@@ -1,5 +1,6 @@
 <meta charset="utf-8">
 <title>Voxelia</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect width="16" height="16" fill="%230A0D12"/><path d="M8 2l5 3v6l-5 3-5-3V5z" fill="%235D9B3F"/><path d="M8 2l5 3-5 3-5-3z" fill="%2382CC57"/><path d="M8 8v6l-5-3V5z" fill="%23406E2C"/></svg>'>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
@@ -1934,10 +1935,13 @@ class World {
         if (bio === BIOMES.peak && h > SEA) b[IDX(lx, h, lz)] = 20;
       }
     }
-    chunk.ready = true;
     this.decorate(chunk);
     this.applyEdits(chunk);
     chunk.recalcAll();
+    // Ready last. Flipping it before applyEdits() left a window in which
+    // getBlock() reported raw terrain for cells the player had already changed:
+    // a dug hole read as filled, a placed block as missing.
+    chunk.ready = true;
   }
 
   /** Plants and trees. Scans a 3x3 chunk area so trees on a border stay whole. */
@@ -4724,6 +4728,11 @@ function setupInput() {
   addEventListener('keydown', e => {
     const tag = document.activeElement && document.activeElement.tagName;
     if (tag === 'INPUT') return;
+    // Held keys auto-repeat about 30x a second. Every branch below either sets a
+    // latched flag or toggles something, so a repeat carries no new information —
+    // and letting it through made holding Space flip flight on and off contin-
+    // uously, because consecutive repeats always fall inside the double-tap window.
+    if (e.repeat) return;
     const k = e.code;
     if (k === 'Escape') {
       e.preventDefault();

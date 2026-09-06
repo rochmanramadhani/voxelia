@@ -720,6 +720,11 @@ function setupInput() {
   addEventListener('keydown', e => {
     const tag = document.activeElement && document.activeElement.tagName;
     if (tag === 'INPUT') return;
+    // Held keys auto-repeat about 30x a second. Every branch below either sets a
+    // latched flag or toggles something, so a repeat carries no new information —
+    // and letting it through made holding Space flip flight on and off contin-
+    // uously, because consecutive repeats always fall inside the double-tap window.
+    if (e.repeat) return;
     const k = e.code;
     if (k === 'Escape') {
       e.preventDefault();

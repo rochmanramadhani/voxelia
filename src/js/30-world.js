@@ -172,10 +172,13 @@ class World {
         if (bio === BIOMES.peak && h > SEA) b[IDX(lx, h, lz)] = 20;
       }
     }
-    chunk.ready = true;
     this.decorate(chunk);
     this.applyEdits(chunk);
     chunk.recalcAll();
+    // Ready last. Flipping it before applyEdits() left a window in which
+    // getBlock() reported raw terrain for cells the player had already changed:
+    // a dug hole read as filled, a placed block as missing.
+    chunk.ready = true;
   }
 
   /** Plants and trees. Scans a 3x3 chunk area so trees on a border stay whole. */
