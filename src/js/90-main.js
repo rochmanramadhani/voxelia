@@ -15,6 +15,10 @@ let lastBiome = null, lastStepD = 0;
 let handSwing = 0, bob = 0;
 let menuAngle = 0;
 const SUN_DIR = new THREE.Vector3(0, 1, 0);
+let spawnPoint = { x: 0, z: 0 };
+let miniCtx = null, mapCtx = null;
+let lastMiniDraw = 0, lastMiniX = 1e9, lastMiniZ = 1e9, lastFullMap = 0;
+const mapView = { x: 0, z: 0, px: 3, dpr: 1, drag: false, lx: 0, ly: 0 };
 const tmpV = new THREE.Vector3(), tmpV2 = new THREE.Vector3(), tmpQ = new THREE.Quaternion();
 
 const input = { f: 0, b: 0, l: 0, r: 0, up: 0, down: 0, sprint: 0, torch: 0, lookL: 0, lookR: 0, lookU: 0, lookD: 0 };
@@ -107,6 +111,7 @@ async function boot() {
 
   // the starting world
   const spawn = findSpawn(world);
+  spawnPoint = { x: spawn.x, z: spawn.z };
   player.pos.set(spawn.x + 0.5, spawn.y, spawn.z + 0.5);
   if (savedWorld && savedWorld.pos) {
     player.pos.fromArray(savedWorld.pos);
@@ -394,6 +399,7 @@ function applyAllSettings() {
   U.uWaveAmt.value = S.wave ? 1 : 0;
   clouds.visible = !!S.clouds;
   $('#vignette').style.display = S.vignette ? '' : 'none';
+  $('#hud').classList.toggle('map-on', !!S.minimap);
   chunks.setDistance(S.renderDist);
   updateFog();
   Audio3D.setVolume();
@@ -415,6 +421,7 @@ onSettingChange = (k) => {
   else if (k === 'wave') U.uWaveAmt.value = S.wave ? 1 : 0;
   else if (k === 'clouds') clouds.visible = !!S.clouds;
   else if (k === 'vignette') $('#vignette').style.display = S.vignette ? '' : 'none';
+  else if (k === 'minimap') { $('#hud').classList.toggle('map-on', !!S.minimap); lastMiniDraw = 0; }
   else if (k === 'timeOfDay') timeOfDay = S.timeOfDay;
   else if (k === 'volume' || k === 'sfx') Audio3D.setVolume();
   else if (k === 'lang') applyLocale();
@@ -441,7 +448,7 @@ function buildUI() {
   initLangSwitch();
   paintLangSwitch();
   onCharChange = i => { setCharModel(i); setHandItem(); };
-  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; };
+  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; lastMiniDraw = 0; drawFullMap(); };
   onHotbarChange = () => setHandItem();
   const ci = Math.max(0, CHARS.findIndex(c => c.key === S.charKey));
   selectChar(ci);
@@ -471,7 +478,7 @@ function buildUI() {
   };
   $$('[data-back]').forEach(b => b.onclick = () => {
     Audio3D.ui();
-    if (screenNow === 'inv') { resume(); return; }
+    if (screenNow === 'inv' || screenNow === 'map') { resume(); return; }
     showScreen(state === 'menu' ? 'menu' : 'pause');
   });
   $('#seedIn').addEventListener('change', () => {
@@ -499,8 +506,86 @@ function buildUI() {
     charSpin.z = clamp(charSpin.z + Math.sign(e.deltaY) * 0.35, 3.0, 9.0);
   }, { passive: false });
 
+  miniCtx = $('#miniCanvas').getContext('2d');
+  mapCtx = $('#mapCanvas').getContext('2d');
+  setupMap();
+
   if (isTouch) $('#touch').classList.add('on');
   setupInput();
+}
+
+/* ═══════════ map ═══════════ */
+function setupMap() {
+  const wrap = $('#mapWrap');
+  $('#bMapHome').onclick = () => { mapView.x = player.pos.x; mapView.z = player.pos.z; drawFullMap(); };
+  wrap.addEventListener('pointerdown', e => {
+    mapView.drag = true; mapView.lx = e.clientX; mapView.ly = e.clientY;
+    wrap.classList.add('grabbing');
+    wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointermove', e => {
+    if (!mapView.drag) return;
+    mapView.x -= (e.clientX - mapView.lx) / mapView.px;
+    mapView.z -= (e.clientY - mapView.ly) / mapView.px;
+    mapView.lx = e.clientX; mapView.ly = e.clientY;
+    drawFullMap();
+  });
+  const stop = () => { mapView.drag = false; wrap.classList.remove('grabbing'); };
+  wrap.addEventListener('pointerup', stop);
+  wrap.addEventListener('pointercancel', stop);
+  wrap.addEventListener('wheel', e => {
+    e.preventDefault();
+    mapView.px = clamp(mapView.px * (e.deltaY > 0 ? 0.82 : 1.22), 1, 16);
+    drawFullMap();
+  }, { passive: false });
+}
+
+/** Match the backing store to the element's real size. Called on every draw,
+    because the layout is not settled yet the moment the screen is shown. */
+function resizeMapCanvas() {
+  const cv = $('#mapCanvas');
+  mapView.dpr = Math.min(devicePixelRatio || 1, 2);
+  const w = Math.max(64, Math.round(cv.clientWidth * mapView.dpr));
+  const h = Math.max(64, Math.round(cv.clientHeight * mapView.dpr));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; return true; }
+  return false;
+}
+
+function openMap() {
+  mapView.x = player.pos.x; mapView.z = player.pos.z;
+  showScreen('map');
+  state = 'map';
+  document.exitPointerLock && document.exitPointerLock();
+  resizeMapCanvas();
+  drawFullMap();
+}
+
+function drawFullMap() {
+  if (!mapCtx || screenNow !== 'map') return;
+  resizeMapCanvas();
+  const cv = $('#mapCanvas'), w = cv.width, h = cv.height;
+  const px = mapView.px * mapView.dpr;
+  WorldMap.draw(mapCtx, world, w, h, mapView.x, mapView.z, px);
+  const sp = WorldMap.markerPos(w, h, mapView.x, mapView.z, px, spawnPoint.x + 0.5, spawnPoint.z + 0.5);
+  WorldMap.drawSpawn(mapCtx, sp[0], sp[1], 5 * mapView.dpr);
+  const me = WorldMap.markerPos(w, h, mapView.x, mapView.z, px, player.pos.x, player.pos.z);
+  WorldMap.drawPlayer(mapCtx, me[0], me[1], player.yaw, 9 * mapView.dpr);
+  $('#mapStat').textContent = t('map.stat', { n: WorldMap.count(), z: mapView.px.toFixed(1) });
+}
+
+function updateMinimap(now) {
+  if (!miniCtx || !S.minimap) return;
+  const moved = Math.abs(player.pos.x - lastMiniX) + Math.abs(player.pos.z - lastMiniZ);
+  if (moved < 0.4 && now - lastMiniDraw < 400) return;
+  lastMiniDraw = now; lastMiniX = player.pos.x; lastMiniZ = player.pos.z;
+  const cv = $('#miniCanvas'), w = cv.width, h = cv.height, px = 5;
+  WorldMap.draw(miniCtx, world, w, h, player.pos.x, player.pos.z, px);
+  const sp = WorldMap.markerPos(w, h, player.pos.x, player.pos.z, px, spawnPoint.x + 0.5, spawnPoint.z + 0.5);
+  if (sp[0] > -24 && sp[0] < w + 24 && sp[1] > -24 && sp[1] < h + 24)
+    WorldMap.drawSpawn(miniCtx, sp[0], sp[1], 6);
+  WorldMap.drawPlayer(miniCtx, w / 2, h / 2, player.yaw, 13);
+  $('#mmPos').textContent = Math.floor(player.pos.x) + ' · ' + Math.floor(player.pos.z);
+  $('#mmBiome').textContent = biomeName(world.biomeAt(Math.floor(player.pos.x), Math.floor(player.pos.z)));
 }
 
 function gpuName() {
@@ -549,10 +634,12 @@ function newWorld(seedText) {
   S.seed = seedText;
   $('#seedIn').value = seedText;
   chunks.clear();
+  WorldMap.clear();
   world = new World(seedToInt(seedText));
   chunks.world = world;
   player.w = world;
   const sp = findSpawn(world);
+  spawnPoint = { x: sp.x, z: sp.z };
   player.pos.set(sp.x + 0.5, sp.y, sp.z + 0.5);
   player.vel.set(0, 0, 0);
   for (let i = 0; i < 40; i++) if (!chunks.update(player.pos.x, player.pos.z, 20)) break;
@@ -637,11 +724,12 @@ function setupInput() {
     if (k === 'Escape') {
       e.preventDefault();
       if (state === 'play') pauseGame();
-      else if (state === 'inv') resume();
+      else if (state === 'inv' || state === 'map') resume();
       else if (screenNow === 'opts' || screenNow === 'guide' || screenNow === 'chars') showScreen(state === 'menu' ? 'menu' : 'pause');
       else if (state === 'pause') resume();
       return;
     }
+    if (k === 'KeyM' && state === 'map') { e.preventDefault(); resume(); return; }
     if (state === 'menu') {
       if (screenNow !== 'menu') return;
       if (k === 'Enter') startGame();
@@ -674,6 +762,7 @@ function setupInput() {
         showScreen('inv'); state = 'inv';
         document.exitPointerLock && document.exitPointerLock();
         break;
+      case 'KeyM': e.preventDefault(); openMap(); break;
       case 'KeyL':
         input.torch = input.torch ? 0 : 1;
         toast(t(input.torch ? 'msg.torchOn' : 'msg.torchOff'));
@@ -763,7 +852,7 @@ function setupInput() {
     if (lockMode === 'lock' && state === 'play' && document.pointerLockElement !== canvas && !isTouch) pauseGame();
   });
   document.addEventListener('pointerlockerror', () => useDragLook());
-  addEventListener('resize', () => applyAllSettings());
+  addEventListener('resize', () => { applyAllSettings(); if (screenNow === 'map') { resizeMapCanvas(); drawFullMap(); } });
   addEventListener('blur', () => {
     input.f = input.b = input.l = input.r = input.up = input.down = input.sprint = 0;
     input.lookL = input.lookR = input.lookU = input.lookD = 0;
@@ -977,7 +1066,8 @@ function loop(now) {
   } else selBox.visible = false;
 
   updateWorldCharacter(dt);
-  if (state !== 'menu' && state !== 'boot') updateHUD();
+  if (state !== 'menu' && state !== 'boot') { updateHUD(); updateMinimap(now); }
+  if (screenNow === 'map' && now - lastFullMap > 260) { lastFullMap = now; drawFullMap(); }
 
   // ═══ render ═══
   renderer.setScissorTest(false);

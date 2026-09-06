@@ -7,7 +7,7 @@ const LS_KEY = 'voxelia.v1';
 const DEFAULTS = {
   lang: 'auto',
   renderDist: 6, resScale: 100, fov: 70, exposure: 105, fogAmt: 100,
-  clouds: true, ao: true, wave: true, vignette: true,
+  clouds: true, ao: true, wave: true, vignette: true, minimap: true,
   sens: 65, invertY: false, autoStep: true,
   lookMode: 'auto', lookSmooth: 22, bob: false,
   dayLength: 8, timeFrozen: false, timeOfDay: 0.30,
@@ -25,7 +25,8 @@ const SCHEMA = [
       { k: 'resScale', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
       { k: 'fov', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
       { k: 'exposure', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
-      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' },
+      { k: 'minimap', type: 'toggle' }
     ]
   },
   {
@@ -172,7 +173,7 @@ const KEYMAP = [
   ['Ctrl', 'key.descend'], ['kb.space2', 'key.fly'],
   ['kb.lclick', 'key.dig'], ['kb.rclick', 'key.place'], ['kb.mclick', 'key.pick'],
   ['1 – 9', 'key.slot'], ['kb.wheel', 'key.wheel'], ['E', 'key.inv'],
-  ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
+  ['M', 'key.map'], ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
   ['F2', 'key.save'], ['R', 'key.surface'], ['Esc', 'key.pause']
 ];
 function buildKeyList() {
@@ -347,7 +348,7 @@ function announceBiome(bio) {
 }
 
 /* ---------- screen navigation ---------- */
-const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'pause'];
+const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'map', 'pause'];
 let screenNow = 'boot';
 let screenBack = 'menu';
 function showScreen(id) {

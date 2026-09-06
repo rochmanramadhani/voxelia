@@ -23,7 +23,7 @@ audio file anywhere in this repository.
 | Typography | Google Fonts: Silkscreen, Barlow Semi Condensed, JetBrains Mono |
 | Build | A 29-line shell script that concatenates `src/` into one HTML file |
 | Hosting | Cloudflare Pages |
-| Size | ~4,900 lines across 13 modules → a single 198 KB `index.html` |
+| Size | ~5,100 lines across 14 modules → a single 212 KB `index.html` |
 
 ## Features
 
@@ -32,6 +32,7 @@ audio file anywhere in this repository.
 - Full day–night cycle: sun, moon, stars, dusk gradients and blocky clouds
 - 6 explorer models you can pick and spin in the menu, visible in third person
 - Rippling transparent water, swaying plants, emissive blocks, a headlamp
+- A corner minimap and a full pan/zoom map of everywhere you have been
 - Keyboard, mouse and touch controls — plus arrow-key looking for mouse-free play
 - English and Indonesian, switched live without a reload
 
@@ -49,7 +50,7 @@ you edit anything under `src/`, rebuild with `./build.sh`.
 
 ## Technical notes
 
-The four things in here most worth reading.
+The five things in here most worth reading.
 
 ### Array textures instead of an atlas
 
@@ -87,6 +88,22 @@ Leaves are a deliberate special case: they are non-opaque for face culling, so
 leaf-against-leaf faces are skipped, but they still count as shade, so forest
 floors sit in genuine shadow.
 
+### A map with no second render pass
+
+The obvious way to draw a minimap is a second orthographic camera pointed
+straight down. That costs a full render pass every frame and can only ever show
+chunks that are currently loaded.
+
+Instead each chunk is painted once into a 16×16 tile — one pixel per column,
+coloured by the average colour of the topmost block's texture, then shaded by
+local slope and height above sea level. Cost to the GPU: nothing. And because the
+tiles are cached independently of the chunks they came from, the map keeps
+everything you have walked past long after those chunks are evicted, which turns
+it into an exploration map for free. Tiles are invalidated when a chunk is
+remeshed, so your own digging shows up.
+
+See [`src/js/45-map.js`](src/js/45-map.js).
+
 ### Two interesting bugs
 
 **The camera rolled.** Orientation was composed with `rotateY(yaw)` then
@@ -112,6 +129,7 @@ src/js/10-blocks    35 block definitions and 41 texture layers
 src/js/20-textures  procedural texture generator -> DataArrayTexture
 src/js/30-world     chunks, terrain generation, biomes, trees, player edits
 src/js/40-mesher    face culling, ambient occlusion, vertex packing
+src/js/45-map       explored-terrain map painted from chunk data
 src/js/50-materials terrain, fluid, sky and cloud shaders
 src/js/55-models    character models, item geometry, icon baking
 src/js/60-chunks    time-budgeted chunk loading
