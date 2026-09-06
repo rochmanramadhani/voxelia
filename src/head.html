@@ -329,6 +329,45 @@ kbd{
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
+/* ---------- map ---------- */
+#minimap{
+  position:absolute;right:14px;top:14px;width:174px;padding:7px;
+  border:1px solid var(--stratum);border-radius:var(--r);
+  background:rgba(9,12,17,.74);display:none;pointer-events:none;
+}
+#hud.map-on #minimap{display:block}
+#minimap canvas{display:block;width:160px;height:160px;border-radius:2px;image-rendering:pixelated;
+  border:1px solid rgba(44,54,68,.8)}
+#minimap .mm-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-dim)}
+#minimap .mm-hd b{color:var(--amber);font-weight:400}
+#minimap .mm-ft{margin-top:6px;font-family:var(--f-mono);font-size:10.5px;color:var(--bone);
+  font-variant-numeric:tabular-nums;text-align:center;letter-spacing:.04em}
+#hud.map-on #toast{top:246px}
+@media (max-width:640px){#minimap{display:none !important}#hud.map-on #toast{top:14px}}
+
+#map .sheet-bd{overflow:hidden;padding:0}
+#mapWrap{
+  position:relative;height:100%;min-height:240px;overflow:hidden;
+  border:1px solid var(--stratum);border-radius:var(--r);background:var(--void);
+  cursor:grab;touch-action:none;
+}
+#mapWrap.grabbing{cursor:grabbing}
+#mapCanvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+#mapLegend{
+  position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:5px;
+  background:rgba(9,12,17,.78);border:1px solid var(--stratum);border-radius:var(--r);
+  padding:8px 11px;pointer-events:none;
+}
+#mapLegend span{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+#mapLegend i{width:9px;height:9px;border-radius:2px;display:block}
+#mapNorth{
+  position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--stratum);background:rgba(9,12,17,.78);pointer-events:none;
+  display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:var(--amber);
+}
+
 /* ---------- language switcher ---------- */
 .langrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .langsw{display:inline-flex;border:1px solid var(--stratum);border-radius:var(--r);overflow:hidden}
@@ -468,6 +507,31 @@ kbd{
   </div>
 </section>
 
+<!-- ══ MAP ══ -->
+<section id="map" class="screen">
+  <div class="sheet">
+    <div class="sheet-hd">
+      <div><span class="eyebrow" data-i18n="map.eyebrow">Survey chart</span><h2 class="head" data-i18n="map.title">Map</h2>
+        <p class="sub" data-i18n="map.sub">Painted from the chunks you have walked past. Drag to pan, scroll to zoom.</p></div>
+      <span class="mono" style="font-size:11px;color:var(--ash-dim)" id="mapStat">—</span>
+    </div>
+    <div class="sheet-bd">
+      <div id="mapWrap">
+        <canvas id="mapCanvas"></canvas>
+        <div id="mapNorth" data-i18n="map.north">N</div>
+        <div id="mapLegend">
+          <span><i style="background:#f0a53c"></i><em style="font-style:normal" data-i18n="map.you">You</em></span>
+          <span><i style="background:#4fbfa8"></i><em style="font-style:normal" data-i18n="map.spawn">Spawn</em></span>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-ft">
+      <button class="btn ghost sm" id="bMapHome" data-i18n="map.recenter">Centre on me</button>
+      <button class="btn ghost sm" data-back data-i18n="common.close">Close</button>
+    </div>
+  </div>
+</section>
+
 <!-- ══ PAUSE ══ -->
 <section id="pause" class="screen">
   <div class="sheet" style="max-width:420px">
@@ -495,6 +559,11 @@ kbd{
   <div id="toast"></div>
   <div id="itemname"></div>
   <div id="hotbar"></div>
+  <div id="minimap">
+    <div class="mm-hd"><span data-i18n="mini.title">MAP</span><b id="mmBiome">—</b></div>
+    <canvas id="miniCanvas" width="320" height="320"></canvas>
+    <div class="mm-ft" id="mmPos">—</div>
+  </div>
 </div>
 
 <!-- ══ TOUCH ══ -->

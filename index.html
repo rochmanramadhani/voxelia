@@ -329,6 +329,45 @@ kbd{
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
+/* ---------- map ---------- */
+#minimap{
+  position:absolute;right:14px;top:14px;width:174px;padding:7px;
+  border:1px solid var(--stratum);border-radius:var(--r);
+  background:rgba(9,12,17,.74);display:none;pointer-events:none;
+}
+#hud.map-on #minimap{display:block}
+#minimap canvas{display:block;width:160px;height:160px;border-radius:2px;image-rendering:pixelated;
+  border:1px solid rgba(44,54,68,.8)}
+#minimap .mm-hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;
+  font-family:var(--f-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ash-dim)}
+#minimap .mm-hd b{color:var(--amber);font-weight:400}
+#minimap .mm-ft{margin-top:6px;font-family:var(--f-mono);font-size:10.5px;color:var(--bone);
+  font-variant-numeric:tabular-nums;text-align:center;letter-spacing:.04em}
+#hud.map-on #toast{top:246px}
+@media (max-width:640px){#minimap{display:none !important}#hud.map-on #toast{top:14px}}
+
+#map .sheet-bd{overflow:hidden;padding:0}
+#mapWrap{
+  position:relative;height:100%;min-height:240px;overflow:hidden;
+  border:1px solid var(--stratum);border-radius:var(--r);background:var(--void);
+  cursor:grab;touch-action:none;
+}
+#mapWrap.grabbing{cursor:grabbing}
+#mapCanvas{display:block;width:100%;height:100%;image-rendering:pixelated}
+#mapLegend{
+  position:absolute;left:12px;bottom:12px;display:flex;flex-direction:column;gap:5px;
+  background:rgba(9,12,17,.78);border:1px solid var(--stratum);border-radius:var(--r);
+  padding:8px 11px;pointer-events:none;
+}
+#mapLegend span{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--ash)}
+#mapLegend i{width:9px;height:9px;border-radius:2px;display:block}
+#mapNorth{
+  position:absolute;right:12px;top:12px;width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--stratum);background:rgba(9,12,17,.78);pointer-events:none;
+  display:grid;place-items:center;font-family:var(--f-mono);font-size:12px;color:var(--amber);
+}
+
 /* ---------- language switcher ---------- */
 .langrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .langsw{display:inline-flex;border:1px solid var(--stratum);border-radius:var(--r);overflow:hidden}
@@ -468,6 +507,31 @@ kbd{
   </div>
 </section>
 
+<!-- ══ MAP ══ -->
+<section id="map" class="screen">
+  <div class="sheet">
+    <div class="sheet-hd">
+      <div><span class="eyebrow" data-i18n="map.eyebrow">Survey chart</span><h2 class="head" data-i18n="map.title">Map</h2>
+        <p class="sub" data-i18n="map.sub">Painted from the chunks you have walked past. Drag to pan, scroll to zoom.</p></div>
+      <span class="mono" style="font-size:11px;color:var(--ash-dim)" id="mapStat">—</span>
+    </div>
+    <div class="sheet-bd">
+      <div id="mapWrap">
+        <canvas id="mapCanvas"></canvas>
+        <div id="mapNorth" data-i18n="map.north">N</div>
+        <div id="mapLegend">
+          <span><i style="background:#f0a53c"></i><em style="font-style:normal" data-i18n="map.you">You</em></span>
+          <span><i style="background:#4fbfa8"></i><em style="font-style:normal" data-i18n="map.spawn">Spawn</em></span>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-ft">
+      <button class="btn ghost sm" id="bMapHome" data-i18n="map.recenter">Centre on me</button>
+      <button class="btn ghost sm" data-back data-i18n="common.close">Close</button>
+    </div>
+  </div>
+</section>
+
 <!-- ══ PAUSE ══ -->
 <section id="pause" class="screen">
   <div class="sheet" style="max-width:420px">
@@ -495,6 +559,11 @@ kbd{
   <div id="toast"></div>
   <div id="itemname"></div>
   <div id="hotbar"></div>
+  <div id="minimap">
+    <div class="mm-hd"><span data-i18n="mini.title">MAP</span><b id="mmBiome">—</b></div>
+    <canvas id="miniCanvas" width="320" height="320"></canvas>
+    <div class="mm-ft" id="mmPos">—</div>
+  </div>
 </div>
 
 <!-- ══ TOUCH ══ -->
@@ -710,6 +779,19 @@ const I18N = {
     'pause.save': 'Simpan Dunia',
     'pause.quit': 'Keluar ke menu',
     'pause.info': '{n} blok disunting · seed {seed} · {c} chunk dimuat',
+
+    'mini.title': 'PETA',
+    'map.eyebrow': 'Bagan survei',
+    'map.title': 'Peta',
+    'map.sub': 'Digambar dari chunk yang pernah kamu lewati, bukan dari kamera kedua. Seret untuk menggeser, gulir untuk zoom.',
+    'map.recenter': 'Pusatkan ke saya',
+    'map.you': 'Kamu',
+    'map.spawn': 'Titik muncul',
+    'map.north': 'U',
+    'map.stat': '{n} chunk terpetakan · {z} px per blok',
+    'set.minimap': 'Minimap',
+    'set.minimap.desc': 'Peta kecil di pojok kanan atas saat bermain',
+    'key.map': 'Buka peta',
 
     'touch.jump': 'LOMPAT',
     'touch.fly': 'TERBANG',
@@ -993,6 +1075,19 @@ const I18N = {
     'pause.save': 'Save World',
     'pause.quit': 'Quit to menu',
     'pause.info': '{n} blocks edited · seed {seed} · {c} chunks loaded',
+
+    'mini.title': 'MAP',
+    'map.eyebrow': 'Survey chart',
+    'map.title': 'Map',
+    'map.sub': 'Painted from the chunks you have walked past, not from a second camera. Drag to pan, scroll to zoom.',
+    'map.recenter': 'Centre on me',
+    'map.you': 'You',
+    'map.spawn': 'Spawn',
+    'map.north': 'N',
+    'map.stat': '{n} chunks mapped · {z} px per block',
+    'set.minimap': 'Minimap',
+    'set.minimap.desc': 'A small map in the top-right corner while playing',
+    'key.map': 'Open the map',
 
     'touch.jump': 'JUMP',
     'touch.fly': 'FLY',
@@ -2223,6 +2318,156 @@ function packGeom(pos, dat, idx, vc, ic) {
   return g;
 }
 
+/* ===== 45-map.js ===== */
+'use strict';
+/* Explored-terrain map.
+
+   Rather than rendering the world a second time from an overhead camera, each
+   chunk is painted once into a 16x16 tile: one pixel per column, coloured by the
+   average colour of the topmost block's texture and shaded by slope and height.
+   Tiles are cached independently of the chunks they came from, so the map keeps
+   everything you have walked past even after those chunks are evicted. */
+
+const MAP_MAX_TILES = 2048;
+const MAP_BUILDS_PER_DRAW = 24;      // keeps a first pan over new ground smooth
+
+const WorldMap = {
+  tiles: new Map(),                  // "cx,cz" -> HTMLCanvasElement (16x16)
+  order: [],                         // insertion order, for eviction
+
+  key(cx, cz) { return cx + ',' + cz; },
+
+  invalidate(cx, cz) { this.tiles.delete(this.key(cx, cz)); },
+  clear() { this.tiles.clear(); this.order.length = 0; },
+
+  store(key, cv) {
+    if (!this.tiles.has(key)) {
+      this.order.push(key);
+      while (this.order.length > MAP_MAX_TILES) {
+        const old = this.order.shift();
+        if (old !== key) this.tiles.delete(old);
+      }
+    }
+    this.tiles.set(key, cv);
+  },
+
+  /** Paint one chunk into a tile. Returns the canvas. */
+  build(world, chunk) {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = CH;
+    const ctx = cv.getContext('2d');
+    const img = ctx.createImageData(CH, CH);
+    const d = img.data;
+    const water = TEX_AVG[T.water] || [46, 108, 176];
+
+    for (let lz = 0; lz < CH; lz++) {
+      for (let lx = 0; lx < CH; lx++) {
+        const h = chunk.top[(lz << 4) | lx];
+        let r, g, b, surface = h;
+
+        if (h < SEA) {
+          // open water: darken with depth so shelves and trenches read apart
+          const depth = clamp((SEA - h) / 15, 0, 1);
+          r = water[0] * (1 - depth * 0.55);
+          g = water[1] * (1 - depth * 0.48);
+          b = water[2] * (1 - depth * 0.30);
+          surface = SEA;
+        } else {
+          const id = chunk.blocks[IDX(lx, h, lz)];
+          const B = BLOCKS[id];
+          const c = (B && TEX_AVG[B.top]) || [124, 124, 124];
+          r = c[0]; g = c[1]; b = c[2];
+        }
+
+        // relief: compare against the column to the north
+        const hn = lz > 0 ? chunk.top[((lz - 1) << 4) | lx] : h;
+        const slope = clamp((h - hn) * 0.14, -0.30, 0.30);
+        const lift = 0.74 + 0.26 * clamp((surface - SEA) / 40, -0.7, 1) + slope;
+
+        const i = ((lz * CH) + lx) * 4;
+        d[i] = clamp(r * lift, 0, 255);
+        d[i + 1] = clamp(g * lift, 0, 255);
+        d[i + 2] = clamp(b * lift, 0, 255);
+        d[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    this.store(this.key(chunk.cx, chunk.cz), cv);
+    return cv;
+  },
+
+  /** Draw the map centred on world (cx, cz). `px` = screen pixels per block. */
+  draw(ctx, world, w, h, centreX, centreZ, px, opts) {
+    opts = opts || {};
+    ctx.imageSmoothingEnabled = false;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = opts.background || '#0a0d12';
+    ctx.fillRect(0, 0, w, h);
+
+    const span = CH * px;
+    const halfW = w / 2, halfH = h / 2;
+    const cx0 = Math.floor((centreX - halfW / px) / CH);
+    const cx1 = Math.floor((centreX + halfW / px) / CH);
+    const cz0 = Math.floor((centreZ - halfH / px) / CH);
+    const cz1 = Math.floor((centreZ + halfH / px) / CH);
+
+    let built = 0;
+    for (let cz = cz0; cz <= cz1; cz++) {
+      for (let cx = cx0; cx <= cx1; cx++) {
+        const key = this.key(cx, cz);
+        let tile = this.tiles.get(key);
+        if (!tile && built < MAP_BUILDS_PER_DRAW) {
+          const chunk = world.chunks.get(key);
+          if (chunk && chunk.ready) { tile = this.build(world, chunk); built++; }
+        }
+        if (!tile) continue;
+        const sx = Math.round(halfW + (cx * CH - centreX) * px);
+        const sy = Math.round(halfH + (cz * CH - centreZ) * px);
+        ctx.drawImage(tile, sx, sy, Math.ceil(span), Math.ceil(span));
+      }
+    }
+  },
+
+  /** A marker at world (x, z), drawn relative to the same centre as draw(). */
+  markerPos(w, h, centreX, centreZ, px, x, z) {
+    return [w / 2 + (x - centreX) * px, h / 2 + (z - centreZ) * px];
+  },
+
+  /** The player arrow. yaw 0 points north (-Z), which is up on the map. */
+  drawPlayer(ctx, x, y, yaw, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-yaw);
+    ctx.beginPath();
+    ctx.moveTo(0, -size);
+    ctx.lineTo(size * 0.68, size * 0.78);
+    ctx.lineTo(0, size * 0.34);
+    ctx.lineTo(-size * 0.68, size * 0.78);
+    ctx.closePath();
+    ctx.fillStyle = '#f0a53c';
+    ctx.strokeStyle = '#0a0d12';
+    ctx.lineWidth = 1.5;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  },
+
+  drawSpawn(ctx, x, y, size) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.strokeStyle = '#4fbfa8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, size, 0, Math.PI * 2);
+    ctx.moveTo(-size * 1.7, 0); ctx.lineTo(size * 1.7, 0);
+    ctx.moveTo(0, -size * 1.7); ctx.lineTo(0, size * 1.7);
+    ctx.stroke();
+    ctx.restore();
+  },
+
+  count() { return this.tiles.size; }
+};
+
 /* ===== 50-materials.js ===== */
 'use strict';
 /* Shaders, written in GLSL1 style. Three.js lifts them to "#version 300 es" on
@@ -2944,6 +3189,7 @@ class ChunkManager {
     }
     chunk.tris = r.tris;
     chunk.dirty = false;
+    WorldMap.invalidate(chunk.cx, chunk.cz);   // terrain changed, repaint its map tile
   }
   /** Do as much work as fits in `budget` milliseconds. */
   update(px, pz, budget = 8) {
@@ -3266,7 +3512,7 @@ const LS_KEY = 'voxelia.v1';
 const DEFAULTS = {
   lang: 'auto',
   renderDist: 6, resScale: 100, fov: 70, exposure: 105, fogAmt: 100,
-  clouds: true, ao: true, wave: true, vignette: true,
+  clouds: true, ao: true, wave: true, vignette: true, minimap: true,
   sens: 65, invertY: false, autoStep: true,
   lookMode: 'auto', lookSmooth: 22, bob: false,
   dayLength: 8, timeFrozen: false, timeOfDay: 0.30,
@@ -3284,7 +3530,8 @@ const SCHEMA = [
       { k: 'resScale', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
       { k: 'fov', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
       { k: 'exposure', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
-      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' },
+      { k: 'minimap', type: 'toggle' }
     ]
   },
   {
@@ -3431,7 +3678,7 @@ const KEYMAP = [
   ['Ctrl', 'key.descend'], ['kb.space2', 'key.fly'],
   ['kb.lclick', 'key.dig'], ['kb.rclick', 'key.place'], ['kb.mclick', 'key.pick'],
   ['1 – 9', 'key.slot'], ['kb.wheel', 'key.wheel'], ['E', 'key.inv'],
-  ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
+  ['M', 'key.map'], ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
   ['F2', 'key.save'], ['R', 'key.surface'], ['Esc', 'key.pause']
 ];
 function buildKeyList() {
@@ -3606,7 +3853,7 @@ function announceBiome(bio) {
 }
 
 /* ---------- screen navigation ---------- */
-const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'pause'];
+const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'map', 'pause'];
 let screenNow = 'boot';
 let screenBack = 'menu';
 function showScreen(id) {
@@ -3755,6 +4002,10 @@ let lastBiome = null, lastStepD = 0;
 let handSwing = 0, bob = 0;
 let menuAngle = 0;
 const SUN_DIR = new THREE.Vector3(0, 1, 0);
+let spawnPoint = { x: 0, z: 0 };
+let miniCtx = null, mapCtx = null;
+let lastMiniDraw = 0, lastMiniX = 1e9, lastMiniZ = 1e9, lastFullMap = 0;
+const mapView = { x: 0, z: 0, px: 3, dpr: 1, drag: false, lx: 0, ly: 0 };
 const tmpV = new THREE.Vector3(), tmpV2 = new THREE.Vector3(), tmpQ = new THREE.Quaternion();
 
 const input = { f: 0, b: 0, l: 0, r: 0, up: 0, down: 0, sprint: 0, torch: 0, lookL: 0, lookR: 0, lookU: 0, lookD: 0 };
@@ -3847,6 +4098,7 @@ async function boot() {
 
   // the starting world
   const spawn = findSpawn(world);
+  spawnPoint = { x: spawn.x, z: spawn.z };
   player.pos.set(spawn.x + 0.5, spawn.y, spawn.z + 0.5);
   if (savedWorld && savedWorld.pos) {
     player.pos.fromArray(savedWorld.pos);
@@ -4134,6 +4386,7 @@ function applyAllSettings() {
   U.uWaveAmt.value = S.wave ? 1 : 0;
   clouds.visible = !!S.clouds;
   $('#vignette').style.display = S.vignette ? '' : 'none';
+  $('#hud').classList.toggle('map-on', !!S.minimap);
   chunks.setDistance(S.renderDist);
   updateFog();
   Audio3D.setVolume();
@@ -4155,6 +4408,7 @@ onSettingChange = (k) => {
   else if (k === 'wave') U.uWaveAmt.value = S.wave ? 1 : 0;
   else if (k === 'clouds') clouds.visible = !!S.clouds;
   else if (k === 'vignette') $('#vignette').style.display = S.vignette ? '' : 'none';
+  else if (k === 'minimap') { $('#hud').classList.toggle('map-on', !!S.minimap); lastMiniDraw = 0; }
   else if (k === 'timeOfDay') timeOfDay = S.timeOfDay;
   else if (k === 'volume' || k === 'sfx') Audio3D.setVolume();
   else if (k === 'lang') applyLocale();
@@ -4181,7 +4435,7 @@ function buildUI() {
   initLangSwitch();
   paintLangSwitch();
   onCharChange = i => { setCharModel(i); setHandItem(); };
-  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; };
+  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; lastMiniDraw = 0; drawFullMap(); };
   onHotbarChange = () => setHandItem();
   const ci = Math.max(0, CHARS.findIndex(c => c.key === S.charKey));
   selectChar(ci);
@@ -4211,7 +4465,7 @@ function buildUI() {
   };
   $$('[data-back]').forEach(b => b.onclick = () => {
     Audio3D.ui();
-    if (screenNow === 'inv') { resume(); return; }
+    if (screenNow === 'inv' || screenNow === 'map') { resume(); return; }
     showScreen(state === 'menu' ? 'menu' : 'pause');
   });
   $('#seedIn').addEventListener('change', () => {
@@ -4239,8 +4493,86 @@ function buildUI() {
     charSpin.z = clamp(charSpin.z + Math.sign(e.deltaY) * 0.35, 3.0, 9.0);
   }, { passive: false });
 
+  miniCtx = $('#miniCanvas').getContext('2d');
+  mapCtx = $('#mapCanvas').getContext('2d');
+  setupMap();
+
   if (isTouch) $('#touch').classList.add('on');
   setupInput();
+}
+
+/* ═══════════ map ═══════════ */
+function setupMap() {
+  const wrap = $('#mapWrap');
+  $('#bMapHome').onclick = () => { mapView.x = player.pos.x; mapView.z = player.pos.z; drawFullMap(); };
+  wrap.addEventListener('pointerdown', e => {
+    mapView.drag = true; mapView.lx = e.clientX; mapView.ly = e.clientY;
+    wrap.classList.add('grabbing');
+    wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointermove', e => {
+    if (!mapView.drag) return;
+    mapView.x -= (e.clientX - mapView.lx) / mapView.px;
+    mapView.z -= (e.clientY - mapView.ly) / mapView.px;
+    mapView.lx = e.clientX; mapView.ly = e.clientY;
+    drawFullMap();
+  });
+  const stop = () => { mapView.drag = false; wrap.classList.remove('grabbing'); };
+  wrap.addEventListener('pointerup', stop);
+  wrap.addEventListener('pointercancel', stop);
+  wrap.addEventListener('wheel', e => {
+    e.preventDefault();
+    mapView.px = clamp(mapView.px * (e.deltaY > 0 ? 0.82 : 1.22), 1, 16);
+    drawFullMap();
+  }, { passive: false });
+}
+
+/** Match the backing store to the element's real size. Called on every draw,
+    because the layout is not settled yet the moment the screen is shown. */
+function resizeMapCanvas() {
+  const cv = $('#mapCanvas');
+  mapView.dpr = Math.min(devicePixelRatio || 1, 2);
+  const w = Math.max(64, Math.round(cv.clientWidth * mapView.dpr));
+  const h = Math.max(64, Math.round(cv.clientHeight * mapView.dpr));
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; return true; }
+  return false;
+}
+
+function openMap() {
+  mapView.x = player.pos.x; mapView.z = player.pos.z;
+  showScreen('map');
+  state = 'map';
+  document.exitPointerLock && document.exitPointerLock();
+  resizeMapCanvas();
+  drawFullMap();
+}
+
+function drawFullMap() {
+  if (!mapCtx || screenNow !== 'map') return;
+  resizeMapCanvas();
+  const cv = $('#mapCanvas'), w = cv.width, h = cv.height;
+  const px = mapView.px * mapView.dpr;
+  WorldMap.draw(mapCtx, world, w, h, mapView.x, mapView.z, px);
+  const sp = WorldMap.markerPos(w, h, mapView.x, mapView.z, px, spawnPoint.x + 0.5, spawnPoint.z + 0.5);
+  WorldMap.drawSpawn(mapCtx, sp[0], sp[1], 5 * mapView.dpr);
+  const me = WorldMap.markerPos(w, h, mapView.x, mapView.z, px, player.pos.x, player.pos.z);
+  WorldMap.drawPlayer(mapCtx, me[0], me[1], player.yaw, 9 * mapView.dpr);
+  $('#mapStat').textContent = t('map.stat', { n: WorldMap.count(), z: mapView.px.toFixed(1) });
+}
+
+function updateMinimap(now) {
+  if (!miniCtx || !S.minimap) return;
+  const moved = Math.abs(player.pos.x - lastMiniX) + Math.abs(player.pos.z - lastMiniZ);
+  if (moved < 0.4 && now - lastMiniDraw < 400) return;
+  lastMiniDraw = now; lastMiniX = player.pos.x; lastMiniZ = player.pos.z;
+  const cv = $('#miniCanvas'), w = cv.width, h = cv.height, px = 5;
+  WorldMap.draw(miniCtx, world, w, h, player.pos.x, player.pos.z, px);
+  const sp = WorldMap.markerPos(w, h, player.pos.x, player.pos.z, px, spawnPoint.x + 0.5, spawnPoint.z + 0.5);
+  if (sp[0] > -24 && sp[0] < w + 24 && sp[1] > -24 && sp[1] < h + 24)
+    WorldMap.drawSpawn(miniCtx, sp[0], sp[1], 6);
+  WorldMap.drawPlayer(miniCtx, w / 2, h / 2, player.yaw, 13);
+  $('#mmPos').textContent = Math.floor(player.pos.x) + ' · ' + Math.floor(player.pos.z);
+  $('#mmBiome').textContent = biomeName(world.biomeAt(Math.floor(player.pos.x), Math.floor(player.pos.z)));
 }
 
 function gpuName() {
@@ -4289,10 +4621,12 @@ function newWorld(seedText) {
   S.seed = seedText;
   $('#seedIn').value = seedText;
   chunks.clear();
+  WorldMap.clear();
   world = new World(seedToInt(seedText));
   chunks.world = world;
   player.w = world;
   const sp = findSpawn(world);
+  spawnPoint = { x: sp.x, z: sp.z };
   player.pos.set(sp.x + 0.5, sp.y, sp.z + 0.5);
   player.vel.set(0, 0, 0);
   for (let i = 0; i < 40; i++) if (!chunks.update(player.pos.x, player.pos.z, 20)) break;
@@ -4377,11 +4711,12 @@ function setupInput() {
     if (k === 'Escape') {
       e.preventDefault();
       if (state === 'play') pauseGame();
-      else if (state === 'inv') resume();
+      else if (state === 'inv' || state === 'map') resume();
       else if (screenNow === 'opts' || screenNow === 'guide' || screenNow === 'chars') showScreen(state === 'menu' ? 'menu' : 'pause');
       else if (state === 'pause') resume();
       return;
     }
+    if (k === 'KeyM' && state === 'map') { e.preventDefault(); resume(); return; }
     if (state === 'menu') {
       if (screenNow !== 'menu') return;
       if (k === 'Enter') startGame();
@@ -4414,6 +4749,7 @@ function setupInput() {
         showScreen('inv'); state = 'inv';
         document.exitPointerLock && document.exitPointerLock();
         break;
+      case 'KeyM': e.preventDefault(); openMap(); break;
       case 'KeyL':
         input.torch = input.torch ? 0 : 1;
         toast(t(input.torch ? 'msg.torchOn' : 'msg.torchOff'));
@@ -4503,7 +4839,7 @@ function setupInput() {
     if (lockMode === 'lock' && state === 'play' && document.pointerLockElement !== canvas && !isTouch) pauseGame();
   });
   document.addEventListener('pointerlockerror', () => useDragLook());
-  addEventListener('resize', () => applyAllSettings());
+  addEventListener('resize', () => { applyAllSettings(); if (screenNow === 'map') { resizeMapCanvas(); drawFullMap(); } });
   addEventListener('blur', () => {
     input.f = input.b = input.l = input.r = input.up = input.down = input.sprint = 0;
     input.lookL = input.lookR = input.lookU = input.lookD = 0;
@@ -4717,7 +5053,8 @@ function loop(now) {
   } else selBox.visible = false;
 
   updateWorldCharacter(dt);
-  if (state !== 'menu' && state !== 'boot') updateHUD();
+  if (state !== 'menu' && state !== 'boot') { updateHUD(); updateMinimap(now); }
+  if (screenNow === 'map' && now - lastFullMap > 260) { lastFullMap = now; drawFullMap(); }
 
   // ═══ render ═══
   renderer.setScissorTest(false);

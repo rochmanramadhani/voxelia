@@ -75,6 +75,7 @@ class ChunkManager {
     }
     chunk.tris = r.tris;
     chunk.dirty = false;
+    WorldMap.invalidate(chunk.cx, chunk.cz);   // terrain changed, repaint its map tile
   }
   /** Do as much work as fits in `budget` milliseconds. */
   update(px, pz, budget = 8) {
