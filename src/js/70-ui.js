@@ -67,7 +67,7 @@ const SCHEMA = [
 ];
 
 function clockLabel(v) {
-  const mins = Math.round(((v + 0.5) % 1) * 1440);
+  const mins = Math.round((v % 1) * 1440);   // t=0 midnight, t=0.5 noon — matches the sun
   const h = Math.floor(mins / 60), m = mins % 60;
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }

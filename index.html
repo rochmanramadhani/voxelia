@@ -138,6 +138,13 @@ input[type=text]:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2
   border-bottom:1px solid var(--stratum);padding-bottom:12px}
 .sheet-bd{overflow:auto;min-height:0;padding-right:4px}
 .sheet-ft{display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--stratum);padding-top:12px}
+/* Header data sits over the live world. A dark shadow does nothing for dark text
+   on bright sky, so give it its own ground instead. */
+.sheet-hd .eyebrow{text-shadow:0 1px 3px rgba(9,12,17,.95),0 0 10px rgba(9,12,17,.6)}
+.sheet-hd .mono{
+  background:rgba(9,12,17,.62);border:1px solid var(--stratum);border-radius:var(--r);
+  padding:4px 9px;color:var(--ash);
+}
 .sheet-bd::-webkit-scrollbar{width:10px}
 .sheet-bd::-webkit-scrollbar-thumb{background:var(--stratum);border-radius:6px}
 .sheet-bd::-webkit-scrollbar-track{background:transparent}
@@ -370,6 +377,7 @@ kbd{
 
 /* ---------- language switcher ---------- */
 .langrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.langrow .eyebrow{text-shadow:0 1px 3px rgba(9,12,17,.95),0 0 10px rgba(9,12,17,.7)}
 .langsw{display:inline-flex;border:1px solid var(--stratum);border-radius:var(--r);overflow:hidden}
 .langsw button{
   appearance:none;border:0;cursor:pointer;padding:5px 11px;
@@ -2927,6 +2935,10 @@ function faceTex(skinHex, opts = {}) {
   }
   return canvasTexFromPix(p);
 }
+/** Scale a hex colour, for shading one body part against another. */
+function hexShade(h, f) {
+  return '#' + hexRgb(h).map(v => Math.round(clamp(v * f, 0, 255)).toString(16).padStart(2, '0')).join('');
+}
 function hexRgb(h) {
   h = h.replace('#', '');
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
@@ -2980,11 +2992,14 @@ function buildCharacter(def) {
   const mat = (tex, extra = {}) => new THREE.MeshLambertMaterial(Object.assign({ map: tex }, extra));
   const texSkin = skinTex(def.skin, { seed: 11, speck: def.metal ? '#c8d0da' : null });
   const texShirt = skinTex(def.shirt, { seed: 22, blotch: 0.07 });
+  // sleeves a shade darker, or arms and torso merge into one silhouette
+  const texSleeve = skinTex(hexShade(def.shirt, 0.78), { seed: 23, blotch: 0.07 });
   const texPants = skinTex(def.pants, { seed: 33, blotch: 0.07 });
   const texShoe = skinTex(def.shoe, { seed: 44 });
   const texFace = faceTex(def.skin, Object.assign({ seed: 55 }, def.faceOpts || {}));
 
   const mSkin = mat(texSkin), mShirt = mat(texShirt), mPants = mat(texPants), mShoe = mat(texShoe);
+  const mSleeve = mat(texSleeve);
   const mFace = mat(texFace);
 
   const box = (w, h, d, m) => {
@@ -3040,12 +3055,14 @@ function buildCharacter(def) {
       const c = box(8.6, 2.2, 8.6, hm); c.position.y = 7.4 * U; headP.add(c);
       const brim = box(8.6, 0.8, 3.2, hm); brim.position.set(0, 6.2 * U, 5.2 * U); headP.add(brim);
     } else if (hat.type === 'helmet') {
-      const c = box(8.8, 4.4, 8.8, hm); c.position.y = 6.4 * U; headP.add(c);
-      const brim = box(9.2, 0.9, 3.6, hm); brim.position.set(0, 4.6 * U, 5.4 * U); headP.add(brim);
+      // Sits high on the head: the eyes occupy y 4.0-5.0, so the brim has to
+      // clear 5.0 or it covers the face completely.
+      const c = box(8.8, 3.6, 8.8, hm); c.position.y = 7.2 * U; headP.add(c);
+      const brim = box(9.2, 0.9, 3.6, hm); brim.position.set(0, 5.6 * U, 5.4 * U); headP.add(brim);
       if (hat.lamp) {
         const lamp = new THREE.Mesh(new THREE.BoxGeometry(2.4 * U, 2.4 * U, 1.6 * U),
           new THREE.MeshBasicMaterial({ color: 0xffe6a8 }));
-        lamp.position.set(0, 6.6 * U, 5.2 * U); headP.add(lamp);
+        lamp.position.set(0, 7.2 * U, 5.0 * U); headP.add(lamp);
         parts.lamp = lamp;
       }
     } else if (hat.type === 'hood') {
@@ -3068,7 +3085,7 @@ function buildCharacter(def) {
   parts.arms = [];
   for (const s of [-1, 1]) {
     const ap = new THREE.Group(); ap.position.set(s * 6 * U, 23 * U, 0); body.add(ap);
-    const arm = box(4, 12, 4, mShirt); arm.position.y = -6 * U; ap.add(arm);
+    const arm = box(4, 12, 4, mSleeve); arm.position.y = -6 * U; ap.add(arm);
     const hand = box(4.1, 2.4, 4.1, mSkin); hand.position.y = -11 * U; ap.add(hand);
     parts.arms.push(ap);
   }
@@ -3572,7 +3589,7 @@ const SCHEMA = [
 ];
 
 function clockLabel(v) {
-  const mins = Math.round(((v + 0.5) % 1) * 1440);
+  const mins = Math.round((v % 1) * 1440);   // t=0 midnight, t=0.5 noon — matches the sun
   const h = Math.floor(mins / 60), m = mins % 60;
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }
@@ -4284,7 +4301,7 @@ function buildHandArm(def) {
     new THREE.MeshLambertMaterial({ map: skin }));
   hand.position.set(0, -0.28, 0);
   g.add(sleeve, hand);
-  g.position.set(0.42, -0.46, -0.62);
+  g.position.set(0.46, -0.50, -0.70);
   g.rotation.set(-0.35, 0.2, -0.16);
   handScene.add(g);
   handArm = g;
@@ -4298,8 +4315,8 @@ function setHandItem() {
   m.position.set(-0.5, -0.5, -0.5);
   const g = new THREE.Group();
   g.add(m);
-  g.scale.setScalar(0.30);
-  g.position.set(0.46, -0.40, -0.66);
+  g.scale.setScalar(0.21);
+  g.position.set(0.50, -0.44, -0.74);
   g.rotation.set(0.12, -0.62, 0.16);
   g.frustumCulled = false;
   handScene.add(g);
@@ -5126,12 +5143,12 @@ function updateHand(dt) {
   const sp = clamp(player.speedNow / 7, 0, 1) * (S.bob ? 1 : 0.35);
   const sway = Math.sin(bob) * 0.035 * sp, sway2 = Math.abs(Math.cos(bob)) * 0.03 * sp;
   if (handMesh) {
-    handMesh.position.set(0.46 + sway, -0.40 - sway2 - s * 0.30, -0.66 + s * 0.16);
+    handMesh.position.set(0.50 + sway, -0.44 - sway2 - s * 0.24, -0.74 + s * 0.14);
     handMesh.rotation.set(0.12 + s * 1.15, -0.62 - s * 0.35, 0.16);
     handMesh.visible = true;
   }
   if (handArm) {
-    handArm.position.set(0.42 + sway, -0.46 - sway2 - s * 0.26, -0.62 + s * 0.14);
+    handArm.position.set(0.46 + sway, -0.50 - sway2 - s * 0.22, -0.70 + s * 0.12);
     handArm.rotation.set(-0.35 + s * 1.05, 0.2, -0.16);
   }
   handLight.position.copy(U.uSunDir.value).multiplyScalar(1).add(new THREE.Vector3(0.4, 0.9, 0.9));

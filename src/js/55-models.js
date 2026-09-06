@@ -138,6 +138,10 @@ function faceTex(skinHex, opts = {}) {
   }
   return canvasTexFromPix(p);
 }
+/** Scale a hex colour, for shading one body part against another. */
+function hexShade(h, f) {
+  return '#' + hexRgb(h).map(v => Math.round(clamp(v * f, 0, 255)).toString(16).padStart(2, '0')).join('');
+}
 function hexRgb(h) {
   h = h.replace('#', '');
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
@@ -191,11 +195,14 @@ function buildCharacter(def) {
   const mat = (tex, extra = {}) => new THREE.MeshLambertMaterial(Object.assign({ map: tex }, extra));
   const texSkin = skinTex(def.skin, { seed: 11, speck: def.metal ? '#c8d0da' : null });
   const texShirt = skinTex(def.shirt, { seed: 22, blotch: 0.07 });
+  // sleeves a shade darker, or arms and torso merge into one silhouette
+  const texSleeve = skinTex(hexShade(def.shirt, 0.78), { seed: 23, blotch: 0.07 });
   const texPants = skinTex(def.pants, { seed: 33, blotch: 0.07 });
   const texShoe = skinTex(def.shoe, { seed: 44 });
   const texFace = faceTex(def.skin, Object.assign({ seed: 55 }, def.faceOpts || {}));
 
   const mSkin = mat(texSkin), mShirt = mat(texShirt), mPants = mat(texPants), mShoe = mat(texShoe);
+  const mSleeve = mat(texSleeve);
   const mFace = mat(texFace);
 
   const box = (w, h, d, m) => {
@@ -251,12 +258,14 @@ function buildCharacter(def) {
       const c = box(8.6, 2.2, 8.6, hm); c.position.y = 7.4 * U; headP.add(c);
       const brim = box(8.6, 0.8, 3.2, hm); brim.position.set(0, 6.2 * U, 5.2 * U); headP.add(brim);
     } else if (hat.type === 'helmet') {
-      const c = box(8.8, 4.4, 8.8, hm); c.position.y = 6.4 * U; headP.add(c);
-      const brim = box(9.2, 0.9, 3.6, hm); brim.position.set(0, 4.6 * U, 5.4 * U); headP.add(brim);
+      // Sits high on the head: the eyes occupy y 4.0-5.0, so the brim has to
+      // clear 5.0 or it covers the face completely.
+      const c = box(8.8, 3.6, 8.8, hm); c.position.y = 7.2 * U; headP.add(c);
+      const brim = box(9.2, 0.9, 3.6, hm); brim.position.set(0, 5.6 * U, 5.4 * U); headP.add(brim);
       if (hat.lamp) {
         const lamp = new THREE.Mesh(new THREE.BoxGeometry(2.4 * U, 2.4 * U, 1.6 * U),
           new THREE.MeshBasicMaterial({ color: 0xffe6a8 }));
-        lamp.position.set(0, 6.6 * U, 5.2 * U); headP.add(lamp);
+        lamp.position.set(0, 7.2 * U, 5.0 * U); headP.add(lamp);
         parts.lamp = lamp;
       }
     } else if (hat.type === 'hood') {
@@ -279,7 +288,7 @@ function buildCharacter(def) {
   parts.arms = [];
   for (const s of [-1, 1]) {
     const ap = new THREE.Group(); ap.position.set(s * 6 * U, 23 * U, 0); body.add(ap);
-    const arm = box(4, 12, 4, mShirt); arm.position.y = -6 * U; ap.add(arm);
+    const arm = box(4, 12, 4, mSleeve); arm.position.y = -6 * U; ap.add(arm);
     const hand = box(4.1, 2.4, 4.1, mSkin); hand.position.y = -11 * U; ap.add(hand);
     parts.arms.push(ap);
   }

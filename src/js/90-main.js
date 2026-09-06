@@ -297,7 +297,7 @@ function buildHandArm(def) {
     new THREE.MeshLambertMaterial({ map: skin }));
   hand.position.set(0, -0.28, 0);
   g.add(sleeve, hand);
-  g.position.set(0.42, -0.46, -0.62);
+  g.position.set(0.46, -0.50, -0.70);
   g.rotation.set(-0.35, 0.2, -0.16);
   handScene.add(g);
   handArm = g;
@@ -311,8 +311,8 @@ function setHandItem() {
   m.position.set(-0.5, -0.5, -0.5);
   const g = new THREE.Group();
   g.add(m);
-  g.scale.setScalar(0.30);
-  g.position.set(0.46, -0.40, -0.66);
+  g.scale.setScalar(0.21);
+  g.position.set(0.50, -0.44, -0.74);
   g.rotation.set(0.12, -0.62, 0.16);
   g.frustumCulled = false;
   handScene.add(g);
@@ -1139,12 +1139,12 @@ function updateHand(dt) {
   const sp = clamp(player.speedNow / 7, 0, 1) * (S.bob ? 1 : 0.35);
   const sway = Math.sin(bob) * 0.035 * sp, sway2 = Math.abs(Math.cos(bob)) * 0.03 * sp;
   if (handMesh) {
-    handMesh.position.set(0.46 + sway, -0.40 - sway2 - s * 0.30, -0.66 + s * 0.16);
+    handMesh.position.set(0.50 + sway, -0.44 - sway2 - s * 0.24, -0.74 + s * 0.14);
     handMesh.rotation.set(0.12 + s * 1.15, -0.62 - s * 0.35, 0.16);
     handMesh.visible = true;
   }
   if (handArm) {
-    handArm.position.set(0.42 + sway, -0.46 - sway2 - s * 0.26, -0.62 + s * 0.14);
+    handArm.position.set(0.46 + sway, -0.50 - sway2 - s * 0.22, -0.70 + s * 0.12);
     handArm.rotation.set(-0.35 + s * 1.05, 0.2, -0.16);
   }
   handLight.position.copy(U.uSunDir.value).multiplyScalar(1).add(new THREE.Vector3(0.4, 0.9, 0.9));

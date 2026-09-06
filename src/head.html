@@ -138,6 +138,13 @@ input[type=text]:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2
   border-bottom:1px solid var(--stratum);padding-bottom:12px}
 .sheet-bd{overflow:auto;min-height:0;padding-right:4px}
 .sheet-ft{display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--stratum);padding-top:12px}
+/* Header data sits over the live world. A dark shadow does nothing for dark text
+   on bright sky, so give it its own ground instead. */
+.sheet-hd .eyebrow{text-shadow:0 1px 3px rgba(9,12,17,.95),0 0 10px rgba(9,12,17,.6)}
+.sheet-hd .mono{
+  background:rgba(9,12,17,.62);border:1px solid var(--stratum);border-radius:var(--r);
+  padding:4px 9px;color:var(--ash);
+}
 .sheet-bd::-webkit-scrollbar{width:10px}
 .sheet-bd::-webkit-scrollbar-thumb{background:var(--stratum);border-radius:6px}
 .sheet-bd::-webkit-scrollbar-track{background:transparent}
@@ -370,6 +377,7 @@ kbd{
 
 /* ---------- language switcher ---------- */
 .langrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.langrow .eyebrow{text-shadow:0 1px 3px rgba(9,12,17,.95),0 0 10px rgba(9,12,17,.7)}
 .langsw{display:inline-flex;border:1px solid var(--stratum);border-radius:var(--r);overflow:hidden}
 .langsw button{
   appearance:none;border:0;cursor:pointer;padding:5px 11px;
