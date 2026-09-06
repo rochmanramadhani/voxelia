@@ -1,12 +1,12 @@
 'use strict';
-/* Perakitan: renderer, adegan, siklus siang-malam, masukan, dan gelung utama. */
+/* Assembly: renderer, scene, day-night cycle, input, and the main loop. */
 
 let renderer, scene, camera, world, chunks, player;
 let matSolid, matLiquid, matItem, atlas;
 let sky, clouds, selBox, particles, pData;
 let handScene, handCam, handMesh, handArm, handLight;
 let charScene, charCam, charModel, charPivot, charSpin = { x: -0.10, y: 0.52, z: 4.6, drag: false, lx: 0, ly: 0 };
-let worldChar = null;                 // model di dunia (orang ketiga)
+let worldChar = null;                 // the in-world model (third person)
 let saved = {};
 let state = 'boot';
 let timeOfDay = 0.30;
@@ -20,7 +20,7 @@ const tmpV = new THREE.Vector3(), tmpV2 = new THREE.Vector3(), tmpQ = new THREE.
 const input = { f: 0, b: 0, l: 0, r: 0, up: 0, down: 0, sprint: 0, torch: 0, lookL: 0, lookR: 0, lookU: 0, lookD: 0 };
 let mouseDown = 0, digTimer = 0, placeTimer = 0;
 let isTouch = false;
-/* Pointer lock bisa diblokir (mis. di dalam iframe). Kalau begitu, pakai mode seret. */
+/* Pointer lock can be blocked (inside an iframe, say). Fall back to drag-look. */
 let lockMode = 'lock';
 let dragOn = false, dragBtn = 0, dragDist = 0, dragX = 0, dragY = 0;
 
@@ -32,8 +32,8 @@ function bootLog(txt, ok) {
   el.scrollTop = el.scrollHeight;
 }
 function bootBar(p) { $('#bar i').style.width = (p * 100).toFixed(0) + '%'; }
-/* Menunggu frame berikutnya, tapi tetap jalan bila tab di latar belakang
-   (requestAnimationFrame berhenti di sana dan pemuatan akan menggantung selamanya). */
+/* Wait for the next frame, but keep going in a background tab
+   (requestAnimationFrame stops there and loading would hang forever). */
 const nextFrame = () => new Promise(r => {
   let done = false;
   const fin = () => { if (!done) { done = true; r(); } };
@@ -43,6 +43,8 @@ const nextFrame = () => new Promise(r => {
 
 async function boot() {
   saved = loadSettings();
+  setLocale(S.lang);
+  applyI18n();
   isTouch = window.matchMedia('(pointer: coarse)').matches;
 
   const canvas = $('#gl');
@@ -52,21 +54,21 @@ async function boot() {
   renderer.setClearColor(0x090c11, 1);
   renderer.autoClear = true;
   renderer.toneMapping = THREE.NoToneMapping;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;   // shader kustom sudah keluar di ruang sRGB
+  renderer.outputColorSpace = THREE.SRGBColorSpace;   // the custom shaders already output sRGB
 
   if (!renderer.capabilities.isWebGL2) {
-    bootLog('WebGL2 tidak tersedia di peramban ini.', 'GAGAL');
-    bootLog('Voxelia butuh WebGL2 untuk tekstur array. Coba Chrome, Edge, Firefox, atau Safari 15+.');
+    bootLog(t('boot.noWebgl'), t('boot.failed'));
+    bootLog(t('boot.noWebgl2'));
     return;
   }
-  bootLog('memeriksa konteks grafis', 'WEBGL2');
+  bootLog(t('boot.gl'), 'WEBGL2');
   bootBar(0.08);
   await nextFrame();
 
   computeTexAverages();
   atlas = buildBlockTextures(renderer);
   U.uAtlas.value = atlas;
-  bootLog(`menggambar ${TEX.length} tekstur prosedural 16×16`, 'OK');
+  bootLog(t('boot.tex', { n: TEX.length }), t('boot.ok'));
   bootBar(0.22);
   await nextFrame();
 
@@ -75,17 +77,17 @@ async function boot() {
   matItem = makeItemMaterial();
 
   ICONS = bakeBlockIcons(renderer, matItem, 96);
-  bootLog(`merender ${BLOCK_COUNT} ikon blok 3D`, 'OK');
+  bootLog(t('boot.icons', { n: BLOCK_COUNT }), t('boot.ok'));
   bootBar(0.36);
   await nextFrame();
 
   buildScene();
-  bootLog('menyusun langit, awan, dan partikel', 'OK');
+  bootLog(t('boot.scene'), t('boot.ok'));
   bootBar(0.46);
   await nextFrame();
 
   buildCharScene();
-  bootLog(`membangun ${CHARS.length} model penjelajah`, 'OK');
+  bootLog(t('boot.chars', { n: CHARS.length }), t('boot.ok'));
   bootBar(0.55);
   await nextFrame();
 
@@ -99,11 +101,11 @@ async function boot() {
   chunks.setDistance(S.renderDist);
   player = new Player(world);
 
-  bootLog(`menyiapkan dunia "${seedText}" (seed ${world.seed})`, 'OK');
+  bootLog(t('boot.world', { seed: seedText, n: world.seed }), t('boot.ok'));
   bootBar(0.62);
   await nextFrame();
 
-  // dunia awal
+  // the starting world
   const spawn = findSpawn(world);
   player.pos.set(spawn.x + 0.5, spawn.y, spawn.z + 0.5);
   if (savedWorld && savedWorld.pos) {
@@ -122,7 +124,7 @@ async function boot() {
     if (!pend) break;
     if (i % 6 === 0) await nextFrame();
   }
-  bootLog(`memuat ${chunks.stats.chunks} chunk di sekitar titik muncul`, 'SIAP');
+  bootLog(t('boot.chunks', { n: chunks.stats.chunks }), t('boot.ready'));
   bootBar(1);
   await nextFrame();
 
@@ -133,8 +135,7 @@ async function boot() {
 }
 
 function randomSeedText() {
-  const a = ['batu', 'kabut', 'lumut', 'pasir', 'obor', 'palung', 'akar', 'kerikil', 'senja', 'arus'];
-  const b = ['utara', 'dalam', 'sunyi', 'panjang', 'kering', 'biru', 'tua', 'jauh'];
+  const a = t('seed.a').split(','), b = t('seed.b').split(',');
   return a[(Math.random() * a.length) | 0] + '-' + b[(Math.random() * b.length) | 0] + '-' +
     String((Math.random() * 900 + 100) | 0);
 }
@@ -151,11 +152,11 @@ function findSpawn(w) {
   return { x: 0, y: w.heightAt(0, 0) + 1.2, z: 0, h: w.heightAt(0, 0) };
 }
 
-/* ═══════════ adegan ═══════════ */
+/* ═══════════ scene ═══════════ */
 function buildScene() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(S.fov, innerWidth / innerHeight, 0.06, 900);
-  camera.rotation.order = 'YXZ';   // yaw lalu pitch — urutan XYZ bawaan bikin kamera terguling
+  camera.rotation.order = 'YXZ';   // yaw then pitch; the default XYZ order rolls the camera
 
   scene.add(new THREE.AmbientLight(0xffffff, 1.1));
   const dl = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -163,7 +164,7 @@ function buildScene() {
   scene.add(dl);
   scene.userData.dl = dl;
 
-  // langit
+  // sky
   const skyGeo = new THREE.SphereGeometry(1, 24, 16);
   sky = new THREE.Mesh(skyGeo, new THREE.ShaderMaterial({
     vertexShader: SKY_VERT, fragmentShader: SKY_FRAG,
@@ -179,7 +180,7 @@ function buildScene() {
   sky.frustumCulled = false;
   scene.add(sky);
 
-  // awan
+  // clouds
   const cg = new THREE.PlaneGeometry(2600, 2600, 1, 1);
   cg.rotateX(-Math.PI / 2);
   clouds = new THREE.Mesh(cg, new THREE.ShaderMaterial({
@@ -196,7 +197,7 @@ function buildScene() {
   clouds.frustumCulled = false;
   scene.add(clouds);
 
-  // kotak seleksi
+  // selection box
   selBox = new THREE.LineSegments(
     new THREE.EdgesGeometry(new THREE.BoxGeometry(1.004, 1.004, 1.004)),
     new THREE.LineBasicMaterial({ color: 0x0a0c10, transparent: true, opacity: 0.85, depthTest: true })
@@ -205,7 +206,7 @@ function buildScene() {
   selBox.renderOrder = 6;
   scene.add(selBox);
 
-  // partikel pecahan blok
+  // block-break particles
   const N = 420;
   const pg = new THREE.BufferGeometry();
   pg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
@@ -219,7 +220,7 @@ function buildScene() {
   pData = { n: N, life: new Float32Array(N), vel: new Float32Array(N * 3), head: 0 };
   for (let i = 0; i < N; i++) pg.attributes.position.array[i * 3 + 1] = -9999;
 
-  // benda di tangan
+  // held item
   handScene = new THREE.Scene();
   handCam = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.01, 12);
   handScene.add(new THREE.AmbientLight(0xffffff, 1.4));
@@ -238,7 +239,7 @@ function buildCharScene() {
   charPivot = new THREE.Group();
   charScene.add(charPivot);
 
-  // panggung: cakram blok
+  // stage: a disc of blocks
   const stage = new THREE.Group();
   for (let dz = -3; dz <= 3; dz++) for (let dx = -3; dx <= 3; dx++) {
     if (dx * dx + dz * dz > 10) continue;
@@ -253,7 +254,7 @@ function buildCharScene() {
   charPivot.add(stage);
 }
 
-/** Lepas geometri & tekstur milik sebuah subtree (model karakter dibuat ulang tiap ganti). */
+/** Dispose the geometry and textures under a subtree (models are rebuilt on every swap). */
 function disposeTree(obj) {
   obj.traverse(o => {
     if (o.geometry) o.geometry.dispose();
@@ -271,7 +272,7 @@ function setCharModel(i) {
   charModel = buildCharacter(CHARS[i]);
   charModel.root.position.y = 0;
   charPivot.add(charModel.root);
-  // model dunia (orang ketiga)
+  // the in-world model (third person)
   if (worldChar) { scene.remove(worldChar.root); disposeTree(worldChar.root); }
   worldChar = buildCharacter(CHARS[i]);
   worldChar.root.visible = false;
@@ -314,7 +315,7 @@ function setHandItem() {
   if (handArm) handArm.visible = true;
 }
 
-/* ═══════════ siklus siang-malam ═══════════ */
+/* ═══════════ day-night cycle ═══════════ */
 const C_NIGHT = { top: [0x06, 0x09, 0x14], mid: [0x0b, 0x11, 0x22], hor: [0x16, 0x1e, 0x33] };
 const C_DAY = { top: [0x2f, 0x6e, 0xc8], mid: [0x74, 0xae, 0xe8], hor: [0xc2, 0xdb, 0xf0] };
 const C_DUSK = { top: [0x35, 0x36, 0x74], mid: [0x9a, 0x62, 0x8e], hor: [0xef, 0x8f, 0x4a] };
@@ -346,7 +347,7 @@ function updateSky(dt) {
   su.uGround.value.setRGB(hor[0] / 255 * 0.86, hor[1] / 255 * 0.88, hor[2] / 255 * 0.92, THREE.LinearSRGBColorSpace);
   su.uNight.value = night;
 
-  // warna matahari: jingga rendah -> putih hangat tinggi
+  // sun colour: orange near the horizon, warm white overhead
   const warm = clamp(1 - h / 0.3, 0, 1);
   const sunI = clamp(h * 2.6 + 0.10, 0, 1.25);
   su.uSunCol.value.setRGB(
@@ -361,7 +362,7 @@ function updateSky(dt) {
     (0.90 - 0.62 * warm) * sunI, THREE.LinearSRGBColorSpace);
   if (h < 0) {
     const moon = clamp(-h * 2.0, 0, 1);
-    U.uSunDir.value.multiplyScalar(-1);        // bulan jadi sumber utama
+    U.uSunDir.value.multiplyScalar(-1);        // the moon becomes the key light
     U.uSunCol.value.setRGB(0.13 * moon, 0.16 * moon, 0.26 * moon, THREE.LinearSRGBColorSpace);
   }
 
@@ -381,7 +382,7 @@ function updateSky(dt) {
   cu.uShade.value.setRGB(lerp(0.13, 0.72, dayF) + duskF * 0.2, lerp(0.15, 0.77, dayF), lerp(0.24, 0.85, dayF), THREE.LinearSRGBColorSpace);
 }
 
-/* ═══════════ pengaturan ═══════════ */
+/* ═══════════ settings ═══════════ */
 function applyAllSettings() {
   const scale = S.resScale / 100;
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2) * scale);
@@ -416,14 +417,15 @@ onSettingChange = (k) => {
   else if (k === 'vignette') $('#vignette').style.display = S.vignette ? '' : 'none';
   else if (k === 'timeOfDay') timeOfDay = S.timeOfDay;
   else if (k === 'volume' || k === 'sfx') Audio3D.setVolume();
+  else if (k === 'lang') applyLocale();
   else if (k === 'lookMode') {
     if (S.lookMode === 'drag') {
       lockMode = 'drag';
       if (document.pointerLockElement) document.exitPointerLock();
-      toast('Menoleh dengan menahan klik kiri');
+      toast(t('msg.dragLook'));
     } else {
       lockMode = 'lock';
-      toast(S.lookMode === 'lock' ? 'Kursor akan dikunci saat bermain' : 'Mode menoleh otomatis');
+      toast(t(S.lookMode === 'lock' ? 'msg.lockLook' : 'msg.autoLook'));
       if (state === 'play') lockPointer();
     }
   }
@@ -436,16 +438,17 @@ function buildUI() {
   buildHotbar();
   buildInventory();
   buildCharList();
+  initLangSwitch();
+  paintLangSwitch();
   onCharChange = i => { setCharModel(i); setHandItem(); };
+  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; };
   onHotbarChange = () => setHandItem();
   const ci = Math.max(0, CHARS.findIndex(c => c.key === S.charKey));
   selectChar(ci);
   setHot(0);
 
   $('#seedIn').value = S.seed;
-  $('#wBlocks').textContent = BLOCK_COUNT + ' blok';
-  $('#wStatus').textContent = saved.world ? 'TERSIMPAN' : 'BARU';
-  if (saved.world) $('#bPlay').firstChild.textContent = 'Lanjutkan Dunia ';
+  paintWorldStatus();
   $('#gpuInfo').textContent = gpuName();
   updateWorldCard();
 
@@ -464,7 +467,7 @@ function buildUI() {
   $('#bReset').onclick = () => {
     const keep = { charKey: S.charKey, hotbar: S.hotbar, seed: S.seed };
     S = Object.assign({}, DEFAULTS, keep);
-    refreshSettingsUI(); applyAllSettings(); persist(); toast('Pengaturan dikembalikan ke bawaan');
+    refreshSettingsUI(); applyAllSettings(); persist(); toast(t('opts.resetDone'));
   };
   $$('[data-back]').forEach(b => b.onclick = () => {
     Audio3D.ui();
@@ -476,7 +479,7 @@ function buildUI() {
     if (v && v !== S.seed) newWorld(v);
   });
 
-  // pemutar model di panggung karakter
+  // model turntable on the character stage
   const stageEl = $('#charStage');
   stageEl.addEventListener('pointerdown', e => {
     charSpin.drag = true; charSpin.lx = e.clientX; charSpin.ly = e.clientY;
@@ -509,11 +512,22 @@ function gpuName() {
   } catch (e) { return 'WebGL2'; }
 }
 
+/** Repaint the world-file status chip, the footer counts and the play button. */
+function paintWorldStatus(force) {
+  const st = force || (saved.world ? 'saved' : 'new');
+  $('#wStatus').textContent = t('world.status.' + st);
+  $('#wBlocks').textContent = t('foot.blocksVal', { n: BLOCK_COUNT });
+  $('#wHeight').textContent = t('foot.heightVal');
+  const lbl = $('#bPlayLabel');
+  lbl.dataset.i18n = saved.world ? 'menu.continue' : 'menu.play';
+  lbl.textContent = t(lbl.dataset.i18n);
+}
+
 function updateWorldCard() {
   const sp = findSpawn(world);
   const bio = world.biomeAt(sp.x, sp.z);
   $('#wSpawn').textContent = `X ${sp.x} · Y ${Math.round(sp.y)} · Z ${sp.z}`;
-  $('#wBiome').textContent = `${bio.id} — ${bio.sub}`;
+  $('#wBiome').textContent = biomeName(bio) + ' — ' + biomeSub(bio);
   const st = $('#wStrata');
   st.innerHTML = '';
   const col = [];
@@ -526,7 +540,7 @@ function updateWorldCard() {
     const B = BLOCKS[id];
     const c = B ? TEX_AVG[B.side] : [12, 16, 24];
     i.style.background = `rgb(${c[0]},${c[1]},${c[2]})`;
-    i.title = B ? B.name : 'Udara';
+    i.title = blockName(id);
     st.append(i);
   }
 }
@@ -543,13 +557,14 @@ function newWorld(seedText) {
   player.vel.set(0, 0, 0);
   for (let i = 0; i < 40; i++) if (!chunks.update(player.pos.x, player.pos.z, 20)) break;
   saved.world = null;
-  $('#wStatus').textContent = 'BARU';
+  saved.world = null;
+  paintWorldStatus();
   updateWorldCard();
   persist({ world: null });
-  toast('Dunia baru dibangkitkan · seed ' + seedText);
+  toast(t('msg.newWorld', { seed: seedText }));
 }
 
-/* ═══════════ status permainan ═══════════ */
+/* ═══════════ game state ═══════════ */
 function enterMenu() {
   state = 'menu';
   showScreen('menu');
@@ -562,7 +577,7 @@ function startGame() {
   Audio3D.init(); Audio3D.resume(); Audio3D.startWind();
   setHandItem();
   lockPointer();
-  toast('Selamat menjelajah · Esc untuk jeda');
+  toast(t('msg.welcome'));
 }
 function resume() {
   state = 'play';
@@ -587,14 +602,14 @@ function lockPointer() {
 function useDragLook() {
   if (lockMode === 'drag') return;
   lockMode = 'drag';
-  toast('Kursor tidak bisa dikunci di sini — tahan klik kiri untuk melihat sekeliling');
+  toast(t('msg.dragFallback'));
 }
 function pauseGame() {
   if (state !== 'play') return;
   state = 'pause';
   showScreen('pause');
   const n = world.editCount();
-  $('#pauseInfo').textContent = `${n} blok disunting · seed ${S.seed} · ${chunks.stats.chunks} chunk dimuat`;
+  $('#pauseInfo').textContent = t('pause.info', { n, seed: S.seed, c: chunks.stats.chunks });
   document.exitPointerLock && document.exitPointerLock();
 }
 function doSave() {
@@ -607,11 +622,11 @@ function doSave() {
     }
   });
   saved.world = ok ? { seed: S.seed } : null;
-  $('#wStatus').textContent = ok ? 'TERSIMPAN' : 'GAGAL';
-  toast(ok ? `Dunia tersimpan · ${edits.length / 4} blok disunting` : 'Penyimpanan peramban ditolak', !ok);
+  paintWorldStatus(ok ? null : 'failed');
+  toast(ok ? t('msg.saved', { n: edits.length / 4 }) : t('msg.saveFail'), !ok);
 }
 
-/* ═══════════ masukan ═══════════ */
+/* ═══════════ input ═══════════ */
 function setupInput() {
   const canvas = $('#gl');
 
@@ -661,18 +676,18 @@ function setupInput() {
         break;
       case 'KeyL':
         input.torch = input.torch ? 0 : 1;
-        toast(input.torch ? 'Lampu kepala menyala' : 'Lampu kepala padam');
+        toast(t(input.torch ? 'msg.torchOn' : 'msg.torchOff'));
         break;
       case 'KeyR': {
         const h = world.heightAt(Math.floor(player.pos.x), Math.floor(player.pos.z));
         player.pos.y = h + 1.2; player.vel.set(0, 0, 0);
-        toast('Kembali ke permukaan · Y ' + Math.round(h + 1));
+        toast(t('msg.surface', { n: Math.round(h + 1) }));
         break;
       }
       case 'F2': e.preventDefault(); doSave(); break;
       case 'F3': e.preventDefault(); S.debug = !S.debug; $('#debug').classList.toggle('on', S.debug); persist(); break;
       case 'F5': e.preventDefault(); player.mode = (player.mode + 1) % 3;
-        toast(['Sudut pandang orang pertama', 'Sudut pandang orang ketiga', 'Sudut pandang depan'][player.mode]); break;
+        toast(t('msg.view' + player.mode)); break;
       default:
         if (k.startsWith('Digit')) {
           const n = +k.slice(5);
@@ -761,7 +776,7 @@ let lastSpace = 0;
 function toggleFly() {
   player.flying = !player.flying;
   player.vel.y = 0;
-  toast(player.flying ? 'Mode terbang aktif · Ctrl untuk turun' : 'Mode terbang mati');
+  toast(t(player.flying ? 'msg.flyOn' : 'msg.flyOff'));
 }
 
 function setupTouch(canvas) {
@@ -823,7 +838,7 @@ function setupTouch(canvas) {
   $('#tFly').addEventListener('touchstart', e => { e.preventDefault(); toggleFly(); }, { passive: false });
 }
 
-/* ═══════════ aksi blok ═══════════ */
+/* ═══════════ block actions ═══════════ */
 function currentHit() {
   player.eyePos(tmpV); player.dirVec(tmpV2);
   return raycastVoxel(world, tmpV.x, tmpV.y, tmpV.z, tmpV2.x, tmpV2.y, tmpV2.z, 6.2);
@@ -832,7 +847,7 @@ function digBlock() {
   const h = currentHit();
   if (!h) return;
   const B = BLOCKS[h.id];
-  if (!B || B.hardness < 0) { Audio3D.deny(); toast('Bedrock tidak bisa digali', true); return; }
+  if (!B || B.hardness < 0) { Audio3D.deny(); toast(t('msg.bedrock'), true); return; }
   spawnParticles(h.x + 0.5, h.y + 0.5, h.z + 0.5, B, 14);
   world.setBlock(h.x, h.y, h.z, 0);
   refreshLights(h.x, h.z);
@@ -849,7 +864,7 @@ function placeBlock() {
   const cur = world.getBlock(x, y, z);
   if (cur > 0 && IS_OPAQUE[cur]) return;
   if (IS_SOLID[id] && boxHitsPlayer(player.pos.x, player.pos.y, player.pos.z, x, y, z)) {
-    Audio3D.deny(); toast('Tidak ada ruang di situ', true); return;
+    Audio3D.deny(); toast(t('msg.noRoom'), true); return;
   }
   world.setBlock(x, y, z, id);
   refreshLights(x, z);
@@ -906,7 +921,7 @@ function updateParticles(dt) {
   if (any) particles.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ═══════════ gelung utama ═══════════ */
+/* ═══════════ main loop ═══════════ */
 let last = performance.now();
 function loop(now) {
   requestAnimationFrame(loop);
@@ -930,9 +945,9 @@ function loop(now) {
   }
   updateParticles(dt);
 
-  // kamera
+  // camera
   if (state === 'menu' || state === 'boot') {
-    // ayunan sangat pelan di satu sisi, bukan berputar mengelilingi dunia
+    // a very slow sway on one side, not an orbit around the world
     menuAngle += dt * 0.10;
     const a = 0.95 + Math.sin(menuAngle) * 0.14;
     const cx = player.pos.x, cz = player.pos.z, cy = player.pos.y + 15;
@@ -954,7 +969,7 @@ function loop(now) {
 
   chunks.update(player.pos.x, player.pos.z, state === 'play' ? 7 : 5);
 
-  // sorotan blok
+  // block highlight
   if (state === 'play' && player.mode !== 2) {
     const h = currentHit();
     if (h) { selBox.visible = true; selBox.position.set(h.x + 0.5, h.y + 0.5, h.z + 0.5); }
@@ -993,7 +1008,7 @@ function positionCamera(dt) {
   player.eyePos(tmpV);
   const sp = clamp(player.speedNow / 7, 0, 1);
   bob += dt * player.speedNow * 1.9;
-  // goyangan langkah: mati secara bawaan, dan tidak pernah memiringkan kamera
+  // head bob: off by default, and it never tilts the camera
   const bobA = (S.bob && player.onGround) ? sp * 0.030 : 0;
   const bx = Math.cos(bob) * bobA, by = Math.abs(Math.sin(bob)) * bobA;
 
@@ -1088,17 +1103,17 @@ function updateHUD() {
   const info = renderer.info.render;
   $('#debug').innerHTML =
     `VOXELIA 1.0 · <b>${fps.toFixed(0)} fps</b> <span class="dim">(${(1000 / Math.max(fps, 1)).toFixed(1)} ms)</span><br>` +
-    `XYZ <b>${p.x.toFixed(1)} ${p.y.toFixed(1)} ${p.z.toFixed(1)}</b><br>` +
-    `chunk <b>${bx >> 4}, ${bz >> 4}</b> <span class="dim">lokal ${((bx % 16) + 16) % 16}, ${((bz % 16) + 16) % 16}</span><br>` +
-    `bioma <b>${bio.id}</b><br>` +
-    `pijakan <b>${B ? B.name : 'udara'}</b> <span class="dim">#${String(under).padStart(3, '0')}</span><br>` +
-    `<span class="dim">${chunks.stats.chunks} chunk · ${chunks.stats.meshes} mesh · ${(chunks.stats.tris / 1000).toFixed(0)}k tri · ${info.calls} draw</span><br>` +
-    `<span class="dim">waktu ${clockLabel(timeOfDay)} · matahari ${(Math.asin(clamp(U.uSunDir.value.y, -1, 1)) * 57.3).toFixed(0)}° · cahaya ${U.uLightN.value}</span><br>` +
-    `<span class="dim">${player.flying ? 'terbang' : (player.inWater ? 'berenang' : (player.onGround ? 'di tanah' : 'jatuh'))} · ${player.speedNow.toFixed(1)} blok/d</span>`;
+    `${t('hud.pos')} <b>${p.x.toFixed(1)} ${p.y.toFixed(1)} ${p.z.toFixed(1)}</b><br>` +
+    `${t('hud.chunk')} <b>${bx >> 4}, ${bz >> 4}</b> <span class="dim">${t('hud.local')} ${((bx % 16) + 16) % 16}, ${((bz % 16) + 16) % 16}</span><br>` +
+    `${t('hud.biome')} <b>${biomeName(bio)}</b><br>` +
+    `${t('hud.standing')} <b>${blockName(under)}</b> <span class="dim">#${String(under).padStart(3, '0')}</span><br>` +
+    `<span class="dim">${t('hud.stats', { c: chunks.stats.chunks, m: chunks.stats.meshes, t: (chunks.stats.tris / 1000).toFixed(0), d: info.calls })}</span><br>` +
+    `<span class="dim">${t('hud.time', { clock: clockLabel(timeOfDay), sun: (Math.asin(clamp(U.uSunDir.value.y, -1, 1)) * 57.3).toFixed(0), lights: U.uLightN.value })}</span><br>` +
+    `<span class="dim">${t(player.flying ? 'hud.flying' : (player.inWater ? 'hud.swimming' : (player.onGround ? 'hud.grounded' : 'hud.falling')))} · ${t('hud.speed', { n: player.speedNow.toFixed(1) })}</span>`;
 }
 
-/* mulai */
+/* go */
 boot().catch(e => {
   console.error(e);
-  bootLog('galat saat memuat: ' + (e && e.message ? e.message : e), 'GAGAL');
+  bootLog(t('boot.error', { msg: (e && e.message ? e.message : e) }), t('boot.failed'));
 });

@@ -1,6 +1,6 @@
 'use strict';
-/* Shader. Ditulis gaya GLSL1 — three mengangkatnya ke "#version 300 es" sendiri
-   di WebGL2 dan menyediakan pc_fragColor + precision sampler2DArray. */
+/* Shaders, written in GLSL1 style. Three.js lifts them to "#version 300 es" on
+   WebGL2 by itself and supplies pc_fragColor plus the sampler2DArray precision. */
 
 const MAX_LIGHTS = 12;
 
@@ -154,7 +154,7 @@ void main(){
     float nd = max(dot(N, uSunDir), 0.0);
     lit = uAmbient * (0.34 + 0.66 * vSky) + uSunCol * (0.30 + 0.70 * nd) * vSky;
     lit += pointLights(vWorld, N);
-    // kilau matahari di permukaan air
+    // sun glint on the water surface
     vec3 V = normalize(uCam - vWorld);
     vec3 H = normalize(uSunDir + V);
     float spec = pow(max(dot(N, H), 0.0), 90.0);
@@ -183,7 +183,7 @@ function makeLiquidMaterial() {
   });
 }
 
-/* --------- item: kubus kecil untuk ikon & benda di tangan --------- */
+/* --------- items: the small cube used for icons and the held block --------- */
 const ITEM_FRAG = COMMON_HEAD + `
 varying vec2 vUv;
 varying float vLayer, vAO, vSky, vFace;
@@ -209,7 +209,7 @@ function makeItemMaterial() {
   });
 }
 
-/* --------- langit --------- */
+/* --------- sky --------- */
 const SKY_VERT = `
 varying vec3 vDir;
 void main(){
@@ -237,7 +237,7 @@ void main(){
   sky = mix(sky, uTop, smoothstep(0.22, 0.8, h));
   sky = mix(uGround, sky, smoothstep(-0.55, 0.0, h));
 
-  // bintang
+  // stars
   float sd = dot(d, uSunDir);
   if (uNight > 0.01 && h > -0.05){
     vec3 g = floor(d * 210.0);
@@ -247,14 +247,14 @@ void main(){
     sky += vec3(0.95, 0.96, 1.0) * star * tw * uNight * smoothstep(-0.02, 0.25, h);
   }
 
-  // pendar sekitar matahari + cakram
+  // sun glow plus the disc itself
   float glow = pow(max(sd, 0.0), 26.0);
   sky += uSunCol * glow * 0.85;
   sky += uSunCol * pow(max(sd, 0.0), 900.0) * 3.2;
   float disc = smoothstep(0.99885, 0.99935, sd);
   sky = mix(sky, uSunCol * 1.9, disc);
 
-  // bulan berlawanan arah
+  // the moon sits opposite the sun
   float md = dot(d, -uSunDir);
   float moon = smoothstep(0.9992, 0.99955, md);
   float crater = hash13(floor(d * 300.0));
@@ -265,7 +265,7 @@ void main(){
 }
 `;
 
-/* --------- awan bergaya kubus --------- */
+/* --------- blocky clouds --------- */
 const CLOUD_FRAG = `
 precision highp float;
 varying vec2 vUvC;
@@ -288,9 +288,9 @@ float fbm(vec2 p){
   return s;
 }
 void main(){
-  // noise dihitung dari koordinat dunia supaya awan tidak ikut bergeser
+  // noise is sampled in world space so clouds do not drift with the camera
   vec2 p = vWp.xz * 0.0075 + vec2(uTime * 0.0045, uTime * 0.0016);
-  vec2 q = floor(p * 7.0) / 7.0;          // kuantisasi -> tepi kotak
+  vec2 q = floor(p * 7.0) / 7.0;          // quantise -> blocky edges
   float n = fbm(q);
   float m = smoothstep(0.50, 0.60, n);
   if (m < 0.02) discard;

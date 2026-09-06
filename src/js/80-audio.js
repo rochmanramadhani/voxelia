@@ -1,5 +1,5 @@
 'use strict';
-/* Suara sintetis. Tidak ada berkas audio — semua dari osilator & derau. */
+/* Synthesised sound. No audio files: everything is oscillators and noise. */
 
 const Audio3D = {
   ctx: null, master: null, noiseBuf: null, wind: null, windGain: null,

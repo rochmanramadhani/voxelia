@@ -1,6 +1,6 @@
 'use strict';
-/* Manajer chunk: memuat, menghasilkan mesh, dan membuang chunk dengan anggaran
-   waktu per frame supaya frame rate tidak jatuh saat dunia dibangkitkan. */
+/* Chunk manager: loads, meshes and evicts chunks under a per-frame time budget
+   so generating the world never tanks the frame rate. */
 
 function scanChunkLights(chunk) {
   const out = [];
@@ -9,7 +9,7 @@ function scanChunkLights(chunk) {
     for (let i = 0; i < CH2; i++) {
       const id = chunk.blocks[(y << 8) | i];
       if (!id || !LIGHT_EMIT[id]) continue;
-      if (id === 30) {                                  // lava: hanya yang terbuka
+      if (id === 30) {                                  // lava: only where it is exposed
         const above = chunk.blocks[((y + 1) << 8) | i];
         if (above !== 0) continue;
       }
@@ -76,7 +76,7 @@ class ChunkManager {
     chunk.tris = r.tris;
     chunk.dirty = false;
   }
-  /** Kerjakan sebanyak mungkin dalam `budget` milidetik. */
+  /** Do as much work as fits in `budget` milliseconds. */
   update(px, pz, budget = 8) {
     const d = this.dist;
     if (this._offDist !== d) this.buildOffsets(d);
@@ -95,7 +95,7 @@ class ChunkManager {
       }
       if (c.dirty) {
         if (!this.neighborsReady(cx, cz)) {
-          // pastikan tetangga dibuat lebih dulu agar AO di batas benar
+          // generate the neighbours first so border AO comes out right
           pending++;
           if (performance.now() - t0 < budget) {
             for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
@@ -110,7 +110,7 @@ class ChunkManager {
       }
     }
 
-    // buang yang jauh
+    // evict anything far away
     const lim = d + 2;
     for (const [key, c] of this.world.chunks) {
       if (Math.abs(c.cx - ccx) > lim || Math.abs(c.cz - ccz) > lim) {
@@ -130,7 +130,7 @@ class ChunkManager {
     this.stats = { chunks: this.world.chunks.size, meshes, tris, pending };
     return pending;
   }
-  /** Kumpulkan sumber cahaya terdekat untuk shader. */
+  /** Collect the nearest light sources for the shader. */
   collectLights(px, py, pz, out, max) {
     const ccx = Math.floor(px / CH), ccz = Math.floor(pz / CH);
     const cand = [];

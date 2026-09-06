@@ -1,5 +1,5 @@
 'use strict';
-/* Util: PRNG deterministik, noise Perlin, helper matematika. */
+/* Utilities: deterministic PRNG, Perlin noise, small maths helpers. */
 
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -15,7 +15,7 @@ function mulberry32(a) {
   };
 }
 
-/** Teks seed apa pun -> integer 32-bit. Angka murni dipakai apa adanya. */
+/** Any seed text -> 32-bit integer. A plain number is used as-is. */
 function seedToInt(str) {
   str = String(str).trim();
   if (/^-?\d+$/.test(str)) return (parseInt(str, 10) | 0) || 1;
@@ -27,7 +27,7 @@ function seedToInt(str) {
   return (h | 0) || 1;
 }
 
-/** Perlin gradient noise 2D/3D dengan tabel permutasi ber-seed. */
+/** 2D/3D Perlin gradient noise with a seeded permutation table. */
 class Perlin {
   constructor(seed) {
     const rnd = mulberry32(seed);
@@ -78,7 +78,7 @@ class Perlin {
         lerp(this.grad3(p[AA + 1], x, y, z - 1), this.grad3(p[BA + 1], x - 1, y, z - 1), u),
         lerp(this.grad3(p[AB + 1], x, y - 1, z - 1), this.grad3(p[BB + 1], x - 1, y - 1, z - 1), u), v), w);
   }
-  /** fractal brownian motion 2D */
+  /** 2D fractional Brownian motion */
   fbm2(x, y, oct, lac = 2.0, gain = 0.5) {
     let a = 1, f = 1, s = 0, norm = 0;
     for (let i = 0; i < oct; i++) { s += a * this.noise2(x * f, y * f); norm += a; a *= gain; f *= lac; }
@@ -89,7 +89,7 @@ class Perlin {
     for (let i = 0; i < oct; i++) { s += a * this.noise3(x * f, y * f, z * f); norm += a; a *= gain; f *= lac; }
     return s / norm;
   }
-  /** ridged: bagus untuk punggungan gunung & lorong gua */
+  /** Ridged noise: good for mountain ridges and cave tunnels. */
   ridged2(x, y, oct, lac = 2.0, gain = 0.5) {
     let a = 1, f = 1, s = 0, norm = 0;
     for (let i = 0; i < oct; i++) {
@@ -100,7 +100,7 @@ class Perlin {
   }
 }
 
-/** hash 2D deterministik -> [0,1), untuk penempatan pohon/rumput per-blok. */
+/** Deterministic 2D hash -> [0,1), for per-block tree and grass placement. */
 function hash2(x, z, salt) {
   let h = Math.imul(x | 0, 0x27d4eb2d) ^ Math.imul(z | 0, 0x165667b1) ^ Math.imul(salt | 0, 0x9e3779b1);
   h ^= h >>> 15; h = Math.imul(h, 0x85ebca6b);
