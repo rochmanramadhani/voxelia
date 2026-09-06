@@ -1,9 +1,11 @@
 'use strict';
-/* Lapisan antarmuka: pengaturan, hotbar, inventaris, pemilih karakter, toast. */
+/* Interface layer: settings, hotbar, inventory, character picker, toasts.
+   Every visible string goes through t(); nothing is hard-coded here. */
 
 const LS_KEY = 'voxelia.v1';
 
 const DEFAULTS = {
+  lang: 'auto',
   renderDist: 6, resScale: 100, fov: 70, exposure: 105, fogAmt: 100,
   clouds: true, ao: true, wave: true, vignette: true,
   sens: 65, invertY: false, autoStep: true,
@@ -14,56 +16,57 @@ const DEFAULTS = {
 };
 let S = Object.assign({}, DEFAULTS);
 
+/* Labels come from `set.<k>`, descriptions from `set.<k>.desc` when present. */
 const SCHEMA = [
   {
-    group: 'Tampilan', items: [
-      { k: 'renderDist', label: 'Jarak pandang', desc: 'Radius chunk yang dimuat di sekitar kamu', type: 'range', min: 3, max: 12, step: 1, fmt: v => v + ' chunk' },
-      { k: 'resScale', label: 'Skala resolusi', desc: 'Turunkan bila frame rate berat', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
-      { k: 'fov', label: 'Bidang pandang', desc: 'Nilai kecil terasa lebih tenang, nilai besar lebih luas', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
-      { k: 'exposure', label: 'Kecerahan', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
-      { k: 'fogAmt', label: 'Kabut jarak', desc: '0% = pandangan bersih sampai batas chunk', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+    group: 'display', items: [
+      { k: 'lang', type: 'select', options: ['auto', 'id', 'en'] },
+      { k: 'renderDist', type: 'range', min: 3, max: 12, step: 1, fmt: v => t('unit.chunk', { n: v }) },
+      { k: 'resScale', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
+      { k: 'fov', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
+      { k: 'exposure', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
+      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
     ]
   },
   {
-    group: 'Grafis', items: [
-      { k: 'clouds', label: 'Awan', desc: 'Lapisan awan kotak di ketinggian 112', type: 'toggle' },
-      { k: 'ao', label: 'Ambient occlusion', desc: 'Bayangan lembut di sudut blok', type: 'toggle' }
+    group: 'graphics', items: [
+      { k: 'clouds', type: 'toggle' },
+      { k: 'ao', type: 'toggle' }
     ]
   },
   {
-    group: 'Kontrol', items: [
-      { k: 'lookMode', label: 'Cara menoleh', desc: 'Kalau kursor terasa liar, pilih Seret klik kiri', type: 'select',
-        options: [['auto', 'Otomatis'], ['lock', 'Kunci kursor'], ['drag', 'Seret klik kiri']] },
-      { k: 'sens', label: 'Sensitivitas menoleh', type: 'range', min: 15, max: 250, step: 5, fmt: v => (v / 100).toFixed(2) },
-      { k: 'lookSmooth', label: 'Kehalusan kamera', desc: 'Meredam gerakan mouse yang menyentak', type: 'range', min: 0, max: 100, step: 5, fmt: v => v ? v + '%' : 'mati' },
-      { k: 'invertY', label: 'Balik sumbu Y', type: 'toggle' },
-      { k: 'autoStep', label: 'Naik blok otomatis', desc: 'Melangkahi tepian setinggi satu blok tanpa lompat', type: 'toggle' }
+    group: 'controls', items: [
+      { k: 'lookMode', type: 'select', options: ['auto', 'lock', 'drag'] },
+      { k: 'sens', type: 'range', min: 15, max: 250, step: 5, fmt: v => (v / 100).toFixed(2) },
+      { k: 'lookSmooth', type: 'range', min: 0, max: 100, step: 5, fmt: v => v ? v + '%' : t('common.off') },
+      { k: 'invertY', type: 'toggle' },
+      { k: 'autoStep', type: 'toggle' }
     ]
   },
   {
-    group: 'Kenyamanan', items: [
-      { k: 'bob', label: 'Goyangan langkah', desc: 'Kamera naik-turun saat berjalan. Matikan bila pusing.', type: 'toggle' },
-      { k: 'wave', label: 'Gerakan air & daun', desc: 'Riak air dan tumbuhan yang bergoyang', type: 'toggle' },
-      { k: 'vignette', label: 'Vignette', desc: 'Penggelapan lembut di tepi layar', type: 'toggle' }
+    group: 'comfort', items: [
+      { k: 'bob', type: 'toggle' },
+      { k: 'wave', type: 'toggle' },
+      { k: 'vignette', type: 'toggle' }
     ]
   },
   {
-    group: 'Dunia', items: [
-      { k: 'dayLength', label: 'Panjang hari', type: 'range', min: 2, max: 20, step: 1, fmt: v => v + ' menit' },
-      { k: 'timeFrozen', label: 'Bekukan waktu', desc: 'Matahari berhenti di posisi sekarang', type: 'toggle' },
-      { k: 'timeOfDay', label: 'Waktu', desc: '0.00 tengah malam · 0.50 tengah hari', type: 'range', min: 0, max: 100, step: 1, scale: 100, fmt: v => clockLabel(v / 100) }
+    group: 'world', items: [
+      { k: 'dayLength', type: 'range', min: 2, max: 20, step: 1, fmt: v => t('unit.minutes', { n: v }) },
+      { k: 'timeFrozen', type: 'toggle' },
+      { k: 'timeOfDay', type: 'range', min: 0, max: 100, step: 1, scale: 100, fmt: v => clockLabel(v / 100) }
     ]
   },
   {
-    group: 'Suara', items: [
-      { k: 'sfx', label: 'Efek suara', desc: 'Nada sintetis, tanpa berkas audio', type: 'toggle' },
-      { k: 'volume', label: 'Volume', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+    group: 'sound', items: [
+      { k: 'sfx', type: 'toggle' },
+      { k: 'volume', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
     ]
   }
 ];
 
-function clockLabel(t) {
-  const mins = Math.round(((t % 1) + 1) % 1 * 1440);
+function clockLabel(v) {
+  const mins = Math.round(((v + 0.5) % 1) * 1440);
   const h = Math.floor(mins / 60), m = mins % 60;
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }
@@ -77,7 +80,7 @@ function loadSettings() {
       if (!Array.isArray(S.hotbar) || S.hotbar.length !== 9) S.hotbar = DEFAULT_HOTBAR.slice();
       return o || {};
     }
-  } catch (e) { /* penyimpanan diblokir: pakai bawaan */ }
+  } catch (e) { /* storage blocked: fall back to defaults */ }
   return {};
 }
 function persist(extra) {
@@ -96,21 +99,33 @@ function buildSettingsUI() {
   for (const g of SCHEMA) {
     const panel = document.createElement('div');
     panel.className = 'panel optgrp';
-    panel.innerHTML = `<div class="panel-hd"><span class="eyebrow">${g.group}</span></div><div class="rows"></div>`;
+    panel.innerHTML = '<div class="panel-hd"><span class="eyebrow"></span></div><div class="rows"></div>';
+    panel.querySelector('.eyebrow').textContent = t('group.' + g.group);
     const rows = panel.querySelector('.rows');
     for (const it of g.items) {
+      const label = t('set.' + it.k);
+      const descKey = 'set.' + it.k + '.desc';
+      const hasDesc = I18N.en[descKey] !== undefined;
       const row = document.createElement('div');
       row.className = 'row';
       const left = document.createElement('div');
-      left.innerHTML = `<div class="lbl">${it.label}</div>` + (it.desc ? `<div class="desc">${it.desc}</div>` : '');
+      const lbl = document.createElement('div');
+      lbl.className = 'lbl'; lbl.textContent = label;
+      left.append(lbl);
+      if (hasDesc) {
+        const d = document.createElement('div');
+        d.className = 'desc'; d.textContent = t(descKey);
+        left.append(d);
+      }
       const ctl = document.createElement('div');
       ctl.className = 'ctl';
       if (it.type === 'select') {
         const sel = document.createElement('select');
-        sel.setAttribute('aria-label', it.label);
-        for (const [val, txt] of it.options) {
+        sel.setAttribute('aria-label', label);
+        for (const val of it.options) {
           const o = document.createElement('option');
-          o.value = val; o.textContent = txt;
+          o.value = val;
+          o.textContent = t('opt.' + it.k + '.' + val);
           if (S[it.k] === val) o.selected = true;
           sel.append(o);
         }
@@ -120,7 +135,7 @@ function buildSettingsUI() {
         const inp = document.createElement('input');
         inp.type = 'range'; inp.min = it.min; inp.max = it.max; inp.step = it.step;
         inp.value = it.scale ? Math.round(S[it.k] * it.scale) : S[it.k];
-        inp.setAttribute('aria-label', it.label);
+        inp.setAttribute('aria-label', label);
         const out = document.createElement('span');
         out.className = 'out';
         const sync = () => { out.textContent = it.fmt ? it.fmt(+inp.value) : inp.value; };
@@ -134,7 +149,7 @@ function buildSettingsUI() {
         const btn = document.createElement('button');
         btn.className = 'sw-toggle';
         btn.setAttribute('aria-pressed', String(!!S[it.k]));
-        btn.setAttribute('aria-label', it.label);
+        btn.setAttribute('aria-label', label);
         btn.addEventListener('click', () => {
           S[it.k] = !S[it.k];
           btn.setAttribute('aria-pressed', String(!!S[it.k]));
@@ -150,24 +165,32 @@ function buildSettingsUI() {
 }
 function refreshSettingsUI() { buildSettingsUI(); }
 
-/* ---------- panduan tombol ---------- */
+/* ---------- controls guide ---------- */
 const KEYMAP = [
-  ['W A S D', 'Berjalan'], ['Panah', 'Menoleh tanpa mouse'],
-  ['Spasi', 'Lompat · naik saat terbang'], ['Shift', 'Berlari'],
-  ['Ctrl', 'Turun saat terbang'], ['Spasi ×2 / F', 'Mode terbang'],
-  ['Klik kiri', 'Gali blok'], ['Klik kanan', 'Taruh blok'], ['Klik tengah', 'Ambil blok yang dilihat'],
-  ['1 – 9', 'Pilih slot hotbar'], ['Roda mouse', 'Geser slot'], ['E', 'Inventaris'],
-  ['L', 'Lampu kepala'], ['F5', 'Sudut pandang'], ['F3', 'Panel diagnostik'],
-  ['F2', 'Simpan dunia'], ['R', 'Kembali ke permukaan'], ['Esc', 'Jeda'],
-  ['Seret kiri', 'Menoleh, bila kursor tak bisa dikunci']
+  ['W A S D', 'key.move'], ['kb.arrows', 'key.look'],
+  ['kb.space', 'key.jump'], ['Shift', 'key.sprint'],
+  ['Ctrl', 'key.descend'], ['kb.space2', 'key.fly'],
+  ['kb.lclick', 'key.dig'], ['kb.rclick', 'key.place'], ['kb.mclick', 'key.pick'],
+  ['1 – 9', 'key.slot'], ['kb.wheel', 'key.wheel'], ['E', 'key.inv'],
+  ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
+  ['F2', 'key.save'], ['R', 'key.surface'], ['Esc', 'key.pause']
 ];
 function buildKeyList() {
   const el = $('#keyList');
-  el.innerHTML = KEYMAP.map(([k, v]) =>
-    `<div class="keyrow"><kbd>${k}</kbd><span class="what">${v}</span></div>`).join('');
+  el.innerHTML = '';
+  for (const [kb, desc] of KEYMAP) {
+    const row = document.createElement('div');
+    row.className = 'keyrow';
+    const k = document.createElement('kbd');
+    k.textContent = kb.startsWith('kb.') ? t(kb) : kb;
+    const w = document.createElement('span');
+    w.className = 'what'; w.textContent = t(desc);
+    row.append(k, w);
+    el.append(row);
+  }
 }
 
-/* ---------- hotbar & inventaris ---------- */
+/* ---------- hotbar & inventory ---------- */
 let ICONS = {};
 let hotIndex = 0;
 let onHotbarChange = () => {};
@@ -179,11 +202,13 @@ function buildHotbar() {
     const b = document.createElement('button');
     b.className = 'slot';
     b.setAttribute('aria-selected', String(i === hotIndex));
-    b.innerHTML = `<span class="n">${i + 1}</span>`;
+    const n = document.createElement('span');
+    n.className = 'n'; n.textContent = String(i + 1);
+    b.append(n);
     const id = S.hotbar[i];
     if (id && ICONS[id]) {
       const img = document.createElement('img');
-      img.src = ICONS[id]; img.alt = BLOCKS[id].name;
+      img.src = ICONS[id]; img.alt = blockName(id);
       b.append(img);
     }
     b.addEventListener('click', e => { e.preventDefault(); setHot(i); });
@@ -208,8 +233,10 @@ function showItemName() {
   const el = $('#itemname');
   const id = currentBlock();
   if (!id || !BLOCKS[id]) { el.classList.remove('show'); return; }
-  const B = BLOCKS[id];
-  el.innerHTML = `<span class="id">#${String(id).padStart(3, '0')}</span>${B.name}`;
+  el.innerHTML = '';
+  const tag = document.createElement('span');
+  tag.className = 'id'; tag.textContent = '#' + String(id).padStart(3, '0');
+  el.append(tag, document.createTextNode(blockName(id)));
   el.classList.add('show');
   clearTimeout(nameTimer);
   nameTimer = setTimeout(() => el.classList.remove('show'), 1600);
@@ -224,15 +251,25 @@ function buildInventory() {
     if (!ids.length) continue;
     const sec = document.createElement('section');
     sec.className = 'cat';
-    sec.innerHTML = `<h3>${CAT_LABEL[cat] || cat}</h3><div class="grid"></div>`;
-    const grid = sec.querySelector('.grid');
+    const h = document.createElement('h3');
+    h.textContent = t('cat.' + cat);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    sec.append(h, grid);
     for (const id of ids) {
       const B = BLOCKS[id];
+      const nm = blockName(id);
       const cell = document.createElement('button');
       cell.className = 'cell';
-      cell.title = `${B.name} · kekerasan ${B.hardness < 0 ? '∞' : B.hardness.toFixed(1)}${B.note ? ' · ' + B.note : ''}`;
+      cell.title = nm + ' · ' + t('block.hardness') + ' ' +
+        (B.hardness < 0 ? '∞' : B.hardness.toFixed(1)) +
+        (B.note ? ' · ' + t('block.' + B.key + '.note') : '');
       cell.setAttribute('aria-selected', String(S.hotbar.includes(id)));
-      cell.innerHTML = `<img src="${ICONS[id] || ''}" alt=""><span class="cn">${B.name}</span>`;
+      const img = document.createElement('img');
+      img.src = ICONS[id] || ''; img.alt = '';
+      const cn = document.createElement('span');
+      cn.className = 'cn'; cn.textContent = nm;
+      cell.append(img, cn);
       cell.addEventListener('click', () => {
         setHotSlot(hotIndex, id);
         $$('#invBody .cell').forEach(c => c.setAttribute('aria-selected', 'false'));
@@ -245,7 +282,7 @@ function buildInventory() {
   }
 }
 
-/* ---------- pemilih karakter ---------- */
+/* ---------- character picker ---------- */
 let charIndex = 0;
 let onCharChange = () => {};
 function buildCharList() {
@@ -255,26 +292,40 @@ function buildCharList() {
     const b = document.createElement('button');
     b.className = 'charcard';
     b.setAttribute('aria-pressed', String(i === charIndex));
-    b.innerHTML = `<span class="sw" style="background:${c.sw}"></span>
-      <span><span class="nm">${c.name}</span><br><span class="rl">${c.role}</span></span>`;
+    const sw = document.createElement('span');
+    sw.className = 'sw'; sw.style.background = c.sw;
+    const wrap = document.createElement('span');
+    const nm = document.createElement('span');
+    nm.className = 'nm'; nm.textContent = c.name;
+    const rl = document.createElement('span');
+    rl.className = 'rl'; rl.textContent = charRole(c);
+    wrap.append(nm, document.createElement('br'), rl);
+    b.append(sw, wrap);
     b.addEventListener('click', () => selectChar(i));
     el.append(b);
   });
 }
+/** Refresh only the text around the current explorer (used on language change). */
+function paintCharInfo() {
+  const c = CHARS[charIndex];
+  $$('#charList .charcard').forEach((el, k) => el.setAttribute('aria-pressed', String(k === charIndex)));
+  $('#charRole').textContent = charRole(c);
+  $('#charBio').textContent = charBio(c);
+  $('#charIdx').textContent = t('chars.index', {
+    i: String(charIndex + 1).padStart(2, '0'),
+    n: String(CHARS.length).padStart(2, '0')
+  });
+  $('#wChar').textContent = c.name + ' · ' + charRole(c);
+}
 function selectChar(i) {
   charIndex = (i + CHARS.length) % CHARS.length;
-  const c = CHARS[charIndex];
-  S.charKey = c.key;
-  $$('#charList .charcard').forEach((el, k) => el.setAttribute('aria-pressed', String(k === charIndex)));
-  $('#charRole').textContent = c.role;
-  $('#charBio').textContent = c.bio;
-  $('#charIdx').textContent = `PERSONEL ${String(charIndex + 1).padStart(2, '0')} / ${String(CHARS.length).padStart(2, '0')}`;
-  $('#wChar').textContent = `${c.name} · ${c.role}`;
+  S.charKey = CHARS[charIndex].key;
+  paintCharInfo();
   onCharChange(charIndex);
   persist();
 }
 
-/* ---------- toast & bioma ---------- */
+/* ---------- toasts & biome banner ---------- */
 function toast(msg, warn) {
   const box = $('#toast');
   const el = document.createElement('div');
@@ -288,24 +339,55 @@ function toast(msg, warn) {
 let biomeTimer = 0;
 function announceBiome(bio) {
   const el = $('#biome');
-  el.querySelector('.t').textContent = bio.id;
-  el.querySelector('.s').textContent = bio.sub;
+  el.querySelector('.t').textContent = biomeName(bio);
+  el.querySelector('.s').textContent = biomeSub(bio);
   el.classList.add('show');
   clearTimeout(biomeTimer);
   biomeTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-/* ---------- navigasi layar ---------- */
+/* ---------- screen navigation ---------- */
 const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'pause'];
 let screenNow = 'boot';
 let screenBack = 'menu';
 function showScreen(id) {
   SCREENS.forEach(s => $('#' + s).classList.toggle('on', s === id));
-  $('#hud').classList.toggle('on', id === null || id === 'hud');
+  $('#hud').classList.toggle('on', id === 'hud');
   screenNow = id;
 }
 function showHUD() {
   SCREENS.forEach(s => $('#' + s).classList.remove('on'));
   $('#hud').classList.add('on');
   screenNow = 'hud';
+}
+
+/* ---------- language ---------- */
+let onLocaleChange = () => {};
+
+function paintLangSwitch() {
+  $$('#langSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LOCALE)));
+}
+function initLangSwitch() {
+  $$('#langSw button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.dataset.lang === LOCALE && S.lang !== 'auto') return;
+      S.lang = b.dataset.lang;
+      applyLocale();
+      persist();
+    });
+  });
+}
+/** Re-resolve the locale and repaint every string in the interface. */
+function applyLocale() {
+  setLocale(S.lang);
+  applyI18n();
+  paintLangSwitch();
+  buildSettingsUI();
+  buildKeyList();
+  buildHotbar();
+  buildInventory();
+  buildCharList();
+  paintCharInfo();
+  showItemName();
+  onLocaleChange();
 }

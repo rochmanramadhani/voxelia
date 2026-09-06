@@ -1,7 +1,7 @@
 'use strict';
-/* Tekstur prosedural 16x16, semuanya digambar di sini. Nol aset eksternal.
-   Hasil akhir: satu DataArrayTexture (satu layer per tekstur) -> tak ada bleeding
-   antar-tile saat mipmap, tidak seperti atlas biasa. */
+/* Procedural 16x16 textures, all drawn here. Zero external assets.
+   The result is one DataArrayTexture (one layer per texture), so mipmaps never
+   bleed between tiles the way they do in a packed atlas. */
 
 const TILE = 16;
 
@@ -24,7 +24,7 @@ class Pix {
   }
   fill(c, a = 255) { for (let y = 0; y < this.s; y++) for (let x = 0; x < this.s; x++) this.set(x, y, c, a); }
   clear() { this.d.fill(0); }
-  /** value-noise yang membungkus mulus pada kelipatan `period` -> tekstur bisa diulang */
+  /** Value noise that wraps cleanly on multiples of `period`, so tiles repeat seamlessly. */
   vn(x, y, period) {
     const p = period, fx = x / (this.s / p), fy = y / (this.s / p);
     const x0 = Math.floor(fx), y0 = Math.floor(fy), tx = smooth(fx - x0), ty = smooth(fy - y0);
@@ -36,7 +36,7 @@ class Pix {
 const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 const shade = (c, f) => [c[0] * f, c[1] * f, c[2] * f];
 
-/** dasar berbutir: warna + bercak lembut + jitter per-piksel */
+/** Grainy base: a colour plus soft blotches plus per-pixel jitter. */
 function grain(p, col, blotch = 0.10, jitter = 0.10, period = 4) {
   for (let y = 0; y < p.s; y++) for (let x = 0; x < p.s; x++) {
     const n = (p.vn(x, y, period) - 0.5) * 2 * blotch;
@@ -45,7 +45,7 @@ function grain(p, col, blotch = 0.10, jitter = 0.10, period = 4) {
   }
 }
 
-/** gumpalan tak beraturan (bijih, kerikil, lumut) */
+/** Irregular blobs (ore, gravel, moss). */
 function blobs(p, n, col, rad, jitter = 0.12, alpha = 255) {
   for (let i = 0; i < n; i++) {
     const cx = p.rnd() * p.s, cy = p.rnd() * p.s;
@@ -59,7 +59,7 @@ function blobs(p, n, col, rad, jitter = 0.12, alpha = 255) {
   }
 }
 
-/* ---- palet ---- */
+/* ---- palette ---- */
 const C = {
   stone: [124, 124, 124], dirt: [122, 84, 55], grass: [96, 154, 68], grassDry: [140, 152, 74],
   sand: [219, 207, 156], redSand: [176, 96, 56], gravel: [131, 128, 124], clay: [160, 166, 179],
@@ -72,7 +72,7 @@ const C = {
   coal: [34, 34, 38], iron: [190, 146, 112], gold: [230, 190, 72], diamond: [110, 226, 226],
 };
 
-/* ---- generator per tekstur ---- */
+/* ---- one generator per texture ---- */
 const GEN = {
   stone: p => { grain(p, C.stone, 0.13, 0.06, 4); },
   dirt: p => { grain(p, C.dirt, 0.14, 0.10, 4); blobs(p, 5, shade(C.dirt, 0.78), 1.4, 0.1); },
@@ -229,10 +229,10 @@ function leafTex(p, col) {
   p.clear();
   for (let y = 0; y < p.s; y++) for (let x = 0; x < p.s; x++) {
     const n = p.vn(x, y, 4), j = (p.rnd() - 0.5) * 0.34;
-    if (p.rnd() < 0.075) continue;                      // celah tembus pandang
+    if (p.rnd() < 0.075) continue;                      // see-through gaps
     p.set(x, y, shade(col, 0.74 + n * 0.5 + j), 255);
   }
-  // sedikit ranting gelap agar tidak terbaca datar
+  // a few dark twigs so the canopy does not read flat
   for (let i = 0; i < 3; i++) {
     let x = (p.rnd() * 16) | 0, y = (p.rnd() * 16) | 0;
     for (let k = 0; k < 5; k++) { p.set(x, y, shade(col, 0.5), 255); x += (p.rnd() * 3 | 0) - 1; y += (p.rnd() * 3 | 0) - 1; }
@@ -259,7 +259,7 @@ function flowerTex(p, petal, core) {
   // dua daun kecil di batang
   p.set(5, 10, shade(C.grass, 0.78), 255);
   p.set(9, 12, shade(C.grass, 0.78), 255);
-  // kuntum 5x5 dengan sudut dipangkas
+  // 5x5 blossom with the corners trimmed
   const cx = 7, cy = 5, R = 2;
   for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) {
     if (Math.abs(dx) === R && Math.abs(dy) === R) continue;
@@ -271,7 +271,7 @@ function flowerTex(p, petal, core) {
   p.set(cx - 1, cy - 1, shade(core, 0.82), 255);
 }
 
-/** Bangun DataArrayTexture untuk semua layer. */
+/** Build the DataArrayTexture holding every layer. */
 function buildBlockTextures(renderer) {
   const n = TEX.length, sz = TILE;
   const data = new Uint8Array(sz * sz * 4 * n);
@@ -279,7 +279,7 @@ function buildBlockTextures(renderer) {
     const name = TEX[i];
     const p = new Pix(sz, 0x9E37 + i * 7919);
     const g = GEN[name];
-    if (g) g(p); else grain(p, [200, 60, 200], 0.2, 0.1, 4);   // magenta = layer lupa didaftarkan
+    if (g) g(p); else grain(p, [200, 60, 200], 0.2, 0.1, 4);   // magenta = a layer nobody registered
     data.set(p.d, i * sz * sz * 4);
   }
   const tex = new THREE.DataArrayTexture(data, sz, sz, n);
@@ -294,7 +294,7 @@ function buildBlockTextures(renderer) {
   return tex;
 }
 
-/** Warna rata-rata sebuah layer — dipakai untuk partikel & swatch UI. */
+/** Average colour of a layer, used for particles and UI swatches. */
 const TEX_AVG = [];
 function computeTexAverages() {
   for (let i = 0; i < TEX.length; i++) {

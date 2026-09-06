@@ -1,26 +1,29 @@
 'use strict';
-/* Dunia voxel: chunk, generator terrain, bioma, struktur, dan suntingan pemain. */
+/* The voxel world: chunks, terrain generation, biomes, structures, player edits. */
 
-const CH = 16;            // lebar chunk
-const WH = 128;           // tinggi dunia
-const SEA = 44;           // permukaan laut
+const CH = 16;            // chunk width
+const WH = 128;           // world height
+const SEA = 44;           // sea level
 const CH2 = CH * CH;      // 256
 const IDX = (x, y, z) => (y << 8) | (z << 4) | x;   // y*256 + z*16 + x
 
 const BIOMES = {
-  ocean: { id: 'Laut', sub: 'Cekungan air asin', top: 7, fill: 7, tree: 0, plant: 0 },
-  beach: { id: 'Pantai', sub: 'Endapan pasir litoral', top: 7, fill: 9, tree: 0, plant: 0.004 },
-  desert: { id: 'Gurun', sub: 'Gurun pasir kering', top: 7, fill: 9, tree: 'cactus', treeD: 0.010, plant: 0.010, plantSet: [35] },
-  redDesert:{ id: 'Gurun Merah', sub: 'Pasir besi teroksidasi', top: 8, fill: 9, tree: 'cactus', treeD: 0.014, plant: 0.012, plantSet: [35] },
-  savanna:{ id: 'Sabana', sub: 'Padang rumput panas', top: 1, fill: 2, tree: 'oak', treeD: 0.004, plant: 0.10, plantSet: [32, 32, 33] },
-  plains: { id: 'Padang Rumput', sub: 'Dataran subur terbuka', top: 1, fill: 2, tree: 'oak', treeD: 0.006, plant: 0.16, plantSet: [32, 32, 32, 33, 34] },
-  forest: { id: 'Hutan', sub: 'Hutan ek dan birch', top: 1, fill: 2, tree: 'forest', treeD: 0.062, plant: 0.20, plantSet: [32, 32, 33, 34] },
-  taiga: { id: 'Hutan Pinus', sub: 'Konifer dataran tinggi', top: 1, fill: 2, tree: 'pine', treeD: 0.048, plant: 0.10, plantSet: [32] },
-  swamp: { id: 'Rawa', sub: 'Lahan basah berlumpur', top: 1, fill: 11, tree: 'oak', treeD: 0.020, plant: 0.22, plantSet: [32, 32, 32] },
-  tundra: { id: 'Tundra Salju', sub: 'Padang beku', top: 20, fill: 2, tree: 'pine', treeD: 0.010, plant: 0.02, plantSet: [35] },
-  mountain:{ id: 'Pegunungan', sub: 'Singkapan batuan', top: 3, fill: 3, tree: 'pine', treeD: 0.006, plant: 0.02, plantSet: [32] },
-  peak: { id: 'Puncak Bersalju', sub: 'Di atas garis salju', top: 20, fill: 3, tree: 0, plant: 0 }
+  ocean:    { key: 'ocean',     top: 7,  fill: 7,  tree: 0,        plant: 0 },
+  beach:    { key: 'beach',     top: 7,  fill: 9,  tree: 0,        plant: 0.004 },
+  desert:   { key: 'desert',    top: 7,  fill: 9,  tree: 'cactus', treeD: 0.010, plant: 0.010, plantSet: [35] },
+  redDesert:{ key: 'redDesert', top: 8,  fill: 9,  tree: 'cactus', treeD: 0.014, plant: 0.012, plantSet: [35] },
+  savanna:  { key: 'savanna',   top: 1,  fill: 2,  tree: 'oak',    treeD: 0.004, plant: 0.10,  plantSet: [32, 32, 33] },
+  plains:   { key: 'plains',    top: 1,  fill: 2,  tree: 'oak',    treeD: 0.006, plant: 0.16,  plantSet: [32, 32, 32, 33, 34] },
+  forest:   { key: 'forest',    top: 1,  fill: 2,  tree: 'forest', treeD: 0.062, plant: 0.20,  plantSet: [32, 32, 33, 34] },
+  taiga:    { key: 'taiga',     top: 1,  fill: 2,  tree: 'pine',   treeD: 0.048, plant: 0.10,  plantSet: [32] },
+  swamp:    { key: 'swamp',     top: 1,  fill: 11, tree: 'oak',    treeD: 0.020, plant: 0.22,  plantSet: [32, 32, 32] },
+  tundra:   { key: 'tundra',    top: 20, fill: 2,  tree: 'pine',   treeD: 0.010, plant: 0.02,  plantSet: [35] },
+  mountain: { key: 'mountain',  top: 3,  fill: 3,  tree: 'pine',   treeD: 0.006, plant: 0.02,  plantSet: [32] },
+  peak:     { key: 'peak',      top: 20, fill: 3,  tree: 0,        plant: 0 }
 };
+/** Localised biome name / subtitle. */
+const biomeName = b => t('biome.' + b.key);
+const biomeSub = b => t('biome.' + b.key + '.sub');
 const BIOME_KEYS = Object.keys(BIOMES);
 
 class World {
@@ -37,7 +40,7 @@ class World {
     this._hCache = new Map();
   }
 
-  /* ---------- fungsi murni terrain (tak butuh chunk) ---------- */
+  /* ---------- pure terrain functions (no chunk needed) ---------- */
   heightAt(x, z) {
     const k = (x + 1048576) * 2097152 + (z + 1048576);
     const c = this._hCache.get(k);
@@ -79,7 +82,7 @@ class World {
     return BIOMES.plains;
   }
 
-  /* ---------- akses blok ---------- */
+  /* ---------- block access ---------- */
   chunkAt(cx, cz, create) {
     const key = cx + ',' + cz;
     if (this._lastKey === key) return this._lastChunk;
@@ -92,7 +95,7 @@ class World {
     if (y < 0 || y >= WH) return 0;
     const cx = x >> 4, cz = z >> 4;
     const c = this.chunkAt(cx, cz, false);
-    if (!c || !c.ready) return -1;                    // -1 = belum dibangkitkan
+    if (!c || !c.ready) return -1;                    // -1 = not generated yet
     return c.blocks[IDX(x - (cx << 4), y, z - (cz << 4))];
   }
   getBlockSafe(x, y, z) { const b = this.getBlock(x, y, z); return b < 0 ? 0 : b; }
@@ -113,7 +116,7 @@ class World {
       m.set(x + ',' + y + ',' + z, id);
     }
     c.dirty = true;
-    // chunk tetangga ikut kotor bila blok menyentuh batas
+    // a block on the border also dirties the neighbouring chunk
     if (lx === 0) this.markDirty(cx - 1, cz); if (lx === 15) this.markDirty(cx + 1, cz);
     if (lz === 0) this.markDirty(cx, cz - 1); if (lz === 15) this.markDirty(cx, cz + 1);
     return true;
@@ -126,7 +129,7 @@ class World {
     return c.top[((z - (cz << 4)) << 4) | (x - (cx << 4))];
   }
 
-  /* ---------- generator ---------- */
+  /* ---------- generation ---------- */
   generate(chunk) {
     const { cx, cz } = chunk, b = chunk.blocks, n = this.n;
     const ox = cx << 4, oz = cz << 4;
@@ -139,11 +142,11 @@ class World {
         for (let y = 0; y <= Math.max(h, SEA); y++) {
           let id = 0;
           if (y <= h) {
-            if (y <= 1 + (hash2(wx, wz, y * 31) * 3 | 0)) id = 31;               // bedrock bergerigi
+            if (y <= 1 + (hash2(wx, wz, y * 31) * 3 | 0)) id = 31;               // jagged bedrock
             else if (y === h) id = beachy && bio !== BIOMES.ocean ? 7 : bio.top;
             else if (y > h - 4) id = beachy ? 7 : bio.fill;
             else id = 3;
-            // bijih
+            // ores
             if (id === 3) {
               const o = n.ore.noise3(wx * 0.09, y * 0.09, wz * 0.09);
               if (y < 16 && o > 0.74) id = 27;
@@ -152,7 +155,7 @@ class World {
               else if (y < 68 && o > 0.62) id = 24;
               else if (o < -0.76) id = 10;
             }
-            // gua
+            // caves
             if (y > 2 && y < h - 1) {
               const t1 = n.cave.fbm3(wx * 0.021, y * 0.038, wz * 0.021, 2);
               const t2 = n.cave2.fbm3(wx * 0.021 + 51.4, y * 0.038, wz * 0.021 - 17.2, 2);
@@ -162,10 +165,10 @@ class World {
                 id = y < 11 ? (y < 8 ? 30 : 0) : 0;
               }
             }
-          } else if (y <= SEA) id = 29;                                          // air laut/danau
+          } else if (y <= SEA) id = 29;                                          // sea and lake water
           b[IDX(lx, y, lz)] = id;
         }
-        // salju tipis di puncak
+        // a thin snow cap on peaks
         if (bio === BIOMES.peak && h > SEA) b[IDX(lx, h, lz)] = 20;
       }
     }
@@ -175,13 +178,13 @@ class World {
     chunk.recalcAll();
   }
 
-  /** Tumbuhan + pohon. Melihat 3x3 chunk agar pohon di batas tetap utuh. */
+  /** Plants and trees. Scans a 3x3 chunk area so trees on a border stay whole. */
   decorate(chunk) {
     const { cx, cz } = chunk;
     for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
       this.structuresOf(cx + dx, cz + dz, chunk);
     }
-    // rumput & bunga hanya untuk chunk ini (tidak melewati batas)
+    // grass and flowers are per-chunk only; they never cross a border
     const ox = cx << 4, oz = cz << 4, b = chunk.blocks;
     for (let lz = 0; lz < CH; lz++) for (let lx = 0; lx < CH; lx++) {
       const wx = ox + lx, wz = oz + lz, h = this.heightAt(wx, wz);
@@ -271,7 +274,7 @@ class World {
     }
   }
 
-  /** Semua suntingan sebagai array datar [x,y,z,id,...] untuk disimpan. */
+  /** Every edit as a flat [x,y,z,id,...] array, ready to save. */
   exportEdits() {
     const out = [];
     for (const m of this.edits.values())
@@ -290,7 +293,7 @@ class World {
   }
   editCount() { let n = 0; for (const m of this.edits.values()) n += m.size; return n; }
 
-  /** Salin chunk + tepi tetangga ke buffer berlapis 18x128x18 untuk mesher. */
+  /** Copy a chunk plus its neighbour edges into an 18x128x18 padded buffer for the mesher. */
   fillPadded(cx, cz, out, tops) {
     const P = CH + 2;
     out.fill(0);
@@ -305,7 +308,7 @@ class World {
           const px = dx * CH + lx + 1;
           if (px < 0 || px >= P) continue;
           if (!c || !c.ready) {
-            // tetangga belum ada: anggap padat agar sisi tidak "bocor" jadi dinding
+            // neighbour missing: treat it as solid so the seam does not turn into a wall
             for (let y = 0; y < WH; y++) out[(y * P + pz) * P + px] = 3;
             tops[pz * P + px] = WH;
             continue;
@@ -322,7 +325,7 @@ class Chunk {
   constructor(cx, cz) {
     this.cx = cx; this.cz = cz;
     this.blocks = new Uint8Array(CH * WH * CH);
-    this.top = new Int16Array(CH2);        // y blok opak tertinggi (untuk cahaya langit)
+    this.top = new Int16Array(CH2);        // highest opaque block y, drives skylight
     this.ready = false; this.dirty = true;
     this.mesh = null; this.meshT = null;
     this.minY = 0; this.maxY = WH - 1;

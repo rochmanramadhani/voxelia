@@ -1,8 +1,8 @@
 'use strict';
-/* Pemain: tabrakan AABB, gravitasi, renang, terbang, dan raycast voxel DDA. */
+/* The player: AABB collision, gravity, swimming, flight, and a DDA voxel raycast. */
 
-const PW = 0.62;        // lebar (setengahnya dipakai)
-const PH = 1.78;        // tinggi
+const PW = 0.62;        // width (half of it is used as the radius)
+const PH = 1.78;        // height
 const EYE = 1.62;
 const GRAV = 30;
 const JUMP = 8.9;
@@ -13,16 +13,16 @@ class Player {
     this.pos = new THREE.Vector3(0, 80, 0);
     this.vel = new THREE.Vector3();
     this.yaw = 0; this.pitch = 0;
-    this.yawT = 0; this.pitchT = 0;      // sasaran arah pandang; yaw/pitch mengejarnya
+    this.yawT = 0; this.pitchT = 0;      // look target; yaw/pitch chase it
     this.onGround = false;
     this.flying = false;
     this.inWater = false;
     this.eyeInWater = false;
     this.sprint = false;
-    this.stepSmooth = 0;      // offset kamera untuk melembutkan naik-tangga
+    this.stepSmooth = 0;      // camera offset that smooths out an auto step-up
     this.walkPhase = 0;
     this.speedNow = 0;
-    this.mode = 0;            // 0 = orang pertama, 1 = orang ketiga, 2 = depan
+    this.mode = 0;            // 0 = first person, 1 = third person, 2 = front
   }
   solidAt(x, y, z) {
     const id = this.w.getBlock(Math.floor(x), Math.floor(y), Math.floor(z));
@@ -47,7 +47,7 @@ class Player {
     return id === 29 || id === 30 ? id : 0;
   }
 
-  /** Set arah pandang sekaligus sasarannya (tanpa animasi kejar). */
+  /** Set the look direction and its target at once, with no chase animation. */
   setLook(yaw, pitch) {
     this.yaw = this.yawT = yaw;
     this.pitch = this.pitchT = clamp(pitch, -1.553, 1.553);
@@ -57,7 +57,7 @@ class Player {
     const hw = PW / 2, eps = 1e-3;
     const p = this.pos;
 
-    // ---- menoleh: tombol panah + pelembutan ----
+    // ---- looking: arrow keys plus smoothing ----
     const turn = 2.0 * dt;
     if (input.lookL) this.yawT += turn;
     if (input.lookR) this.yawT -= turn;
@@ -75,7 +75,7 @@ class Player {
     this.inWater = !!this.liquidAt(p.x, p.y + 0.4, p.z);
     this.eyeInWater = !!this.liquidAt(p.x, p.y + EYE, p.z);
 
-    // ---- arah gerak relatif yaw ----
+    // ---- movement direction, relative to yaw ----
     const cy = Math.cos(this.yaw), sy = Math.sin(this.yaw);
     let mx = 0, mz = 0;
     if (input.f) { mx -= sy; mz -= cy; }
@@ -92,7 +92,7 @@ class Player {
     else if (this.inWater) speed = sprinting ? 5.2 : 3.9;
     else speed = sprinting ? 7.4 : 4.5;
 
-    // percepatan halus
+    // smooth acceleration
     const accel = this.onGround || this.flying ? 22 : 8;
     const tx = mx * speed, tz = mz * speed;
     this.vel.x += (tx - this.vel.x) * Math.min(1, accel * dt);
@@ -107,7 +107,7 @@ class Player {
       this.vel.y += (-GRAV * 0.22) * dt;
       if (input.up) this.vel.y = Math.min(this.vel.y + 26 * dt, 4.0);
       if (input.down) this.vel.y = Math.max(this.vel.y - 26 * dt, -4.0);
-      this.vel.y *= Math.pow(0.06, dt);           // hambatan air
+      this.vel.y *= Math.pow(0.06, dt);           // water drag
       this.vel.x *= Math.pow(0.30, dt);
       this.vel.z *= Math.pow(0.30, dt);
     } else {
@@ -116,7 +116,7 @@ class Player {
       if (input.up && this.onGround) { this.vel.y = JUMP; this.onGround = false; }
     }
 
-    // ---- integrasi dengan sub-langkah ----
+    // ---- integration in sub-steps ----
     let remain = dt;
     while (remain > 0) {
       const step = Math.min(remain, 0.012);
@@ -170,7 +170,7 @@ class Player {
     this.walkPhase += hs * dt * 2.2;
   }
 
-  /** Naik satu blok otomatis. Kembalikan y baru atau null. */
+  /** Automatic one-block step up. Returns the new y, or null. */
   canStep(x, y, z) {
     if (!S.autoStep) return null;
     if (!this.onGround && !this.inWater) return null;
@@ -191,7 +191,7 @@ class Player {
   }
 }
 
-/* ---------- raycast voxel (Amanatides & Woo) ---------- */
+/* ---------- voxel raycast (Amanatides & Woo, 1987) ---------- */
 const _rc = { x: 0, y: 0, z: 0, nx: 0, ny: 0, nz: 0, id: 0, dist: 0 };
 function raycastVoxel(world, ox, oy, oz, dx, dy, dz, maxD) {
   let x = Math.floor(ox), y = Math.floor(oy), z = Math.floor(oz);
@@ -215,7 +215,7 @@ function raycastVoxel(world, ox, oy, oz, dx, dy, dz, maxD) {
   return null;
 }
 
-/** Apakah AABB pemain menabrak sel blok ini? */
+/** Does the player's AABB overlap this block cell? */
 function boxHitsPlayer(px, py, pz, bx, by, bz) {
   const hw = PW / 2;
   return (px + hw > bx && px - hw < bx + 1 &&

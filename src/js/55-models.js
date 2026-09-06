@@ -1,8 +1,8 @@
 'use strict';
-/* Model 3D: geometri kubus item, ikon blok yang dirender, dan penjelajah.
-   Semua dibangun dari kotak + tekstur kanvas prosedural. */
+/* 3D models: the item cube geometry, the rendered block icons, and the
+   explorers. Everything is boxes plus procedurally drawn canvas textures. */
 
-/* ---------- geometri satu blok (format atribut sama dengan mesher) ---------- */
+/* ---------- single-block geometry (same attribute layout as the mesher) ---------- */
 function blockCubeGeom(id) {
   const B = BLOCKS[id];
   const pos = [], dat = [], idx = [];
@@ -47,7 +47,7 @@ function blockCubeGeom(id) {
   return g;
 }
 
-/* ---------- ikon blok: render 3D asli -> dataURL ---------- */
+/* ---------- block icons: a real 3D render -> data URL ---------- */
 function bakeBlockIcons(renderer, itemMat, size = 96) {
   const rt = new THREE.WebGLRenderTarget(size, size, {
     minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat
@@ -82,7 +82,7 @@ function bakeBlockIcons(renderer, itemMat, size = 96) {
     renderer.render(scene, cam);
     renderer.readRenderTargetPixels(rt, 0, 0, size, size, buf);
 
-    for (let y = 0; y < size; y++) {                 // WebGL membaca dari bawah
+    for (let y = 0; y < size; y++) {                 // WebGL reads bottom-up
       const src = (size - 1 - y) * size * 4, dst = y * size * 4;
       img.data.set(buf.subarray(src, src + size * 4), dst);
     }
@@ -99,7 +99,7 @@ function bakeBlockIcons(renderer, itemMat, size = 96) {
   return icons;
 }
 
-/* ---------- tekstur kulit karakter ---------- */
+/* ---------- character skin textures ---------- */
 function skinTex(baseHex, opts = {}) {
   const p = new Pix(16, opts.seed || 1234);
   const base = hexRgb(baseHex);
@@ -157,48 +157,35 @@ function canvasTexFromPix(p) {
   return t;
 }
 
-/* ---------- daftar penjelajah ---------- */
+/* ---------- the explorers ---------- */
 const CHARS = [
-  {
-    key: 'rana', name: 'Rana', role: 'Ahli Geologi', sw: '#2E8B7A',
-    bio: 'Memetakan strata sejak sektor pertama dibuka. Jaket lapangan tahan abrasi, palu selalu di pinggang.',
+  { key: 'rana',  name: 'Rana',  sw: '#2E8B7A',
     skin: '#c98d63', shirt: '#2e8b7a', pants: '#3a4553', shoe: '#20262f',
-    hat: { type: 'cap', color: '#e0a63c' }
-  },
-  {
-    key: 'bagas', name: 'Bagas', role: 'Penambang', sw: '#E0A63C',
-    bio: 'Turun ke terowongan sebelum matahari terbit. Helm bercahaya, jadi gua paling gelap pun terbaca.',
+    hat: { type: 'cap', color: '#e0a63c' } },
+  { key: 'bagas', name: 'Bagas', sw: '#E0A63C',
     skin: '#a9744a', shirt: '#c46a2c', pants: '#4a4038', shoe: '#26201a',
-    hat: { type: 'helmet', color: '#f0c33c', lamp: true }
-  },
-  {
-    key: 'nuri', name: 'Nuri', role: 'Perintis Hutan', sw: '#4E9A3E',
-    bio: 'Hafal setiap jenis dedaunan di sektor utara. Berjalan tanpa suara, menanam lebih banyak dari yang ditebang.',
+    hat: { type: 'helmet', color: '#f0c33c', lamp: true } },
+  { key: 'nuri',  name: 'Nuri',  sw: '#4E9A3E',
     skin: '#d8a377', shirt: '#4e9a3e', pants: '#3d5730', shoe: '#2a2118',
-    hat: { type: 'hood', color: '#3f7d33' }
-  },
-  {
-    key: 'ombak', name: 'Ombak', role: 'Penyelam Cekungan', sw: '#2C6FA8',
-    bio: 'Memetakan dasar laut dan gua bawah air. Setelan selam rapat, visor kaca tahan tekanan.',
+    hat: { type: 'hood', color: '#3f7d33' } },
+  { key: 'ombak', name: 'Ombak', sw: '#2C6FA8',
     skin: '#8f6a4e', shirt: '#22394f', pants: '#1b2c3d', shoe: '#14202c',
-    hat: { type: 'visor', color: '#2c6fa8' }, faceOpts: { glow: '#9fd8ff', mouth: '#2a3a4a' }
-  },
-  {
-    key: 'mk3', name: 'MK-3', role: 'Unit Otomat', sw: '#9C8BE8',
-    bio: 'Rangka logam hasil daur ulang bijih besi. Tidak butuh tidur, tidak pernah tersesat, sesekali berdengung.',
+    hat: { type: 'visor', color: '#2c6fa8' },
+    faceOpts: { glow: '#9fd8ff', mouth: '#2a3a4a' } },
+  { key: 'mk3',   name: 'MK-3',  sw: '#9C8BE8',
     skin: '#9aa3ad', shirt: '#6f7883', pants: '#5b636d', shoe: '#3c424a',
     hat: { type: 'antenna', color: '#9c8be8' },
     faceOpts: { glow: '#a48cff', mouth: '#3a3f46', eyeY: 7 },
-    metal: true
-  },
-  {
-    key: 'rubah', name: 'Sengu', role: 'Rubah Pendamping', sw: '#D2703A',
-    bio: 'Bukan manusia, dan tidak keberatan soal itu. Ikut ke mana pun, berhenti tiap kali mencium bijih.',
-    quad: true, skin: '#d2703a', shirt: '#d2703a', pants: '#f0e6d8', shoe: '#2a2018'
-  }
+    metal: true },
+  { key: 'rubah', name: 'Sengu', sw: '#D2703A',
+    quad: true,
+    skin: '#d2703a', shirt: '#d2703a', pants: '#f0e6d8', shoe: '#2a2018' }
 ];
+/** Localised role / biography for an explorer. */
+const charRole = c => t('char.' + c.key + '.role');
+const charBio = c => t('char.' + c.key + '.bio');
 
-/** Bangun model penjelajah. Kembalikan { root, parts } untuk dianimasikan. */
+/** Build an explorer model. Returns { root, parts } for the animator. */
 function buildCharacter(def) {
   const U = 1 / 16;
   const mat = (tex, extra = {}) => new THREE.MeshLambertMaterial(Object.assign({ map: tex }, extra));
@@ -219,7 +206,7 @@ function buildCharacter(def) {
   const parts = {};
 
   if (def.quad) {
-    /* --- rubah: kuadruped --- */
+    /* --- the fox: a quadruped --- */
     const body = new THREE.Group(); body.position.y = 10 * U; root.add(body);
     const torso = box(7, 6, 14, mSkin); body.add(torso);
     const headP = new THREE.Group(); headP.position.set(0, 2 * U, 7 * U); body.add(headP);
@@ -303,11 +290,11 @@ function buildCharacter(def) {
     const shoe = box(4.2, 2.4, 5, mShoe); shoe.position.set(0, -11 * U, 0.4 * U); lp.add(shoe);
     parts.legs.push(lp);
   }
-  root.scale.setScalar(0.9);      // 32 px -> 1.8 unit
+  root.scale.setScalar(0.9);      // 32 px -> 1.8 units
   return { root, parts, def };
 }
 
-/** Animasi berjalan / diam. `speed` 0..1, `t` waktu, `yaw/pitch` arah kepala. */
+/** Walk / idle animation. `speed` 0..1, `t` is time, `pitch` aims the head. */
 function animateCharacter(m, t, speed, pitch = 0, walkPhase = 0) {
   const p = m.parts;
   const sw = Math.sin(walkPhase) * clamp(speed, 0, 1);

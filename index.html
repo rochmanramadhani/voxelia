@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap">
 <style>
 /* ---------------------------------------------------------------------------
-   VOXELIA — palet "survei geologi": basalt dingin, cahaya obor, tembaga teroksidasi.
-   Sengaja satu tema (gelap): ini instrumen lapangan, bukan dokumen.
+   VOXELIA — a "geological survey" palette: cold basalt, torchlight, oxidised copper.
+   Deliberately single-theme (dark): this is a field instrument, not a document.
 --------------------------------------------------------------------------- */
 :root{
   --void:#090C11; --basalt:#111720; --slate:#19212C; --slate-2:#212B38;
@@ -38,13 +38,13 @@ canvas#gl{position:fixed;inset:0;width:100%;height:100%;display:block;background
   backdrop-filter:blur(1.5px);
 }
 .screen.on{display:block}
-.screen::after{ /* garis pindai halus, seperti layar instrumen */
+.screen::after{ /* faint scanlines, like an instrument display */
   content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
   background:repeating-linear-gradient(to bottom,rgba(255,255,255,.028) 0 1px,transparent 1px 3px);
 }
 .screen>*{position:relative;z-index:1}
 
-/* ---------- tipografi ---------- */
+/* ---------- typography ---------- */
 .eyebrow{
   font-family:var(--f-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;
   color:var(--ash-dim);
@@ -63,7 +63,7 @@ h2.head{
 .sub{color:var(--ash);font-size:14.5px;max-width:56ch;margin:0}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
 
-/* ---------- panel ---------- */
+/* ---------- panels ---------- */
 .panel{
   background:linear-gradient(180deg,rgba(25,33,44,.94),rgba(17,23,32,.94));
   border:1px solid var(--stratum);
@@ -76,7 +76,7 @@ h2.head{
   background:linear-gradient(180deg,rgba(240,165,60,.07),transparent);
 }
 
-/* ---------- tombol ---------- */
+/* ---------- buttons ---------- */
 .btn{
   appearance:none;display:flex;align-items:center;gap:12px;width:100%;
   padding:13px 16px;text-align:left;cursor:pointer;
@@ -98,12 +98,12 @@ h2.head{
 .btn.ghost:hover{background:rgba(255,255,255,.04);transform:none;border-color:var(--stratum-hi)}
 .btn.sm{width:auto;padding:8px 14px;font-size:13px}
 
-/* ---------- MENU ---------- */
+/* ---------- MAIN MENU ---------- */
 /* layar berisi banyak teks butuh tirai lebih pekat daripada menu utama */
 #inv,#opts,#guide,#pause{background:linear-gradient(180deg,rgba(9,12,17,.95) 0%,rgba(9,12,17,.90) 40%,rgba(9,12,17,.88) 100%)}
 #menu{display:none}
 #menu.on{display:grid}
-/* tirai bawah supaya baris data kaki halaman tetap terbaca di atas dunia terang */
+/* bottom scrim so the footer data row stays legible over a bright world */
 #menu.on::before{content:"";position:absolute;left:0;right:0;bottom:0;height:150px;pointer-events:none;
   background:linear-gradient(180deg,rgba(9,12,17,0),rgba(9,12,17,.55) 45%,rgba(9,12,17,.92))}
 #menu{
@@ -132,7 +132,7 @@ input[type=text]:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2
 .foot .legend span{font-family:var(--f-mono);font-size:10.5px;color:var(--ash);letter-spacing:.14em;text-transform:uppercase}
 .foot .legend b{color:var(--ash);font-weight:400}
 
-/* ---------- layout sub-layar ---------- */
+/* ---------- sub-screen layout ---------- */
 .sheet{display:grid;grid-template-rows:auto 1fr auto;gap:18px;height:100%;max-width:1180px;margin:0 auto}
 .sheet-hd{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;
   border-bottom:1px solid var(--stratum);padding-bottom:12px}
@@ -142,7 +142,7 @@ input[type=text]:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2
 .sheet-bd::-webkit-scrollbar-thumb{background:var(--stratum);border-radius:6px}
 .sheet-bd::-webkit-scrollbar-track{background:transparent}
 
-/* ---------- pilih karakter ---------- */
+/* ---------- character picker ---------- */
 #chars{background:linear-gradient(100deg,rgba(9,12,17,.96) 0%,rgba(9,12,17,.93) 30%,rgba(9,12,17,.55) 52%,rgba(9,12,17,.16) 74%,rgba(9,12,17,.06) 100%)}
 #chars::after{opacity:.16}
 #chars .sheet-bd{display:grid;grid-template-columns:minmax(250px,320px) 1fr;gap:22px}
@@ -170,7 +170,7 @@ input[type=text]:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2
 .charstage .bio p{margin:6px 0 0;color:var(--ash);font-size:13.5px;line-height:1.4}
 .charstage .hint{background:rgba(9,12,17,.7);padding:5px 9px;border-radius:var(--r)}
 
-/* ---------- pengaturan ---------- */
+/* ---------- settings ---------- */
 .optgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
 .optgrp{padding:0}
 .optgrp .rows{padding:4px 0}
@@ -203,7 +203,7 @@ select{
 }
 select:focus-visible{outline:none;border-color:var(--amber)}
 
-/* ---------- panduan ---------- */
+/* ---------- controls guide ---------- */
 .keys{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0 26px}
 .keyrow{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid rgba(44,54,68,.55)}
 kbd{
@@ -272,7 +272,7 @@ kbd{
   background:radial-gradient(120% 100% at 50% 50%,transparent 55%,rgba(0,0,0,.42) 100%)}
 #tint{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;background:#1E5A8C;mix-blend-mode:multiply}
 
-/* ---------- inventaris ---------- */
+/* ---------- inventory ---------- */
 #inv .sheet-bd{display:flex;flex-direction:column;gap:20px}
 .cat h3{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ash-dim);
   margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--stratum)}
@@ -299,7 +299,7 @@ kbd{
 #bootlog{font-family:var(--f-mono);font-size:11px;color:var(--ash-dim);line-height:1.75;min-height:6em}
 #bootlog b{color:var(--copper);font-weight:400}
 
-/* ---------- kontrol sentuh ---------- */
+/* ---------- touch controls ---------- */
 #touch{position:fixed;inset:0;display:none;pointer-events:none;z-index:5}
 #touch.on{display:block}
 #stick{position:absolute;left:22px;bottom:26px;width:130px;height:130px;border-radius:50%;
@@ -322,13 +322,25 @@ kbd{
   .charstage{min-height:250px;order:-1}
   .charstage .bio{position:static;max-width:none;text-align:left;border-radius:var(--r);
     border-right:1px solid var(--stratum);border-left:2px solid var(--amber-deep);margin:10px}
-  /* di layar sempit panggung ada di atas: gelapkan bagian lain, bukan sisi kiri */
+  /* on narrow screens the stage sits on top: darken the rest, not the left edge */
   #chars{background:linear-gradient(180deg,rgba(9,12,17,.95) 0%,rgba(9,12,17,.62) 14%,
     rgba(9,12,17,.34) 30%,rgba(9,12,17,.88) 44%,rgba(9,12,17,.96) 60%,rgba(9,12,17,.97) 100%)}
 }
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
+/* ---------- language switcher ---------- */
+.langrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.langsw{display:inline-flex;border:1px solid var(--stratum);border-radius:var(--r);overflow:hidden}
+.langsw button{
+  appearance:none;border:0;cursor:pointer;padding:5px 11px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;
+  background:var(--void);color:var(--ash);transition:background .12s,color .12s;
+}
+.langsw button+button{border-left:1px solid var(--stratum)}
+.langsw button:hover{color:var(--bone);background:rgba(255,255,255,.05)}
+.langsw button[aria-pressed=true]{background:var(--amber);color:var(--void)}
+.langsw button:focus-visible{outline:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.45)}
 </style>
 
 <canvas id="gl"></canvas>
@@ -336,130 +348,137 @@ kbd{
 <!-- ══ BOOT ══ -->
 <section id="boot" class="screen on">
   <div class="box">
-    <div class="brandline"><span class="chip"></span><span class="eyebrow">Survei Voxelia · v1.0</span></div>
-    <h1 class="logo">VOXELIA<em>dunia kubus</em></h1>
+    <div class="brandline"><span class="chip"></span><span class="eyebrow" data-i18n="boot.eyebrow">Voxelia Survey · v1.0</span></div>
+    <h1 class="logo">VOXELIA<em data-i18n="brand.tagline">a world of cubes</em></h1>
     <div id="bar"><i></i></div>
     <div id="bootlog"></div>
   </div>
 </section>
 
-<!-- ══ MENU UTAMA ══ -->
+<!-- ══ MAIN MENU ══ -->
 <section id="menu" class="screen">
   <div class="rail">
     <div>
-      <div class="brandline"><span class="chip"></span><span class="eyebrow">Stasiun survei · sektor 0,0</span></div>
-      <h1 class="logo">VOXELIA<em>dunia kubus</em></h1>
+      <div class="brandline"><span class="chip"></span><span class="eyebrow" data-i18n="menu.eyebrow">Survey station · sector 0,0</span></div>
+      <h1 class="logo">VOXELIA<em data-i18n="brand.tagline">a world of cubes</em></h1>
     </div>
     <nav class="menu-nav">
-      <button class="btn primary" id="bPlay">Masuk Dunia <span class="k">ENTER</span></button>
-      <button class="btn" id="bChars">Pilih Penjelajah <span class="k">C</span></button>
-      <button class="btn" id="bOpts">Pengaturan <span class="k">O</span></button>
-      <button class="btn" id="bGuide">Kontrol <span class="k">H</span></button>
-      <button class="btn ghost" id="bNew">Bangkitkan dunia baru dari seed</button>
+      <button class="btn primary" id="bPlay"><span id="bPlayLabel" data-i18n="menu.play">Enter World</span> <span class="k">ENTER</span></button>
+      <button class="btn" id="bChars"><span data-i18n="menu.chars">Choose Explorer</span> <span class="k">C</span></button>
+      <button class="btn" id="bOpts"><span data-i18n="menu.opts">Settings</span> <span class="k">O</span></button>
+      <button class="btn" id="bGuide"><span data-i18n="menu.guide">Controls</span> <span class="k">H</span></button>
+      <button class="btn ghost" id="bNew" data-i18n="menu.new">Generate a new world from a seed</button>
     </nav>
   </div>
   <div></div>
   <div class="survey">
+    <div class="langrow">
+      <span class="eyebrow" data-i18n="set.lang">Language</span>
+      <span class="langsw" id="langSw" role="group" data-i18n-aria="set.lang">
+        <button type="button" data-lang="id">ID</button>
+        <button type="button" data-lang="en">EN</button>
+      </span>
+    </div>
     <div class="panel">
-      <div class="panel-hd"><span class="eyebrow">Berkas Dunia</span><span class="mono" id="wStatus" style="font-size:10px;color:var(--copper)">BARU</span></div>
+      <div class="panel-hd"><span class="eyebrow" data-i18n="world.file">World File</span><span class="mono" id="wStatus" style="font-size:10px;color:var(--copper)">NEW</span></div>
       <div class="field">
-        <label for="seedIn">Seed</label>
+        <label for="seedIn" data-i18n="world.seed">Seed</label>
         <input type="text" id="seedIn" spellcheck="false" autocomplete="off">
       </div>
-      <div class="field"><label>Penjelajah</label><div class="val" id="wChar">—</div></div>
-      <div class="field"><label>Titik muncul</label><div class="val" id="wSpawn">—</div></div>
-      <div class="field"><label>Bioma</label><div class="val" id="wBiome">—</div></div>
+      <div class="field"><label data-i18n="world.explorer">Explorer</label><div class="val" id="wChar">—</div></div>
+      <div class="field"><label data-i18n="world.spawn">Spawn point</label><div class="val" id="wSpawn">—</div></div>
+      <div class="field"><label data-i18n="world.biome">Biome</label><div class="val" id="wBiome">—</div></div>
       <div class="field">
-        <label>Kolom strata</label>
+        <label data-i18n="world.strata">Strata column</label>
         <div class="strata" id="wStrata"></div>
       </div>
     </div>
   </div>
   <div class="foot">
     <div class="legend">
-      <span>Tinggi dunia <b class="mono">128 blok</b></span>
-      <span>Chunk <b class="mono">16×16</b></span>
-      <span>Permukaan laut <b class="mono">Y=44</b></span>
-      <span>Jenis blok <b class="mono" id="wBlocks">—</b></span>
+      <span><span data-i18n="foot.height">World height</span> <b class="mono" id="wHeight">128 blocks</b></span>
+      <span><span data-i18n="foot.chunk">Chunk</span> <b class="mono">16×16</b></span>
+      <span><span data-i18n="foot.sea">Sea level</span> <b class="mono">Y=44</b></span>
+      <span><span data-i18n="foot.blocks">Block types</span> <b class="mono" id="wBlocks">—</b></span>
     </div>
-    <span class="eyebrow">WebGL2 · tekstur prosedural · tanpa aset eksternal</span>
+    <span class="eyebrow" data-i18n="foot.note">WebGL2 · procedural textures · zero external assets</span>
   </div>
 </section>
 
-<!-- ══ PILIH KARAKTER ══ -->
+<!-- ══ CHARACTER PICKER ══ -->
 <section id="chars" class="screen">
   <div class="sheet">
     <div class="sheet-hd">
-      <div><span class="eyebrow">Berkas personel</span><h2 class="head">Pilih Penjelajah</h2>
-        <p class="sub">Model dibangun dari kubus di dalam mesin — tanpa file model. Seret panggung untuk memutar.</p></div>
+      <div><span class="eyebrow" data-i18n="chars.eyebrow">Personnel file</span><h2 class="head" data-i18n="chars.title">Choose Explorer</h2>
+        <p class="sub" data-i18n="chars.sub">Models are built from cubes inside the engine — no model files. Drag the stage to rotate.</p></div>
       <span class="mono" style="font-size:11px;color:var(--ash-dim)" id="charIdx">—</span>
     </div>
     <div class="sheet-bd">
       <div class="charlist" id="charList"></div>
       <div class="charstage" id="charStage">
         <div class="bio"><span class="eyebrow" id="charRole">—</span><p id="charBio">—</p></div>
-        <div class="hint">Seret untuk memutar · gulir untuk zoom</div>
+        <div class="hint" data-i18n="chars.hint">Drag to rotate · scroll to zoom</div>
       </div>
     </div>
     <div class="sheet-ft">
-      <button class="btn ghost sm" data-back>Kembali</button>
-      <button class="btn primary sm" id="bCharOk" style="width:auto">Pakai penjelajah ini</button>
+      <button class="btn ghost sm" data-back data-i18n="common.back">Back</button>
+      <button class="btn primary sm" id="bCharOk" style="width:auto" data-i18n="chars.use">Use this explorer</button>
     </div>
   </div>
 </section>
 
-<!-- ══ PENGATURAN ══ -->
+<!-- ══ SETTINGS ══ -->
 <section id="opts" class="screen">
   <div class="sheet">
     <div class="sheet-hd">
-      <div><span class="eyebrow">Kalibrasi</span><h2 class="head">Pengaturan</h2>
-        <p class="sub">Semua perubahan langsung berlaku dan tersimpan di peramban.</p></div>
+      <div><span class="eyebrow" data-i18n="opts.eyebrow">Calibration</span><h2 class="head" data-i18n="opts.title">Settings</h2>
+        <p class="sub" data-i18n="opts.sub">Every change applies immediately and is stored in your browser.</p></div>
       <span class="mono" style="font-size:11px;color:var(--ash-dim)" id="gpuInfo">—</span>
     </div>
     <div class="sheet-bd"><div class="optgrid" id="optGrid"></div></div>
     <div class="sheet-ft">
-      <button class="btn ghost sm" id="bReset">Kembalikan bawaan</button>
-      <button class="btn ghost sm" data-back>Kembali</button>
+      <button class="btn ghost sm" id="bReset" data-i18n="opts.reset">Restore defaults</button>
+      <button class="btn ghost sm" data-back data-i18n="common.back">Back</button>
     </div>
   </div>
 </section>
 
-<!-- ══ KONTROL ══ -->
+<!-- ══ CONTROLS GUIDE ══ -->
 <section id="guide" class="screen">
   <div class="sheet">
     <div class="sheet-hd">
-      <div><span class="eyebrow">Panduan lapangan</span><h2 class="head">Kontrol</h2>
-        <p class="sub">Klik layar untuk mengunci kursor. Tekan Esc kapan saja untuk melepas.</p></div>
+      <div><span class="eyebrow" data-i18n="guide.eyebrow">Field guide</span><h2 class="head" data-i18n="guide.title">Controls</h2>
+        <p class="sub" data-i18n="guide.sub">Click the screen to lock the cursor. Press Esc at any time to release it.</p></div>
     </div>
     <div class="sheet-bd"><div class="keys" id="keyList"></div></div>
-    <div class="sheet-ft"><button class="btn ghost sm" data-back>Kembali</button></div>
+    <div class="sheet-ft"><button class="btn ghost sm" data-back data-i18n="common.back">Back</button></div>
   </div>
 </section>
 
-<!-- ══ INVENTARIS ══ -->
+<!-- ══ INVENTORY ══ -->
 <section id="inv" class="screen">
   <div class="sheet">
     <div class="sheet-hd">
-      <div><span class="eyebrow">Peti bahan</span><h2 class="head">Inventaris</h2>
-        <p class="sub">Klik blok untuk menaruhnya di slot terpilih. Setiap ikon adalah render 3D asli, bukan gambar.</p></div>
-      <span class="mono" style="font-size:11px;color:var(--ash-dim)">E / ESC untuk menutup</span>
+      <div><span class="eyebrow" data-i18n="inv.eyebrow">Material crate</span><h2 class="head" data-i18n="inv.title">Inventory</h2>
+        <p class="sub" data-i18n="inv.sub">Click a block to put it in the selected slot. Every icon is a real 3D render, not an image.</p></div>
+      <span class="mono" style="font-size:11px;color:var(--ash-dim)" data-i18n="inv.close">E / ESC to close</span>
     </div>
     <div class="sheet-bd" id="invBody"></div>
-    <div class="sheet-ft"><button class="btn ghost sm" data-back>Tutup</button></div>
+    <div class="sheet-ft"><button class="btn ghost sm" data-back data-i18n="common.close">Close</button></div>
   </div>
 </section>
 
-<!-- ══ JEDA ══ -->
+<!-- ══ PAUSE ══ -->
 <section id="pause" class="screen">
   <div class="sheet" style="max-width:420px">
-    <div class="sheet-hd"><div><span class="eyebrow">Ekspedisi dijeda</span><h2 class="head">Jeda</h2></div></div>
+    <div class="sheet-hd"><div><span class="eyebrow" data-i18n="pause.eyebrow">Expedition paused</span><h2 class="head" data-i18n="pause.title">Paused</h2></div></div>
     <div class="sheet-bd">
       <nav class="menu-nav">
-        <button class="btn primary" id="bResume">Lanjut Main <span class="k">ESC</span></button>
-        <button class="btn" id="bSave">Simpan Dunia <span class="k">F2</span></button>
-        <button class="btn" id="bOpts2">Pengaturan</button>
-        <button class="btn" id="bGuide2">Kontrol</button>
-        <button class="btn ghost" id="bQuit">Keluar ke menu</button>
+        <button class="btn primary" id="bResume"><span data-i18n="pause.resume">Resume</span> <span class="k">ESC</span></button>
+        <button class="btn" id="bSave"><span data-i18n="pause.save">Save World</span> <span class="k">F2</span></button>
+        <button class="btn" id="bOpts2" data-i18n="menu.opts">Settings</button>
+        <button class="btn" id="bGuide2" data-i18n="menu.guide">Controls</button>
+        <button class="btn ghost" id="bQuit" data-i18n="pause.quit">Quit to menu</button>
       </nav>
       <p class="sub mono" id="pauseInfo" style="margin-top:16px;font-size:11.5px;color:var(--ash-dim)"></p>
     </div>
@@ -478,20 +497,20 @@ kbd{
   <div id="hotbar"></div>
 </div>
 
-<!-- ══ SENTUH ══ -->
+<!-- ══ TOUCH ══ -->
 <div id="touch">
   <div id="stick"><i></i></div>
-  <button class="tbtn" id="tJump">LOMPAT</button>
-  <button class="tbtn" id="tFly">TERBANG</button>
-  <button class="tbtn" id="tBreak">GALI</button>
-  <button class="tbtn" id="tPlace">TARUH</button>
+  <button class="tbtn" id="tJump" data-i18n="touch.jump">JUMP</button>
+  <button class="tbtn" id="tFly" data-i18n="touch.fly">FLY</button>
+  <button class="tbtn" id="tBreak" data-i18n="touch.dig">DIG</button>
+  <button class="tbtn" id="tPlace" data-i18n="touch.place">PLACE</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.1/three.min.js"></script>
 <script>
 /* ===== 00-util.js ===== */
 'use strict';
-/* Util: PRNG deterministik, noise Perlin, helper matematika. */
+/* Utilities: deterministic PRNG, Perlin noise, small maths helpers. */
 
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -507,7 +526,7 @@ function mulberry32(a) {
   };
 }
 
-/** Teks seed apa pun -> integer 32-bit. Angka murni dipakai apa adanya. */
+/** Any seed text -> 32-bit integer. A plain number is used as-is. */
 function seedToInt(str) {
   str = String(str).trim();
   if (/^-?\d+$/.test(str)) return (parseInt(str, 10) | 0) || 1;
@@ -519,7 +538,7 @@ function seedToInt(str) {
   return (h | 0) || 1;
 }
 
-/** Perlin gradient noise 2D/3D dengan tabel permutasi ber-seed. */
+/** 2D/3D Perlin gradient noise with a seeded permutation table. */
 class Perlin {
   constructor(seed) {
     const rnd = mulberry32(seed);
@@ -570,7 +589,7 @@ class Perlin {
         lerp(this.grad3(p[AA + 1], x, y, z - 1), this.grad3(p[BA + 1], x - 1, y, z - 1), u),
         lerp(this.grad3(p[AB + 1], x, y - 1, z - 1), this.grad3(p[BB + 1], x - 1, y - 1, z - 1), u), v), w);
   }
-  /** fractal brownian motion 2D */
+  /** 2D fractional Brownian motion */
   fbm2(x, y, oct, lac = 2.0, gain = 0.5) {
     let a = 1, f = 1, s = 0, norm = 0;
     for (let i = 0; i < oct; i++) { s += a * this.noise2(x * f, y * f); norm += a; a *= gain; f *= lac; }
@@ -581,7 +600,7 @@ class Perlin {
     for (let i = 0; i < oct; i++) { s += a * this.noise3(x * f, y * f, z * f); norm += a; a *= gain; f *= lac; }
     return s / norm;
   }
-  /** ridged: bagus untuk punggungan gunung & lorong gua */
+  /** Ridged noise: good for mountain ridges and cave tunnels. */
   ridged2(x, y, oct, lac = 2.0, gain = 0.5) {
     let a = 1, f = 1, s = 0, norm = 0;
     for (let i = 0; i < oct; i++) {
@@ -592,7 +611,7 @@ class Perlin {
   }
 }
 
-/** hash 2D deterministik -> [0,1), untuk penempatan pohon/rumput per-blok. */
+/** Deterministic 2D hash -> [0,1), for per-block tree and grass placement. */
 function hash2(x, z, salt) {
   let h = Math.imul(x | 0, 0x27d4eb2d) ^ Math.imul(z | 0, 0x165667b1) ^ Math.imul(salt | 0, 0x9e3779b1);
   h ^= h >>> 15; h = Math.imul(h, 0x85ebca6b);
@@ -605,9 +624,624 @@ const fmt = (n, d = 1) => n.toFixed(d);
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 
+/* ===== 05-i18n.js ===== */
+'use strict';
+/* Localisation. Two locales, resolved once at boot and switchable at runtime.
+   Keys are grouped by screen; `t()` falls back to English, then to the key
+   itself, so a missing string is visible rather than silently blank. */
+
+const LOCALES = ['id', 'en'];
+let LOCALE = 'en';
+
+const I18N = {
+  id: {
+    'brand.tagline': 'dunia kubus',
+    'common.back': 'Kembali',
+    'common.close': 'Tutup',
+    'common.off': 'mati',
+    'common.air': 'udara',
+
+    'boot.eyebrow': 'Survei Voxelia · v1.0',
+    'boot.gl': 'memeriksa konteks grafis',
+    'boot.tex': 'menggambar {n} tekstur prosedural 16×16',
+    'boot.icons': 'merender {n} ikon blok 3D',
+    'boot.scene': 'menyusun langit, awan, dan partikel',
+    'boot.chars': 'membangun {n} model penjelajah',
+    'boot.world': 'menyiapkan dunia "{seed}" (seed {n})',
+    'boot.chunks': 'memuat {n} chunk di sekitar titik muncul',
+    'boot.ready': 'SIAP',
+    'boot.ok': 'OK',
+    'boot.failed': 'GAGAL',
+    'boot.error': 'galat saat memuat: {msg}',
+    'boot.noWebgl': 'WebGL2 tidak tersedia di peramban ini.',
+    'boot.noWebgl2': 'Voxelia butuh WebGL2 untuk tekstur array. Coba Chrome, Edge, Firefox, atau Safari 15+.',
+
+    'menu.eyebrow': 'Stasiun survei · sektor 0,0',
+    'menu.play': 'Masuk Dunia',
+    'menu.continue': 'Lanjutkan Dunia',
+    'menu.chars': 'Pilih Penjelajah',
+    'menu.opts': 'Pengaturan',
+    'menu.guide': 'Kontrol',
+    'menu.new': 'Bangkitkan dunia baru dari seed',
+
+    'world.file': 'Berkas Dunia',
+    'world.seed': 'Seed',
+    'world.explorer': 'Penjelajah',
+    'world.spawn': 'Titik muncul',
+    'world.biome': 'Bioma',
+    'world.strata': 'Kolom strata',
+    'world.status.new': 'BARU',
+    'world.status.saved': 'TERSIMPAN',
+    'world.status.failed': 'GAGAL',
+
+    'foot.height': 'Tinggi dunia',
+    'foot.heightVal': '128 blok',
+    'foot.chunk': 'Chunk',
+    'foot.sea': 'Permukaan laut',
+    'foot.blocks': 'Jenis blok',
+    'foot.blocksVal': '{n} blok',
+    'foot.note': 'WebGL2 · tekstur prosedural · tanpa aset eksternal',
+
+    'chars.eyebrow': 'Berkas personel',
+    'chars.title': 'Pilih Penjelajah',
+    'chars.sub': 'Model dibangun dari kubus di dalam mesin — tanpa file model. Seret panggung untuk memutar.',
+    'chars.hint': 'Seret untuk memutar · gulir untuk zoom',
+    'chars.use': 'Pakai penjelajah ini',
+    'chars.index': 'PERSONEL {i} / {n}',
+
+    'opts.eyebrow': 'Kalibrasi',
+    'opts.title': 'Pengaturan',
+    'opts.sub': 'Semua perubahan langsung berlaku dan tersimpan di peramban.',
+    'opts.reset': 'Kembalikan bawaan',
+    'opts.resetDone': 'Pengaturan dikembalikan ke bawaan',
+
+    'guide.eyebrow': 'Panduan lapangan',
+    'guide.title': 'Kontrol',
+    'guide.sub': 'Klik layar untuk mengunci kursor. Tekan Esc kapan saja untuk melepas.',
+
+    'inv.eyebrow': 'Peti bahan',
+    'inv.title': 'Inventaris',
+    'inv.sub': 'Klik blok untuk menaruhnya di slot terpilih. Setiap ikon adalah render 3D asli, bukan gambar.',
+    'inv.close': 'E / ESC untuk menutup',
+
+    'pause.eyebrow': 'Ekspedisi dijeda',
+    'pause.title': 'Jeda',
+    'pause.resume': 'Lanjut Main',
+    'pause.save': 'Simpan Dunia',
+    'pause.quit': 'Keluar ke menu',
+    'pause.info': '{n} blok disunting · seed {seed} · {c} chunk dimuat',
+
+    'touch.jump': 'LOMPAT',
+    'touch.fly': 'TERBANG',
+    'touch.dig': 'GALI',
+    'touch.place': 'TARUH',
+
+    'group.display': 'Tampilan',
+    'group.graphics': 'Grafis',
+    'group.controls': 'Kontrol',
+    'group.comfort': 'Kenyamanan',
+    'group.world': 'Dunia',
+    'group.sound': 'Suara',
+
+    'set.lang': 'Bahasa',
+    'set.lang.desc': 'Berlaku langsung, tanpa memuat ulang halaman',
+    'opt.lang.auto': 'Ikuti peramban',
+    'opt.lang.id': 'Bahasa Indonesia',
+    'opt.lang.en': 'English',
+    'set.renderDist': 'Jarak pandang',
+    'set.renderDist.desc': 'Radius chunk yang dimuat di sekitar kamu',
+    'set.resScale': 'Skala resolusi',
+    'set.resScale.desc': 'Turunkan bila frame rate berat',
+    'set.fov': 'Bidang pandang',
+    'set.fov.desc': 'Nilai kecil terasa lebih tenang, nilai besar lebih luas',
+    'set.exposure': 'Kecerahan',
+    'set.fogAmt': 'Kabut jarak',
+    'set.fogAmt.desc': '0% = pandangan bersih sampai batas chunk',
+    'set.clouds': 'Awan',
+    'set.clouds.desc': 'Lapisan awan kotak di ketinggian 112',
+    'set.ao': 'Ambient occlusion',
+    'set.ao.desc': 'Bayangan lembut di sudut blok',
+    'set.lookMode': 'Cara menoleh',
+    'set.lookMode.desc': 'Kalau kursor terasa liar, pilih Seret klik kiri',
+    'opt.lookMode.auto': 'Otomatis',
+    'opt.lookMode.lock': 'Kunci kursor',
+    'opt.lookMode.drag': 'Seret klik kiri',
+    'set.sens': 'Sensitivitas menoleh',
+    'set.lookSmooth': 'Kehalusan kamera',
+    'set.lookSmooth.desc': 'Meredam gerakan mouse yang menyentak',
+    'set.invertY': 'Balik sumbu Y',
+    'set.autoStep': 'Naik blok otomatis',
+    'set.autoStep.desc': 'Melangkahi tepian setinggi satu blok tanpa lompat',
+    'set.bob': 'Goyangan langkah',
+    'set.bob.desc': 'Kamera naik-turun saat berjalan. Matikan bila pusing.',
+    'set.wave': 'Gerakan air & daun',
+    'set.wave.desc': 'Riak air dan tumbuhan yang bergoyang',
+    'set.vignette': 'Vignette',
+    'set.vignette.desc': 'Penggelapan lembut di tepi layar',
+    'set.dayLength': 'Panjang hari',
+    'set.timeFrozen': 'Bekukan waktu',
+    'set.timeFrozen.desc': 'Matahari berhenti di posisi sekarang',
+    'set.timeOfDay': 'Waktu',
+    'set.timeOfDay.desc': '0.00 tengah malam · 0.50 tengah hari',
+    'set.sfx': 'Efek suara',
+    'set.sfx.desc': 'Nada sintetis, tanpa berkas audio',
+    'set.volume': 'Volume',
+    'unit.chunk': '{n} chunk',
+    'unit.minutes': '{n} menit',
+
+    'key.move': 'Berjalan',
+    'key.look': 'Menoleh tanpa mouse',
+    'key.jump': 'Lompat · naik saat terbang',
+    'key.sprint': 'Berlari',
+    'key.descend': 'Turun saat terbang',
+    'key.fly': 'Mode terbang',
+    'key.dig': 'Gali blok',
+    'key.place': 'Taruh blok',
+    'key.pick': 'Ambil blok yang dilihat',
+    'key.slot': 'Pilih slot hotbar',
+    'key.wheel': 'Geser slot',
+    'key.inv': 'Inventaris',
+    'key.torch': 'Lampu kepala',
+    'key.view': 'Sudut pandang',
+    'key.debug': 'Panel diagnostik',
+    'key.save': 'Simpan dunia',
+    'key.surface': 'Kembali ke permukaan',
+    'key.pause': 'Jeda',
+    'kb.arrows': 'Panah',
+    'kb.space': 'Spasi',
+    'kb.space2': 'Spasi ×2 / F',
+    'kb.lclick': 'Klik kiri',
+    'kb.rclick': 'Klik kanan',
+    'kb.mclick': 'Klik tengah',
+    'kb.wheel': 'Roda mouse',
+
+    'msg.welcome': 'Selamat menjelajah · Esc untuk jeda',
+    'msg.saved': 'Dunia tersimpan · {n} blok disunting',
+    'msg.saveFail': 'Penyimpanan peramban ditolak',
+    'msg.newWorld': 'Dunia baru dibangkitkan · seed {seed}',
+    'msg.bedrock': 'Bedrock tidak bisa digali',
+    'msg.noRoom': 'Tidak ada ruang di situ',
+    'msg.torchOn': 'Lampu kepala menyala',
+    'msg.torchOff': 'Lampu kepala padam',
+    'msg.flyOn': 'Mode terbang aktif · Ctrl untuk turun',
+    'msg.flyOff': 'Mode terbang mati',
+    'msg.surface': 'Kembali ke permukaan · Y {n}',
+    'msg.view0': 'Sudut pandang orang pertama',
+    'msg.view1': 'Sudut pandang orang ketiga',
+    'msg.view2': 'Sudut pandang depan',
+    'msg.dragLook': 'Menoleh dengan menahan klik kiri',
+    'msg.dragFallback': 'Kursor tidak bisa dikunci di sini — tahan klik kiri untuk melihat sekeliling',
+    'msg.lockLook': 'Kursor akan dikunci saat bermain',
+    'msg.autoLook': 'Mode menoleh otomatis',
+
+    'hud.pos': 'XYZ',
+    'hud.chunk': 'chunk',
+    'hud.local': 'lokal',
+    'hud.biome': 'bioma',
+    'hud.standing': 'pijakan',
+    'hud.stats': '{c} chunk · {m} mesh · {t}k tri · {d} draw',
+    'hud.time': 'waktu {clock} · matahari {sun}° · cahaya {lights}',
+    'hud.flying': 'terbang',
+    'hud.swimming': 'berenang',
+    'hud.grounded': 'di tanah',
+    'hud.falling': 'jatuh',
+    'hud.speed': '{n} blok/d',
+
+    'cat.nature': 'Permukaan & sedimen',
+    'cat.stone': 'Batuan',
+    'cat.wood': 'Kayu & dedaunan',
+    'cat.plant': 'Tumbuhan kecil',
+    'cat.build': 'Bahan bangunan',
+    'cat.ore': 'Bijih',
+    'cat.rare': 'Langka',
+    'cat.fluid': 'Cairan',
+    'block.hardness': 'kekerasan',
+
+    'block.grass': 'Rumput',
+    'block.dirt': 'Tanah',
+    'block.stone': 'Batu',
+    'block.cobblestone': 'Batu Bulat',
+    'block.stone_bricks': 'Bata Batu',
+    'block.mossy_stone': 'Batu Berlumut',
+    'block.sand': 'Pasir',
+    'block.red_sand': 'Pasir Merah',
+    'block.sandstone': 'Batu Pasir',
+    'block.gravel': 'Kerikil',
+    'block.clay': 'Tanah Liat',
+    'block.oak_log': 'Kayu Ek',
+    'block.oak_leaves': 'Daun Ek',
+    'block.birch_log': 'Kayu Birch',
+    'block.birch_leaves': 'Daun Birch',
+    'block.pine_leaves': 'Daun Pinus',
+    'block.planks': 'Papan',
+    'block.bricks': 'Bata',
+    'block.glass': 'Kaca',
+    'block.snow': 'Salju',
+    'block.ice': 'Es',
+    'block.cactus': 'Kaktus',
+    'block.obsidian': 'Obsidian',
+    'block.coal_ore': 'Bijih Batu Bara',
+    'block.iron_ore': 'Bijih Besi',
+    'block.gold_ore': 'Bijih Emas',
+    'block.diamond_ore': 'Bijih Berlian',
+    'block.glowstone': 'Lampu Batu',
+    'block.glowstone.note': 'Memancarkan cahaya hangat radius 12 blok.',
+    'block.water': 'Air',
+    'block.lava': 'Lava',
+    'block.bedrock': 'Bedrock',
+    'block.tall_grass': 'Rumput Tinggi',
+    'block.yellow_flower': 'Bunga Kuning',
+    'block.red_flower': 'Bunga Merah',
+    'block.dead_bush': 'Semak Kering',
+    'block.grass.note': 'Lapisan atas daratan lembap.',
+
+    'biome.ocean': 'Laut',
+    'biome.ocean.sub': 'Cekungan air asin',
+    'biome.beach': 'Pantai',
+    'biome.beach.sub': 'Endapan pasir litoral',
+    'biome.desert': 'Gurun',
+    'biome.desert.sub': 'Gurun pasir kering',
+    'biome.redDesert': 'Gurun Merah',
+    'biome.redDesert.sub': 'Pasir besi teroksidasi',
+    'biome.savanna': 'Sabana',
+    'biome.savanna.sub': 'Padang rumput panas',
+    'biome.plains': 'Padang Rumput',
+    'biome.plains.sub': 'Dataran subur terbuka',
+    'biome.forest': 'Hutan',
+    'biome.forest.sub': 'Hutan ek dan birch',
+    'biome.taiga': 'Hutan Pinus',
+    'biome.taiga.sub': 'Konifer dataran tinggi',
+    'biome.swamp': 'Rawa',
+    'biome.swamp.sub': 'Lahan basah berlumpur',
+    'biome.tundra': 'Tundra Salju',
+    'biome.tundra.sub': 'Padang beku',
+    'biome.mountain': 'Pegunungan',
+    'biome.mountain.sub': 'Singkapan batuan',
+    'biome.peak': 'Puncak Bersalju',
+    'biome.peak.sub': 'Di atas garis salju',
+
+    'char.rana.role': 'Ahli Geologi',
+    'char.rana.bio': 'Memetakan strata sejak sektor pertama dibuka. Jaket lapangan tahan abrasi, palu selalu di pinggang.',
+    'char.bagas.role': 'Penambang',
+    'char.bagas.bio': 'Turun ke terowongan sebelum matahari terbit. Helm bercahaya, jadi gua paling gelap pun terbaca.',
+    'char.nuri.role': 'Perintis Hutan',
+    'char.nuri.bio': 'Hafal setiap jenis dedaunan di sektor utara. Berjalan tanpa suara, menanam lebih banyak dari yang ditebang.',
+    'char.ombak.role': 'Penyelam Cekungan',
+    'char.ombak.bio': 'Memetakan dasar laut dan gua bawah air. Setelan selam rapat, visor kaca tahan tekanan.',
+    'char.mk3.role': 'Unit Otomat',
+    'char.mk3.bio': 'Rangka logam hasil daur ulang bijih besi. Tidak butuh tidur, tidak pernah tersesat, sesekali berdengung.',
+    'char.rubah.role': 'Rubah Pendamping',
+    'char.rubah.bio': 'Bukan manusia, dan tidak keberatan soal itu. Ikut ke mana pun, berhenti tiap kali mencium bijih.',
+
+    'seed.a': 'batu,kabut,lumut,pasir,obor,palung,akar,kerikil,senja,arus',
+    'seed.b': 'utara,dalam,sunyi,panjang,kering,biru,tua,jauh'
+  },
+
+  en: {
+    'brand.tagline': 'a world of cubes',
+    'common.back': 'Back',
+    'common.close': 'Close',
+    'common.off': 'off',
+    'common.air': 'air',
+
+    'boot.eyebrow': 'Voxelia Survey · v1.0',
+    'boot.gl': 'checking graphics context',
+    'boot.tex': 'drawing {n} procedural 16×16 textures',
+    'boot.icons': 'rendering {n} 3D block icons',
+    'boot.scene': 'assembling sky, clouds and particles',
+    'boot.chars': 'building {n} explorer models',
+    'boot.world': 'preparing world "{seed}" (seed {n})',
+    'boot.chunks': 'loading {n} chunks around the spawn point',
+    'boot.ready': 'READY',
+    'boot.ok': 'OK',
+    'boot.failed': 'FAILED',
+    'boot.error': 'error while loading: {msg}',
+    'boot.noWebgl': 'WebGL2 is not available in this browser.',
+    'boot.noWebgl2': 'Voxelia needs WebGL2 for array textures. Try Chrome, Edge, Firefox or Safari 15+.',
+
+    'menu.eyebrow': 'Survey station · sector 0,0',
+    'menu.play': 'Enter World',
+    'menu.continue': 'Continue World',
+    'menu.chars': 'Choose Explorer',
+    'menu.opts': 'Settings',
+    'menu.guide': 'Controls',
+    'menu.new': 'Generate a new world from a seed',
+
+    'world.file': 'World File',
+    'world.seed': 'Seed',
+    'world.explorer': 'Explorer',
+    'world.spawn': 'Spawn point',
+    'world.biome': 'Biome',
+    'world.strata': 'Strata column',
+    'world.status.new': 'NEW',
+    'world.status.saved': 'SAVED',
+    'world.status.failed': 'FAILED',
+
+    'foot.height': 'World height',
+    'foot.heightVal': '128 blocks',
+    'foot.chunk': 'Chunk',
+    'foot.sea': 'Sea level',
+    'foot.blocks': 'Block types',
+    'foot.blocksVal': '{n} blocks',
+    'foot.note': 'WebGL2 · procedural textures · zero external assets',
+
+    'chars.eyebrow': 'Personnel file',
+    'chars.title': 'Choose Explorer',
+    'chars.sub': 'Models are built from cubes inside the engine — no model files. Drag the stage to rotate.',
+    'chars.hint': 'Drag to rotate · scroll to zoom',
+    'chars.use': 'Use this explorer',
+    'chars.index': 'PERSONNEL {i} / {n}',
+
+    'opts.eyebrow': 'Calibration',
+    'opts.title': 'Settings',
+    'opts.sub': 'Every change applies immediately and is stored in your browser.',
+    'opts.reset': 'Restore defaults',
+    'opts.resetDone': 'Settings restored to defaults',
+
+    'guide.eyebrow': 'Field guide',
+    'guide.title': 'Controls',
+    'guide.sub': 'Click the screen to lock the cursor. Press Esc at any time to release it.',
+
+    'inv.eyebrow': 'Material crate',
+    'inv.title': 'Inventory',
+    'inv.sub': 'Click a block to put it in the selected slot. Every icon is a real 3D render, not an image.',
+    'inv.close': 'E / ESC to close',
+
+    'pause.eyebrow': 'Expedition paused',
+    'pause.title': 'Paused',
+    'pause.resume': 'Resume',
+    'pause.save': 'Save World',
+    'pause.quit': 'Quit to menu',
+    'pause.info': '{n} blocks edited · seed {seed} · {c} chunks loaded',
+
+    'touch.jump': 'JUMP',
+    'touch.fly': 'FLY',
+    'touch.dig': 'DIG',
+    'touch.place': 'PLACE',
+
+    'group.display': 'Display',
+    'group.graphics': 'Graphics',
+    'group.controls': 'Controls',
+    'group.comfort': 'Comfort',
+    'group.world': 'World',
+    'group.sound': 'Sound',
+
+    'set.lang': 'Language',
+    'set.lang.desc': 'Applies immediately, no page reload',
+    'opt.lang.auto': 'Follow browser',
+    'opt.lang.id': 'Bahasa Indonesia',
+    'opt.lang.en': 'English',
+    'set.renderDist': 'Render distance',
+    'set.renderDist.desc': 'Radius of chunks loaded around you',
+    'set.resScale': 'Resolution scale',
+    'set.resScale.desc': 'Lower this if the frame rate struggles',
+    'set.fov': 'Field of view',
+    'set.fov.desc': 'Lower feels calmer, higher shows more',
+    'set.exposure': 'Brightness',
+    'set.fogAmt': 'Distance fog',
+    'set.fogAmt.desc': '0% = clear view all the way to the chunk edge',
+    'set.clouds': 'Clouds',
+    'set.clouds.desc': 'Blocky cloud layer at altitude 112',
+    'set.ao': 'Ambient occlusion',
+    'set.ao.desc': 'Soft shading in block corners',
+    'set.lookMode': 'Look mode',
+    'set.lookMode.desc': 'If the cursor feels wild, pick Drag left click',
+    'opt.lookMode.auto': 'Automatic',
+    'opt.lookMode.lock': 'Pointer lock',
+    'opt.lookMode.drag': 'Drag left click',
+    'set.sens': 'Look sensitivity',
+    'set.lookSmooth': 'Camera smoothing',
+    'set.lookSmooth.desc': 'Damps jittery mouse movement',
+    'set.invertY': 'Invert Y axis',
+    'set.autoStep': 'Auto step up',
+    'set.autoStep.desc': 'Step over one-block ledges without jumping',
+    'set.bob': 'Head bob',
+    'set.bob.desc': 'Camera bounce while walking. Turn off if it makes you dizzy.',
+    'set.wave': 'Water & foliage motion',
+    'set.wave.desc': 'Rippling water and swaying plants',
+    'set.vignette': 'Vignette',
+    'set.vignette.desc': 'Soft darkening at the screen edges',
+    'set.dayLength': 'Day length',
+    'set.timeFrozen': 'Freeze time',
+    'set.timeFrozen.desc': 'The sun stops where it is now',
+    'set.timeOfDay': 'Time of day',
+    'set.timeOfDay.desc': '0.00 midnight · 0.50 noon',
+    'set.sfx': 'Sound effects',
+    'set.sfx.desc': 'Synthesised tones, no audio files',
+    'set.volume': 'Volume',
+    'unit.chunk': '{n} chunks',
+    'unit.minutes': '{n} min',
+
+    'key.move': 'Walk',
+    'key.look': 'Look around without a mouse',
+    'key.jump': 'Jump · ascend while flying',
+    'key.sprint': 'Sprint',
+    'key.descend': 'Descend while flying',
+    'key.fly': 'Toggle flight',
+    'key.dig': 'Dig block',
+    'key.place': 'Place block',
+    'key.pick': 'Pick the block you are looking at',
+    'key.slot': 'Select hotbar slot',
+    'key.wheel': 'Cycle slots',
+    'key.inv': 'Inventory',
+    'key.torch': 'Headlamp',
+    'key.view': 'Camera view',
+    'key.debug': 'Diagnostics panel',
+    'key.save': 'Save world',
+    'key.surface': 'Return to the surface',
+    'key.pause': 'Pause',
+    'kb.arrows': 'Arrows',
+    'kb.space': 'Space',
+    'kb.space2': 'Space ×2 / F',
+    'kb.lclick': 'Left click',
+    'kb.rclick': 'Right click',
+    'kb.mclick': 'Middle click',
+    'kb.wheel': 'Mouse wheel',
+
+    'msg.welcome': 'Happy exploring · Esc to pause',
+    'msg.saved': 'World saved · {n} blocks edited',
+    'msg.saveFail': 'Browser storage refused the save',
+    'msg.newWorld': 'New world generated · seed {seed}',
+    'msg.bedrock': 'Bedrock cannot be dug',
+    'msg.noRoom': 'No room there',
+    'msg.torchOn': 'Headlamp on',
+    'msg.torchOff': 'Headlamp off',
+    'msg.flyOn': 'Flight enabled · Ctrl to descend',
+    'msg.flyOff': 'Flight disabled',
+    'msg.surface': 'Back to the surface · Y {n}',
+    'msg.view0': 'First-person view',
+    'msg.view1': 'Third-person view',
+    'msg.view2': 'Front view',
+    'msg.dragLook': 'Look by holding left click',
+    'msg.dragFallback': 'Pointer lock is unavailable here — hold left click to look around',
+    'msg.lockLook': 'The cursor will lock while playing',
+    'msg.autoLook': 'Automatic look mode',
+
+    'hud.pos': 'XYZ',
+    'hud.chunk': 'chunk',
+    'hud.local': 'local',
+    'hud.biome': 'biome',
+    'hud.standing': 'standing on',
+    'hud.stats': '{c} chunks · {m} meshes · {t}k tris · {d} draws',
+    'hud.time': 'time {clock} · sun {sun}° · lights {lights}',
+    'hud.flying': 'flying',
+    'hud.swimming': 'swimming',
+    'hud.grounded': 'grounded',
+    'hud.falling': 'falling',
+    'hud.speed': '{n} blocks/s',
+
+    'cat.nature': 'Surface & sediment',
+    'cat.stone': 'Stone',
+    'cat.wood': 'Wood & foliage',
+    'cat.plant': 'Small plants',
+    'cat.build': 'Building materials',
+    'cat.ore': 'Ores',
+    'cat.rare': 'Rare',
+    'cat.fluid': 'Fluids',
+    'block.hardness': 'hardness',
+
+    'block.grass': 'Grass',
+    'block.dirt': 'Dirt',
+    'block.stone': 'Stone',
+    'block.cobblestone': 'Cobblestone',
+    'block.stone_bricks': 'Stone Bricks',
+    'block.mossy_stone': 'Mossy Stone',
+    'block.sand': 'Sand',
+    'block.red_sand': 'Red Sand',
+    'block.sandstone': 'Sandstone',
+    'block.gravel': 'Gravel',
+    'block.clay': 'Clay',
+    'block.oak_log': 'Oak Log',
+    'block.oak_leaves': 'Oak Leaves',
+    'block.birch_log': 'Birch Log',
+    'block.birch_leaves': 'Birch Leaves',
+    'block.pine_leaves': 'Pine Needles',
+    'block.planks': 'Planks',
+    'block.bricks': 'Bricks',
+    'block.glass': 'Glass',
+    'block.snow': 'Snow',
+    'block.ice': 'Ice',
+    'block.cactus': 'Cactus',
+    'block.obsidian': 'Obsidian',
+    'block.coal_ore': 'Coal Ore',
+    'block.iron_ore': 'Iron Ore',
+    'block.gold_ore': 'Gold Ore',
+    'block.diamond_ore': 'Diamond Ore',
+    'block.glowstone': 'Glowstone',
+    'block.glowstone.note': 'Emits warm light within a 12-block radius.',
+    'block.water': 'Water',
+    'block.lava': 'Lava',
+    'block.bedrock': 'Bedrock',
+    'block.tall_grass': 'Tall Grass',
+    'block.yellow_flower': 'Yellow Flower',
+    'block.red_flower': 'Red Flower',
+    'block.dead_bush': 'Dead Bush',
+    'block.grass.note': 'The damp top layer of the land.',
+
+    'biome.ocean': 'Ocean',
+    'biome.ocean.sub': 'Saltwater basin',
+    'biome.beach': 'Beach',
+    'biome.beach.sub': 'Littoral sand deposits',
+    'biome.desert': 'Desert',
+    'biome.desert.sub': 'Dry sand desert',
+    'biome.redDesert': 'Red Desert',
+    'biome.redDesert.sub': 'Oxidised iron sand',
+    'biome.savanna': 'Savanna',
+    'biome.savanna.sub': 'Hot grassland',
+    'biome.plains': 'Plains',
+    'biome.plains.sub': 'Open fertile lowland',
+    'biome.forest': 'Forest',
+    'biome.forest.sub': 'Oak and birch woodland',
+    'biome.taiga': 'Pine Forest',
+    'biome.taiga.sub': 'Highland conifers',
+    'biome.swamp': 'Swamp',
+    'biome.swamp.sub': 'Muddy wetland',
+    'biome.tundra': 'Snow Tundra',
+    'biome.tundra.sub': 'Frozen plain',
+    'biome.mountain': 'Mountains',
+    'biome.mountain.sub': 'Rock outcrop',
+    'biome.peak': 'Snowy Peaks',
+    'biome.peak.sub': 'Above the snow line',
+
+    'char.rana.role': 'Geologist',
+    'char.rana.bio': 'Has mapped strata since the first sector opened. Abrasion-proof field jacket, hammer always on the belt.',
+    'char.bagas.role': 'Miner',
+    'char.bagas.bio': 'Goes down the tunnels before sunrise. The lamp on the helmet makes even the darkest cave readable.',
+    'char.nuri.role': 'Forest Ranger',
+    'char.nuri.bio': 'Knows every kind of leaf in the northern sector. Walks without a sound, plants more than gets felled.',
+    'char.ombak.role': 'Basin Diver',
+    'char.ombak.bio': 'Maps the seabed and the caves beneath it. Sealed dive suit, pressure-rated glass visor.',
+    'char.mk3.role': 'Automaton Unit',
+    'char.mk3.bio': 'A metal frame recycled from iron ore. Needs no sleep, never gets lost, hums occasionally.',
+    'char.rubah.role': 'Fox Companion',
+    'char.rubah.bio': 'Not human, and untroubled by that. Follows anywhere, stops every time it smells ore.',
+
+    'seed.a': 'stone,mist,moss,sand,torch,trench,root,gravel,dusk,current',
+    'seed.b': 'north,deep,quiet,long,dry,blue,old,far'
+  }
+};
+
+/** Resolve the 'auto' setting against the browser's own language list. */
+function detectLocale() {
+  const list = navigator.languages && navigator.languages.length
+    ? navigator.languages : [navigator.language || 'en'];
+  for (const l of list) {
+    const tag = String(l).toLowerCase();
+    if (tag.startsWith('id') || tag.startsWith('in')) return 'id';   // "in" = kode ISO lama
+    if (tag.startsWith('en')) return 'en';
+  }
+  return 'en';
+}
+
+function setLocale(pref) {
+  LOCALE = (pref && pref !== 'auto' && LOCALES.indexOf(pref) >= 0) ? pref : detectLocale();
+  document.documentElement.lang = LOCALE;
+  return LOCALE;
+}
+
+/** Look up a key, substituting {placeholders}. Falls back en -> key. */
+function t(key, vars) {
+  const dict = I18N[LOCALE] || I18N.en;
+  let s = dict[key];
+  if (s === undefined) s = I18N.en[key];
+  if (s === undefined) return key;
+  if (vars) for (const k in vars) s = s.split('{' + k + '}').join(vars[k]);
+  return s;
+}
+
+/** Apply every data-i18n binding under `root`. */
+function applyI18n(root) {
+  root = root || document;
+  root.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  root.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  root.querySelectorAll('[data-i18n-title]').forEach(el => el.setAttribute('title', t(el.dataset.i18nTitle)));
+}
+
 /* ===== 10-blocks.js ===== */
 'use strict';
-/* Registri blok + daftar layer tekstur (indeks = layer di DataArrayTexture). */
+/* Block registry + texture layer list (index = layer in the DataArrayTexture).
+   Display names live in the i18n dictionary under `block.<key>`; nothing here
+   is user-visible text. */
 
 const TEX = [
   'grass_top', 'grass_side', 'dirt', 'stone', 'cobble', 'stone_brick', 'mossy',
@@ -623,73 +1257,78 @@ const T = {};
 TEX.forEach((n, i) => T[n] = i);
 
 const AIR = 0;
-/* kind: 0 = kubus, 1 = silang (tanaman), 2 = cairan */
+/* kind: 0 = cube, 1 = cross (plant), 2 = fluid */
 const K_CUBE = 0, K_CROSS = 1, K_LIQUID = 2;
 
-/** t: [atas, samping, bawah] */
-function blk(id, name, t, o = {}) {
+/** t: [top, side, bottom] */
+function blk(id, key, t, o = {}) {
   return {
-    id, name,
+    id, key,
     top: t[0], side: t[1], bottom: t[2] === undefined ? t[0] : t[2],
     kind: o.kind === undefined ? K_CUBE : o.kind,
     solid: o.solid === undefined ? true : o.solid,
     opaque: o.opaque === undefined ? true : o.opaque,
     light: o.light || 0,
     hardness: o.hardness === undefined ? 1.5 : o.hardness,
-    cat: o.cat || 'Alam',
-    shade: !!o.shade,               // menghalangi cahaya langit walau tidak opak (daun)
-    tint: o.tint || null,
-    note: o.note || ''
+    shade: !!o.shade,               // blocks skylight even when not opaque (leaves)
+    cat: o.cat || 'nature',
+    note: !!o.note                  // true -> i18n key `block.<key>.note` exists
   };
 }
 
 const BLOCKS = [];
 function reg(b) { BLOCKS[b.id] = b; return b; }
 
-reg(blk(1, 'Rumput', [T.grass_top, T.grass_side, T.dirt], { hardness: 0.6, note: 'Lapisan atas daratan lembap.' }));
-reg(blk(2, 'Tanah', [T.dirt, T.dirt, T.dirt], { hardness: 0.5 }));
-reg(blk(3, 'Batu', [T.stone, T.stone, T.stone], { hardness: 1.5, cat: 'Batuan' }));
-reg(blk(4, 'Batu Bulat', [T.cobble, T.cobble, T.cobble], { hardness: 2.0, cat: 'Batuan' }));
-reg(blk(5, 'Bata Batu', [T.stone_brick, T.stone_brick, T.stone_brick], { hardness: 2.0, cat: 'Bangunan' }));
-reg(blk(6, 'Batu Berlumut', [T.mossy, T.mossy, T.mossy], { hardness: 2.0, cat: 'Batuan' }));
-reg(blk(7, 'Pasir', [T.sand, T.sand, T.sand], { hardness: 0.5 }));
-reg(blk(8, 'Pasir Merah', [T.red_sand, T.red_sand, T.red_sand], { hardness: 0.5 }));
-reg(blk(9, 'Batu Pasir', [T.sandstone_top, T.sandstone_side, T.sandstone_top], { hardness: 0.8, cat: 'Bangunan' }));
-reg(blk(10, 'Kerikil', [T.gravel, T.gravel, T.gravel], { hardness: 0.6 }));
-reg(blk(11, 'Tanah Liat', [T.clay, T.clay, T.clay], { hardness: 0.6 }));
-reg(blk(12, 'Kayu Ek', [T.oak_top, T.oak_side, T.oak_top], { hardness: 2.0, cat: 'Kayu' }));
-reg(blk(13, 'Daun Ek', [T.oak_leaves, T.oak_leaves, T.oak_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'Kayu' }));
-reg(blk(14, 'Kayu Birch', [T.birch_top, T.birch_side, T.birch_top], { hardness: 2.0, cat: 'Kayu' }));
-reg(blk(15, 'Daun Birch', [T.birch_leaves, T.birch_leaves, T.birch_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'Kayu' }));
-reg(blk(16, 'Daun Pinus', [T.pine_leaves, T.pine_leaves, T.pine_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'Kayu' }));
-reg(blk(17, 'Papan', [T.planks, T.planks, T.planks], { hardness: 2.0, cat: 'Bangunan' }));
-reg(blk(18, 'Bata', [T.bricks, T.bricks, T.bricks], { hardness: 2.0, cat: 'Bangunan' }));
-reg(blk(19, 'Kaca', [T.glass, T.glass, T.glass], { hardness: 0.3, opaque: false, cat: 'Bangunan' }));
-reg(blk(20, 'Salju', [T.snow, T.snow_side, T.dirt], { hardness: 0.2 }));
-reg(blk(21, 'Es', [T.ice, T.ice, T.ice], { hardness: 0.5, opaque: false }));
-reg(blk(22, 'Kaktus', [T.cactus_top, T.cactus_side, T.cactus_top], { hardness: 0.4, opaque: false, cat: 'Tumbuhan' }));
-reg(blk(23, 'Obsidian', [T.obsidian, T.obsidian, T.obsidian], { hardness: 50, cat: 'Langka' }));
-reg(blk(24, 'Bijih Batu Bara', [T.coal_ore, T.coal_ore, T.coal_ore], { hardness: 3.0, cat: 'Bijih' }));
-reg(blk(25, 'Bijih Besi', [T.iron_ore, T.iron_ore, T.iron_ore], { hardness: 3.0, cat: 'Bijih' }));
-reg(blk(26, 'Bijih Emas', [T.gold_ore, T.gold_ore, T.gold_ore], { hardness: 3.0, cat: 'Bijih' }));
-reg(blk(27, 'Bijih Berlian', [T.diamond_ore, T.diamond_ore, T.diamond_ore], { hardness: 3.0, cat: 'Bijih' }));
-reg(blk(28, 'Lampu Batu', [T.glowstone, T.glowstone, T.glowstone], { hardness: 0.3, light: 15, cat: 'Langka', note: 'Memancarkan cahaya hangat radius 12 blok.' }));
-reg(blk(29, 'Air', [T.water, T.water, T.water], { kind: K_LIQUID, solid: false, opaque: false, hardness: 0, cat: 'Cairan' }));
-reg(blk(30, 'Lava', [T.lava, T.lava, T.lava], { kind: K_LIQUID, solid: false, opaque: false, light: 15, hardness: 0, cat: 'Cairan' }));
-reg(blk(31, 'Bedrock', [T.bedrock, T.bedrock, T.bedrock], { hardness: -1, cat: 'Langka' }));
-reg(blk(32, 'Rumput Tinggi', [T.tallgrass, T.tallgrass, T.tallgrass], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'Tumbuhan' }));
-reg(blk(33, 'Bunga Kuning', [T.flower_yellow, T.flower_yellow, T.flower_yellow], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'Tumbuhan' }));
-reg(blk(34, 'Bunga Merah', [T.flower_red, T.flower_red, T.flower_red], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'Tumbuhan' }));
-reg(blk(35, 'Semak Kering', [T.deadbush, T.deadbush, T.deadbush], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'Tumbuhan' }));
+reg(blk(1, 'grass', [T.grass_top, T.grass_side, T.dirt], { hardness: 0.6, note: true }));
+reg(blk(2, 'dirt', [T.dirt, T.dirt, T.dirt], { hardness: 0.5 }));
+reg(blk(3, 'stone', [T.stone, T.stone, T.stone], { hardness: 1.5, cat: 'stone' }));
+reg(blk(4, 'cobblestone', [T.cobble, T.cobble, T.cobble], { hardness: 2.0, cat: 'stone' }));
+reg(blk(5, 'stone_bricks', [T.stone_brick, T.stone_brick, T.stone_brick], { hardness: 2.0, cat: 'build' }));
+reg(blk(6, 'mossy_stone', [T.mossy, T.mossy, T.mossy], { hardness: 2.0, cat: 'stone' }));
+reg(blk(7, 'sand', [T.sand, T.sand, T.sand], { hardness: 0.5 }));
+reg(blk(8, 'red_sand', [T.red_sand, T.red_sand, T.red_sand], { hardness: 0.5 }));
+reg(blk(9, 'sandstone', [T.sandstone_top, T.sandstone_side, T.sandstone_top], { hardness: 0.8, cat: 'build' }));
+reg(blk(10, 'gravel', [T.gravel, T.gravel, T.gravel], { hardness: 0.6 }));
+reg(blk(11, 'clay', [T.clay, T.clay, T.clay], { hardness: 0.6 }));
+reg(blk(12, 'oak_log', [T.oak_top, T.oak_side, T.oak_top], { hardness: 2.0, cat: 'wood' }));
+reg(blk(13, 'oak_leaves', [T.oak_leaves, T.oak_leaves, T.oak_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'wood' }));
+reg(blk(14, 'birch_log', [T.birch_top, T.birch_side, T.birch_top], { hardness: 2.0, cat: 'wood' }));
+reg(blk(15, 'birch_leaves', [T.birch_leaves, T.birch_leaves, T.birch_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'wood' }));
+reg(blk(16, 'pine_leaves', [T.pine_leaves, T.pine_leaves, T.pine_leaves], { hardness: 0.2, opaque: false, shade: true, cat: 'wood' }));
+reg(blk(17, 'planks', [T.planks, T.planks, T.planks], { hardness: 2.0, cat: 'build' }));
+reg(blk(18, 'bricks', [T.bricks, T.bricks, T.bricks], { hardness: 2.0, cat: 'build' }));
+reg(blk(19, 'glass', [T.glass, T.glass, T.glass], { hardness: 0.3, opaque: false, cat: 'build' }));
+reg(blk(20, 'snow', [T.snow, T.snow_side, T.dirt], { hardness: 0.2 }));
+reg(blk(21, 'ice', [T.ice, T.ice, T.ice], { hardness: 0.5, opaque: false }));
+reg(blk(22, 'cactus', [T.cactus_top, T.cactus_side, T.cactus_top], { hardness: 0.4, opaque: false }));
+reg(blk(23, 'obsidian', [T.obsidian, T.obsidian, T.obsidian], { hardness: 50, cat: 'rare' }));
+reg(blk(24, 'coal_ore', [T.coal_ore, T.coal_ore, T.coal_ore], { hardness: 3.0, cat: 'ore' }));
+reg(blk(25, 'iron_ore', [T.iron_ore, T.iron_ore, T.iron_ore], { hardness: 3.0, cat: 'ore' }));
+reg(blk(26, 'gold_ore', [T.gold_ore, T.gold_ore, T.gold_ore], { hardness: 3.0, cat: 'ore' }));
+reg(blk(27, 'diamond_ore', [T.diamond_ore, T.diamond_ore, T.diamond_ore], { hardness: 3.0, cat: 'ore' }));
+reg(blk(28, 'glowstone', [T.glowstone, T.glowstone, T.glowstone], { hardness: 0.3, light: 15, cat: 'rare', note: true }));
+reg(blk(29, 'water', [T.water, T.water, T.water], { kind: K_LIQUID, solid: false, opaque: false, hardness: 0, cat: 'fluid' }));
+reg(blk(30, 'lava', [T.lava, T.lava, T.lava], { kind: K_LIQUID, solid: false, opaque: false, light: 15, hardness: 0, cat: 'fluid' }));
+reg(blk(31, 'bedrock', [T.bedrock, T.bedrock, T.bedrock], { hardness: -1, cat: 'rare' }));
+reg(blk(32, 'tall_grass', [T.tallgrass, T.tallgrass, T.tallgrass], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'plant' }));
+reg(blk(33, 'yellow_flower', [T.flower_yellow, T.flower_yellow, T.flower_yellow], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'plant' }));
+reg(blk(34, 'red_flower', [T.flower_red, T.flower_red, T.flower_red], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'plant' }));
+reg(blk(35, 'dead_bush', [T.deadbush, T.deadbush, T.deadbush], { kind: K_CROSS, solid: false, opaque: false, hardness: 0, cat: 'plant' }));
 
 const BLOCK_COUNT = BLOCKS.filter(Boolean).length;
 
-/* Tabel lookup rata (dipakai di jalur panas mesher) */
+/** Localised display name for a block id. */
+function blockName(id) {
+  const b = BLOCKS[id];
+  return b ? t('block.' + b.key) : t('common.air');
+}
+
+/* Flat lookup tables, used on the mesher's hot path. */
 const N_ID = 64;
 const IS_OPAQUE = new Uint8Array(N_ID);
 const IS_SOLID = new Uint8Array(N_ID);
 const KIND = new Uint8Array(N_ID);
-const IS_SHADE = new Uint8Array(N_ID);   // menghalangi cahaya langit
+const IS_SHADE = new Uint8Array(N_ID);   // casts skylight shadow
 const LIGHT_EMIT = new Uint8Array(N_ID);
 for (let i = 1; i < N_ID; i++) {
   const b = BLOCKS[i];
@@ -701,19 +1340,14 @@ for (let i = 1; i < N_ID; i++) {
   LIGHT_EMIT[i] = b.light;
 }
 
-const CATEGORIES = ['Alam', 'Batuan', 'Kayu', 'Tumbuhan', 'Bangunan', 'Bijih', 'Langka', 'Cairan'];
-const CAT_LABEL = {
-  Alam: 'Permukaan & sedimen', Batuan: 'Batuan', Kayu: 'Kayu & dedaunan',
-  Tumbuhan: 'Tumbuhan kecil', Bangunan: 'Bahan bangunan', Bijih: 'Bijih',
-  Langka: 'Langka', Cairan: 'Cairan'
-};
+const CATEGORIES = ['nature', 'stone', 'wood', 'plant', 'build', 'ore', 'rare', 'fluid'];
 const DEFAULT_HOTBAR = [1, 3, 4, 17, 5, 19, 13, 28, 7];
 
 /* ===== 20-textures.js ===== */
 'use strict';
-/* Tekstur prosedural 16x16, semuanya digambar di sini. Nol aset eksternal.
-   Hasil akhir: satu DataArrayTexture (satu layer per tekstur) -> tak ada bleeding
-   antar-tile saat mipmap, tidak seperti atlas biasa. */
+/* Procedural 16x16 textures, all drawn here. Zero external assets.
+   The result is one DataArrayTexture (one layer per texture), so mipmaps never
+   bleed between tiles the way they do in a packed atlas. */
 
 const TILE = 16;
 
@@ -736,7 +1370,7 @@ class Pix {
   }
   fill(c, a = 255) { for (let y = 0; y < this.s; y++) for (let x = 0; x < this.s; x++) this.set(x, y, c, a); }
   clear() { this.d.fill(0); }
-  /** value-noise yang membungkus mulus pada kelipatan `period` -> tekstur bisa diulang */
+  /** Value noise that wraps cleanly on multiples of `period`, so tiles repeat seamlessly. */
   vn(x, y, period) {
     const p = period, fx = x / (this.s / p), fy = y / (this.s / p);
     const x0 = Math.floor(fx), y0 = Math.floor(fy), tx = smooth(fx - x0), ty = smooth(fy - y0);
@@ -748,7 +1382,7 @@ class Pix {
 const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
 const shade = (c, f) => [c[0] * f, c[1] * f, c[2] * f];
 
-/** dasar berbutir: warna + bercak lembut + jitter per-piksel */
+/** Grainy base: a colour plus soft blotches plus per-pixel jitter. */
 function grain(p, col, blotch = 0.10, jitter = 0.10, period = 4) {
   for (let y = 0; y < p.s; y++) for (let x = 0; x < p.s; x++) {
     const n = (p.vn(x, y, period) - 0.5) * 2 * blotch;
@@ -757,7 +1391,7 @@ function grain(p, col, blotch = 0.10, jitter = 0.10, period = 4) {
   }
 }
 
-/** gumpalan tak beraturan (bijih, kerikil, lumut) */
+/** Irregular blobs (ore, gravel, moss). */
 function blobs(p, n, col, rad, jitter = 0.12, alpha = 255) {
   for (let i = 0; i < n; i++) {
     const cx = p.rnd() * p.s, cy = p.rnd() * p.s;
@@ -771,7 +1405,7 @@ function blobs(p, n, col, rad, jitter = 0.12, alpha = 255) {
   }
 }
 
-/* ---- palet ---- */
+/* ---- palette ---- */
 const C = {
   stone: [124, 124, 124], dirt: [122, 84, 55], grass: [96, 154, 68], grassDry: [140, 152, 74],
   sand: [219, 207, 156], redSand: [176, 96, 56], gravel: [131, 128, 124], clay: [160, 166, 179],
@@ -784,7 +1418,7 @@ const C = {
   coal: [34, 34, 38], iron: [190, 146, 112], gold: [230, 190, 72], diamond: [110, 226, 226],
 };
 
-/* ---- generator per tekstur ---- */
+/* ---- one generator per texture ---- */
 const GEN = {
   stone: p => { grain(p, C.stone, 0.13, 0.06, 4); },
   dirt: p => { grain(p, C.dirt, 0.14, 0.10, 4); blobs(p, 5, shade(C.dirt, 0.78), 1.4, 0.1); },
@@ -941,10 +1575,10 @@ function leafTex(p, col) {
   p.clear();
   for (let y = 0; y < p.s; y++) for (let x = 0; x < p.s; x++) {
     const n = p.vn(x, y, 4), j = (p.rnd() - 0.5) * 0.34;
-    if (p.rnd() < 0.075) continue;                      // celah tembus pandang
+    if (p.rnd() < 0.075) continue;                      // see-through gaps
     p.set(x, y, shade(col, 0.74 + n * 0.5 + j), 255);
   }
-  // sedikit ranting gelap agar tidak terbaca datar
+  // a few dark twigs so the canopy does not read flat
   for (let i = 0; i < 3; i++) {
     let x = (p.rnd() * 16) | 0, y = (p.rnd() * 16) | 0;
     for (let k = 0; k < 5; k++) { p.set(x, y, shade(col, 0.5), 255); x += (p.rnd() * 3 | 0) - 1; y += (p.rnd() * 3 | 0) - 1; }
@@ -971,7 +1605,7 @@ function flowerTex(p, petal, core) {
   // dua daun kecil di batang
   p.set(5, 10, shade(C.grass, 0.78), 255);
   p.set(9, 12, shade(C.grass, 0.78), 255);
-  // kuntum 5x5 dengan sudut dipangkas
+  // 5x5 blossom with the corners trimmed
   const cx = 7, cy = 5, R = 2;
   for (let dy = -R; dy <= R; dy++) for (let dx = -R; dx <= R; dx++) {
     if (Math.abs(dx) === R && Math.abs(dy) === R) continue;
@@ -983,7 +1617,7 @@ function flowerTex(p, petal, core) {
   p.set(cx - 1, cy - 1, shade(core, 0.82), 255);
 }
 
-/** Bangun DataArrayTexture untuk semua layer. */
+/** Build the DataArrayTexture holding every layer. */
 function buildBlockTextures(renderer) {
   const n = TEX.length, sz = TILE;
   const data = new Uint8Array(sz * sz * 4 * n);
@@ -991,7 +1625,7 @@ function buildBlockTextures(renderer) {
     const name = TEX[i];
     const p = new Pix(sz, 0x9E37 + i * 7919);
     const g = GEN[name];
-    if (g) g(p); else grain(p, [200, 60, 200], 0.2, 0.1, 4);   // magenta = layer lupa didaftarkan
+    if (g) g(p); else grain(p, [200, 60, 200], 0.2, 0.1, 4);   // magenta = a layer nobody registered
     data.set(p.d, i * sz * sz * 4);
   }
   const tex = new THREE.DataArrayTexture(data, sz, sz, n);
@@ -1006,7 +1640,7 @@ function buildBlockTextures(renderer) {
   return tex;
 }
 
-/** Warna rata-rata sebuah layer — dipakai untuk partikel & swatch UI. */
+/** Average colour of a layer, used for particles and UI swatches. */
 const TEX_AVG = [];
 function computeTexAverages() {
   for (let i = 0; i < TEX.length; i++) {
@@ -1024,28 +1658,31 @@ function computeTexAverages() {
 
 /* ===== 30-world.js ===== */
 'use strict';
-/* Dunia voxel: chunk, generator terrain, bioma, struktur, dan suntingan pemain. */
+/* The voxel world: chunks, terrain generation, biomes, structures, player edits. */
 
-const CH = 16;            // lebar chunk
-const WH = 128;           // tinggi dunia
-const SEA = 44;           // permukaan laut
+const CH = 16;            // chunk width
+const WH = 128;           // world height
+const SEA = 44;           // sea level
 const CH2 = CH * CH;      // 256
 const IDX = (x, y, z) => (y << 8) | (z << 4) | x;   // y*256 + z*16 + x
 
 const BIOMES = {
-  ocean: { id: 'Laut', sub: 'Cekungan air asin', top: 7, fill: 7, tree: 0, plant: 0 },
-  beach: { id: 'Pantai', sub: 'Endapan pasir litoral', top: 7, fill: 9, tree: 0, plant: 0.004 },
-  desert: { id: 'Gurun', sub: 'Gurun pasir kering', top: 7, fill: 9, tree: 'cactus', treeD: 0.010, plant: 0.010, plantSet: [35] },
-  redDesert:{ id: 'Gurun Merah', sub: 'Pasir besi teroksidasi', top: 8, fill: 9, tree: 'cactus', treeD: 0.014, plant: 0.012, plantSet: [35] },
-  savanna:{ id: 'Sabana', sub: 'Padang rumput panas', top: 1, fill: 2, tree: 'oak', treeD: 0.004, plant: 0.10, plantSet: [32, 32, 33] },
-  plains: { id: 'Padang Rumput', sub: 'Dataran subur terbuka', top: 1, fill: 2, tree: 'oak', treeD: 0.006, plant: 0.16, plantSet: [32, 32, 32, 33, 34] },
-  forest: { id: 'Hutan', sub: 'Hutan ek dan birch', top: 1, fill: 2, tree: 'forest', treeD: 0.062, plant: 0.20, plantSet: [32, 32, 33, 34] },
-  taiga: { id: 'Hutan Pinus', sub: 'Konifer dataran tinggi', top: 1, fill: 2, tree: 'pine', treeD: 0.048, plant: 0.10, plantSet: [32] },
-  swamp: { id: 'Rawa', sub: 'Lahan basah berlumpur', top: 1, fill: 11, tree: 'oak', treeD: 0.020, plant: 0.22, plantSet: [32, 32, 32] },
-  tundra: { id: 'Tundra Salju', sub: 'Padang beku', top: 20, fill: 2, tree: 'pine', treeD: 0.010, plant: 0.02, plantSet: [35] },
-  mountain:{ id: 'Pegunungan', sub: 'Singkapan batuan', top: 3, fill: 3, tree: 'pine', treeD: 0.006, plant: 0.02, plantSet: [32] },
-  peak: { id: 'Puncak Bersalju', sub: 'Di atas garis salju', top: 20, fill: 3, tree: 0, plant: 0 }
+  ocean:    { key: 'ocean',     top: 7,  fill: 7,  tree: 0,        plant: 0 },
+  beach:    { key: 'beach',     top: 7,  fill: 9,  tree: 0,        plant: 0.004 },
+  desert:   { key: 'desert',    top: 7,  fill: 9,  tree: 'cactus', treeD: 0.010, plant: 0.010, plantSet: [35] },
+  redDesert:{ key: 'redDesert', top: 8,  fill: 9,  tree: 'cactus', treeD: 0.014, plant: 0.012, plantSet: [35] },
+  savanna:  { key: 'savanna',   top: 1,  fill: 2,  tree: 'oak',    treeD: 0.004, plant: 0.10,  plantSet: [32, 32, 33] },
+  plains:   { key: 'plains',    top: 1,  fill: 2,  tree: 'oak',    treeD: 0.006, plant: 0.16,  plantSet: [32, 32, 32, 33, 34] },
+  forest:   { key: 'forest',    top: 1,  fill: 2,  tree: 'forest', treeD: 0.062, plant: 0.20,  plantSet: [32, 32, 33, 34] },
+  taiga:    { key: 'taiga',     top: 1,  fill: 2,  tree: 'pine',   treeD: 0.048, plant: 0.10,  plantSet: [32] },
+  swamp:    { key: 'swamp',     top: 1,  fill: 11, tree: 'oak',    treeD: 0.020, plant: 0.22,  plantSet: [32, 32, 32] },
+  tundra:   { key: 'tundra',    top: 20, fill: 2,  tree: 'pine',   treeD: 0.010, plant: 0.02,  plantSet: [35] },
+  mountain: { key: 'mountain',  top: 3,  fill: 3,  tree: 'pine',   treeD: 0.006, plant: 0.02,  plantSet: [32] },
+  peak:     { key: 'peak',      top: 20, fill: 3,  tree: 0,        plant: 0 }
 };
+/** Localised biome name / subtitle. */
+const biomeName = b => t('biome.' + b.key);
+const biomeSub = b => t('biome.' + b.key + '.sub');
 const BIOME_KEYS = Object.keys(BIOMES);
 
 class World {
@@ -1062,7 +1699,7 @@ class World {
     this._hCache = new Map();
   }
 
-  /* ---------- fungsi murni terrain (tak butuh chunk) ---------- */
+  /* ---------- pure terrain functions (no chunk needed) ---------- */
   heightAt(x, z) {
     const k = (x + 1048576) * 2097152 + (z + 1048576);
     const c = this._hCache.get(k);
@@ -1104,7 +1741,7 @@ class World {
     return BIOMES.plains;
   }
 
-  /* ---------- akses blok ---------- */
+  /* ---------- block access ---------- */
   chunkAt(cx, cz, create) {
     const key = cx + ',' + cz;
     if (this._lastKey === key) return this._lastChunk;
@@ -1117,7 +1754,7 @@ class World {
     if (y < 0 || y >= WH) return 0;
     const cx = x >> 4, cz = z >> 4;
     const c = this.chunkAt(cx, cz, false);
-    if (!c || !c.ready) return -1;                    // -1 = belum dibangkitkan
+    if (!c || !c.ready) return -1;                    // -1 = not generated yet
     return c.blocks[IDX(x - (cx << 4), y, z - (cz << 4))];
   }
   getBlockSafe(x, y, z) { const b = this.getBlock(x, y, z); return b < 0 ? 0 : b; }
@@ -1138,7 +1775,7 @@ class World {
       m.set(x + ',' + y + ',' + z, id);
     }
     c.dirty = true;
-    // chunk tetangga ikut kotor bila blok menyentuh batas
+    // a block on the border also dirties the neighbouring chunk
     if (lx === 0) this.markDirty(cx - 1, cz); if (lx === 15) this.markDirty(cx + 1, cz);
     if (lz === 0) this.markDirty(cx, cz - 1); if (lz === 15) this.markDirty(cx, cz + 1);
     return true;
@@ -1151,7 +1788,7 @@ class World {
     return c.top[((z - (cz << 4)) << 4) | (x - (cx << 4))];
   }
 
-  /* ---------- generator ---------- */
+  /* ---------- generation ---------- */
   generate(chunk) {
     const { cx, cz } = chunk, b = chunk.blocks, n = this.n;
     const ox = cx << 4, oz = cz << 4;
@@ -1164,11 +1801,11 @@ class World {
         for (let y = 0; y <= Math.max(h, SEA); y++) {
           let id = 0;
           if (y <= h) {
-            if (y <= 1 + (hash2(wx, wz, y * 31) * 3 | 0)) id = 31;               // bedrock bergerigi
+            if (y <= 1 + (hash2(wx, wz, y * 31) * 3 | 0)) id = 31;               // jagged bedrock
             else if (y === h) id = beachy && bio !== BIOMES.ocean ? 7 : bio.top;
             else if (y > h - 4) id = beachy ? 7 : bio.fill;
             else id = 3;
-            // bijih
+            // ores
             if (id === 3) {
               const o = n.ore.noise3(wx * 0.09, y * 0.09, wz * 0.09);
               if (y < 16 && o > 0.74) id = 27;
@@ -1177,7 +1814,7 @@ class World {
               else if (y < 68 && o > 0.62) id = 24;
               else if (o < -0.76) id = 10;
             }
-            // gua
+            // caves
             if (y > 2 && y < h - 1) {
               const t1 = n.cave.fbm3(wx * 0.021, y * 0.038, wz * 0.021, 2);
               const t2 = n.cave2.fbm3(wx * 0.021 + 51.4, y * 0.038, wz * 0.021 - 17.2, 2);
@@ -1187,10 +1824,10 @@ class World {
                 id = y < 11 ? (y < 8 ? 30 : 0) : 0;
               }
             }
-          } else if (y <= SEA) id = 29;                                          // air laut/danau
+          } else if (y <= SEA) id = 29;                                          // sea and lake water
           b[IDX(lx, y, lz)] = id;
         }
-        // salju tipis di puncak
+        // a thin snow cap on peaks
         if (bio === BIOMES.peak && h > SEA) b[IDX(lx, h, lz)] = 20;
       }
     }
@@ -1200,13 +1837,13 @@ class World {
     chunk.recalcAll();
   }
 
-  /** Tumbuhan + pohon. Melihat 3x3 chunk agar pohon di batas tetap utuh. */
+  /** Plants and trees. Scans a 3x3 chunk area so trees on a border stay whole. */
   decorate(chunk) {
     const { cx, cz } = chunk;
     for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
       this.structuresOf(cx + dx, cz + dz, chunk);
     }
-    // rumput & bunga hanya untuk chunk ini (tidak melewati batas)
+    // grass and flowers are per-chunk only; they never cross a border
     const ox = cx << 4, oz = cz << 4, b = chunk.blocks;
     for (let lz = 0; lz < CH; lz++) for (let lx = 0; lx < CH; lx++) {
       const wx = ox + lx, wz = oz + lz, h = this.heightAt(wx, wz);
@@ -1296,7 +1933,7 @@ class World {
     }
   }
 
-  /** Semua suntingan sebagai array datar [x,y,z,id,...] untuk disimpan. */
+  /** Every edit as a flat [x,y,z,id,...] array, ready to save. */
   exportEdits() {
     const out = [];
     for (const m of this.edits.values())
@@ -1315,7 +1952,7 @@ class World {
   }
   editCount() { let n = 0; for (const m of this.edits.values()) n += m.size; return n; }
 
-  /** Salin chunk + tepi tetangga ke buffer berlapis 18x128x18 untuk mesher. */
+  /** Copy a chunk plus its neighbour edges into an 18x128x18 padded buffer for the mesher. */
   fillPadded(cx, cz, out, tops) {
     const P = CH + 2;
     out.fill(0);
@@ -1330,7 +1967,7 @@ class World {
           const px = dx * CH + lx + 1;
           if (px < 0 || px >= P) continue;
           if (!c || !c.ready) {
-            // tetangga belum ada: anggap padat agar sisi tidak "bocor" jadi dinding
+            // neighbour missing: treat it as solid so the seam does not turn into a wall
             for (let y = 0; y < WH; y++) out[(y * P + pz) * P + px] = 3;
             tops[pz * P + px] = WH;
             continue;
@@ -1347,7 +1984,7 @@ class Chunk {
   constructor(cx, cz) {
     this.cx = cx; this.cz = cz;
     this.blocks = new Uint8Array(CH * WH * CH);
-    this.top = new Int16Array(CH2);        // y blok opak tertinggi (untuk cahaya langit)
+    this.top = new Int16Array(CH2);        // highest opaque block y, drives skylight
     this.ready = false; this.dirty = true;
     this.mesh = null; this.meshT = null;
     this.minY = 0; this.maxY = WH - 1;
@@ -1380,14 +2017,15 @@ class Chunk {
 
 /* ===== 40-mesher.js ===== */
 'use strict';
-/* Mesher: ubah chunk jadi geometri. Face culling + ambient occlusion per-vertex
-   + cahaya langit yang dihitung dari tinggi kolom (fungsi murni -> tanpa jahitan
-   antar chunk). Posisi dikemas Uint16 (skala 1/8), sisanya 4 byte per vertex. */
+/* Mesher: turns a chunk into geometry. Face culling, per-vertex ambient
+   occlusion, and skylight derived from column height (a pure function, so
+   chunks never disagree at their seams). Positions are packed as Uint16 at
+   1/8 scale; everything else fits in 4 more bytes per vertex. */
 
 const P = CH + 2;                              // 18
 const pIdx = (x, y, z) => (y * P + z) * P + x;
 
-/* Enam sisi kubus. Urutan sudut CCW dilihat dari luar. */
+/* The six cube faces. Corners wind counter-clockwise seen from outside. */
 const RAW_FACES = [
   { n: [-1, 0, 0], c: [[0, 1, 0], [0, 0, 0], [0, 0, 1], [0, 1, 1]], uv: [[0, 0], [0, 1], [1, 1], [1, 0]] }, // 0 -X
   { n: [1, 0, 0], c: [[1, 1, 1], [1, 0, 1], [1, 0, 0], [1, 1, 0]], uv: [[0, 0], [0, 1], [1, 1], [1, 0]] }, // 1 +X
@@ -1397,7 +2035,7 @@ const RAW_FACES = [
   { n: [0, 0, 1], c: [[1, 1, 1], [0, 1, 1], [0, 0, 1], [1, 0, 1]], uv: [[0, 0], [1, 0], [1, 1], [0, 1]] }  // 5 +Z
 ];
 
-/* Pra-hitung offset tetangga untuk AO tiap sudut. */
+/* Pre-compute the neighbour offsets each corner needs for ambient occlusion. */
 const FACES = RAW_FACES.map(f => {
   const n = f.n;
   const axes = [];
@@ -1415,7 +2053,7 @@ const FACES = RAW_FACES.map(f => {
 
 const AO_LEVEL = [0.54, 0.72, 0.88, 1.0];
 
-/* Buffer sementara dipakai ulang antar chunk. */
+/* Scratch buffers, reused across chunks. */
 const MAXV = 200000;
 const sPos = new Uint16Array(MAXV * 3);
 const sDat = new Uint8Array(MAXV * 4);
@@ -1456,7 +2094,7 @@ function meshChunk(world, chunk) {
         const B = BLOCKS[id];
         if (!B) continue;
 
-        /* ---- tanaman silang ---- */
+        /* ---- cross-shaped plants ---- */
         if (B.kind === K_CROSS) {
           if (vc + 8 > MAXV) continue;
           const layer = B.side;
@@ -1483,7 +2121,7 @@ function meshChunk(world, chunk) {
           continue;
         }
 
-        /* ---- cairan ---- */
+        /* ---- fluids ---- */
         if (B.kind === K_LIQUID) {
           const above = padded[pIdx(px, y + 1, pz)];
           const topH = (above === id) ? 8 : 7;      // permukaan sedikit turun
@@ -1514,14 +2152,14 @@ function meshChunk(world, chunk) {
           continue;
         }
 
-        /* ---- kubus biasa ---- */
+        /* ---- ordinary cubes ---- */
         for (let f = 0; f < 6; f++) {
           const F = FACES[f], n = F.n;
           const nx = px + n[0], ny = y + n[1], nz = pz + n[2];
           let nb;
           if (ny < 0) nb = 3; else if (ny >= WH) nb = 0;
           else nb = padded[pIdx(nx, ny, nz)];
-          if (nb === id) continue;                       // sisi antar-blok sejenis
+          if (nb === id) continue;                       // face between two of the same block
           if (nb !== 0 && IS_OPAQUE[nb]) continue;
           if (vc + 4 > MAXV) continue;
 
@@ -1536,7 +2174,7 @@ function meshChunk(world, chunk) {
             const ao = (s1 && s2) ? 0 : 3 - (s1 + s2 + sc);
             aoq[k] = ao;
 
-            // cahaya: rata-rata sisi udara di sekitar sudut
+            // light: average the air cells touching this corner
             let sum = skyAt(nx, clamp(ny, 0, WH - 1), nz), cnt = 1;
             const add = (o) => {
               const ax = px + o[0], ay = y + o[1], az = pz + o[2];
@@ -1555,7 +2193,7 @@ function meshChunk(world, chunk) {
             sDat[vc * 4 + 3] = f | (c.uv[0] << 3) | (c.uv[1] << 4);
             vc++;
           }
-          // balik arah segitiga agar gradasi AO tidak melintir
+          // flip the quad's triangulation so the AO gradient does not twist
           if (aoq[0] + aoq[2] > aoq[1] + aoq[3]) {
             sIdx[ic++] = base; sIdx[ic++] = base + 1; sIdx[ic++] = base + 2;
             sIdx[ic++] = base; sIdx[ic++] = base + 2; sIdx[ic++] = base + 3;
@@ -1580,15 +2218,15 @@ function packGeom(pos, dat, idx, vc, ic) {
   g.setAttribute('aPos', new THREE.BufferAttribute(pos.slice(0, vc * 3), 3));
   g.setAttribute('aData', new THREE.BufferAttribute(dat.slice(0, vc * 4), 4));
   g.setIndex(new THREE.BufferAttribute(idx.slice(0, ic), 1));
-  // bounding sphere manual: geometri tak punya atribut `position`
+  // bounding sphere set by hand: this geometry has no `position` attribute
   g.boundingSphere = new THREE.Sphere(new THREE.Vector3(CH / 2, WH / 2, CH / 2), Math.sqrt(8 * 8 + 64 * 64 + 8 * 8) + 1);
   return g;
 }
 
 /* ===== 50-materials.js ===== */
 'use strict';
-/* Shader. Ditulis gaya GLSL1 — three mengangkatnya ke "#version 300 es" sendiri
-   di WebGL2 dan menyediakan pc_fragColor + precision sampler2DArray. */
+/* Shaders, written in GLSL1 style. Three.js lifts them to "#version 300 es" on
+   WebGL2 by itself and supplies pc_fragColor plus the sampler2DArray precision. */
 
 const MAX_LIGHTS = 12;
 
@@ -1742,7 +2380,7 @@ void main(){
     float nd = max(dot(N, uSunDir), 0.0);
     lit = uAmbient * (0.34 + 0.66 * vSky) + uSunCol * (0.30 + 0.70 * nd) * vSky;
     lit += pointLights(vWorld, N);
-    // kilau matahari di permukaan air
+    // sun glint on the water surface
     vec3 V = normalize(uCam - vWorld);
     vec3 H = normalize(uSunDir + V);
     float spec = pow(max(dot(N, H), 0.0), 90.0);
@@ -1771,7 +2409,7 @@ function makeLiquidMaterial() {
   });
 }
 
-/* --------- item: kubus kecil untuk ikon & benda di tangan --------- */
+/* --------- items: the small cube used for icons and the held block --------- */
 const ITEM_FRAG = COMMON_HEAD + `
 varying vec2 vUv;
 varying float vLayer, vAO, vSky, vFace;
@@ -1797,7 +2435,7 @@ function makeItemMaterial() {
   });
 }
 
-/* --------- langit --------- */
+/* --------- sky --------- */
 const SKY_VERT = `
 varying vec3 vDir;
 void main(){
@@ -1825,7 +2463,7 @@ void main(){
   sky = mix(sky, uTop, smoothstep(0.22, 0.8, h));
   sky = mix(uGround, sky, smoothstep(-0.55, 0.0, h));
 
-  // bintang
+  // stars
   float sd = dot(d, uSunDir);
   if (uNight > 0.01 && h > -0.05){
     vec3 g = floor(d * 210.0);
@@ -1835,14 +2473,14 @@ void main(){
     sky += vec3(0.95, 0.96, 1.0) * star * tw * uNight * smoothstep(-0.02, 0.25, h);
   }
 
-  // pendar sekitar matahari + cakram
+  // sun glow plus the disc itself
   float glow = pow(max(sd, 0.0), 26.0);
   sky += uSunCol * glow * 0.85;
   sky += uSunCol * pow(max(sd, 0.0), 900.0) * 3.2;
   float disc = smoothstep(0.99885, 0.99935, sd);
   sky = mix(sky, uSunCol * 1.9, disc);
 
-  // bulan berlawanan arah
+  // the moon sits opposite the sun
   float md = dot(d, -uSunDir);
   float moon = smoothstep(0.9992, 0.99955, md);
   float crater = hash13(floor(d * 300.0));
@@ -1853,7 +2491,7 @@ void main(){
 }
 `;
 
-/* --------- awan bergaya kubus --------- */
+/* --------- blocky clouds --------- */
 const CLOUD_FRAG = `
 precision highp float;
 varying vec2 vUvC;
@@ -1876,9 +2514,9 @@ float fbm(vec2 p){
   return s;
 }
 void main(){
-  // noise dihitung dari koordinat dunia supaya awan tidak ikut bergeser
+  // noise is sampled in world space so clouds do not drift with the camera
   vec2 p = vWp.xz * 0.0075 + vec2(uTime * 0.0045, uTime * 0.0016);
-  vec2 q = floor(p * 7.0) / 7.0;          // kuantisasi -> tepi kotak
+  vec2 q = floor(p * 7.0) / 7.0;          // quantise -> blocky edges
   float n = fbm(q);
   float m = smoothstep(0.50, 0.60, n);
   if (m < 0.02) discard;
@@ -1905,10 +2543,10 @@ void main(){
 
 /* ===== 55-models.js ===== */
 'use strict';
-/* Model 3D: geometri kubus item, ikon blok yang dirender, dan penjelajah.
-   Semua dibangun dari kotak + tekstur kanvas prosedural. */
+/* 3D models: the item cube geometry, the rendered block icons, and the
+   explorers. Everything is boxes plus procedurally drawn canvas textures. */
 
-/* ---------- geometri satu blok (format atribut sama dengan mesher) ---------- */
+/* ---------- single-block geometry (same attribute layout as the mesher) ---------- */
 function blockCubeGeom(id) {
   const B = BLOCKS[id];
   const pos = [], dat = [], idx = [];
@@ -1953,7 +2591,7 @@ function blockCubeGeom(id) {
   return g;
 }
 
-/* ---------- ikon blok: render 3D asli -> dataURL ---------- */
+/* ---------- block icons: a real 3D render -> data URL ---------- */
 function bakeBlockIcons(renderer, itemMat, size = 96) {
   const rt = new THREE.WebGLRenderTarget(size, size, {
     minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat
@@ -1988,7 +2626,7 @@ function bakeBlockIcons(renderer, itemMat, size = 96) {
     renderer.render(scene, cam);
     renderer.readRenderTargetPixels(rt, 0, 0, size, size, buf);
 
-    for (let y = 0; y < size; y++) {                 // WebGL membaca dari bawah
+    for (let y = 0; y < size; y++) {                 // WebGL reads bottom-up
       const src = (size - 1 - y) * size * 4, dst = y * size * 4;
       img.data.set(buf.subarray(src, src + size * 4), dst);
     }
@@ -2005,7 +2643,7 @@ function bakeBlockIcons(renderer, itemMat, size = 96) {
   return icons;
 }
 
-/* ---------- tekstur kulit karakter ---------- */
+/* ---------- character skin textures ---------- */
 function skinTex(baseHex, opts = {}) {
   const p = new Pix(16, opts.seed || 1234);
   const base = hexRgb(baseHex);
@@ -2063,48 +2701,35 @@ function canvasTexFromPix(p) {
   return t;
 }
 
-/* ---------- daftar penjelajah ---------- */
+/* ---------- the explorers ---------- */
 const CHARS = [
-  {
-    key: 'rana', name: 'Rana', role: 'Ahli Geologi', sw: '#2E8B7A',
-    bio: 'Memetakan strata sejak sektor pertama dibuka. Jaket lapangan tahan abrasi, palu selalu di pinggang.',
+  { key: 'rana',  name: 'Rana',  sw: '#2E8B7A',
     skin: '#c98d63', shirt: '#2e8b7a', pants: '#3a4553', shoe: '#20262f',
-    hat: { type: 'cap', color: '#e0a63c' }
-  },
-  {
-    key: 'bagas', name: 'Bagas', role: 'Penambang', sw: '#E0A63C',
-    bio: 'Turun ke terowongan sebelum matahari terbit. Helm bercahaya, jadi gua paling gelap pun terbaca.',
+    hat: { type: 'cap', color: '#e0a63c' } },
+  { key: 'bagas', name: 'Bagas', sw: '#E0A63C',
     skin: '#a9744a', shirt: '#c46a2c', pants: '#4a4038', shoe: '#26201a',
-    hat: { type: 'helmet', color: '#f0c33c', lamp: true }
-  },
-  {
-    key: 'nuri', name: 'Nuri', role: 'Perintis Hutan', sw: '#4E9A3E',
-    bio: 'Hafal setiap jenis dedaunan di sektor utara. Berjalan tanpa suara, menanam lebih banyak dari yang ditebang.',
+    hat: { type: 'helmet', color: '#f0c33c', lamp: true } },
+  { key: 'nuri',  name: 'Nuri',  sw: '#4E9A3E',
     skin: '#d8a377', shirt: '#4e9a3e', pants: '#3d5730', shoe: '#2a2118',
-    hat: { type: 'hood', color: '#3f7d33' }
-  },
-  {
-    key: 'ombak', name: 'Ombak', role: 'Penyelam Cekungan', sw: '#2C6FA8',
-    bio: 'Memetakan dasar laut dan gua bawah air. Setelan selam rapat, visor kaca tahan tekanan.',
+    hat: { type: 'hood', color: '#3f7d33' } },
+  { key: 'ombak', name: 'Ombak', sw: '#2C6FA8',
     skin: '#8f6a4e', shirt: '#22394f', pants: '#1b2c3d', shoe: '#14202c',
-    hat: { type: 'visor', color: '#2c6fa8' }, faceOpts: { glow: '#9fd8ff', mouth: '#2a3a4a' }
-  },
-  {
-    key: 'mk3', name: 'MK-3', role: 'Unit Otomat', sw: '#9C8BE8',
-    bio: 'Rangka logam hasil daur ulang bijih besi. Tidak butuh tidur, tidak pernah tersesat, sesekali berdengung.',
+    hat: { type: 'visor', color: '#2c6fa8' },
+    faceOpts: { glow: '#9fd8ff', mouth: '#2a3a4a' } },
+  { key: 'mk3',   name: 'MK-3',  sw: '#9C8BE8',
     skin: '#9aa3ad', shirt: '#6f7883', pants: '#5b636d', shoe: '#3c424a',
     hat: { type: 'antenna', color: '#9c8be8' },
     faceOpts: { glow: '#a48cff', mouth: '#3a3f46', eyeY: 7 },
-    metal: true
-  },
-  {
-    key: 'rubah', name: 'Sengu', role: 'Rubah Pendamping', sw: '#D2703A',
-    bio: 'Bukan manusia, dan tidak keberatan soal itu. Ikut ke mana pun, berhenti tiap kali mencium bijih.',
-    quad: true, skin: '#d2703a', shirt: '#d2703a', pants: '#f0e6d8', shoe: '#2a2018'
-  }
+    metal: true },
+  { key: 'rubah', name: 'Sengu', sw: '#D2703A',
+    quad: true,
+    skin: '#d2703a', shirt: '#d2703a', pants: '#f0e6d8', shoe: '#2a2018' }
 ];
+/** Localised role / biography for an explorer. */
+const charRole = c => t('char.' + c.key + '.role');
+const charBio = c => t('char.' + c.key + '.bio');
 
-/** Bangun model penjelajah. Kembalikan { root, parts } untuk dianimasikan. */
+/** Build an explorer model. Returns { root, parts } for the animator. */
 function buildCharacter(def) {
   const U = 1 / 16;
   const mat = (tex, extra = {}) => new THREE.MeshLambertMaterial(Object.assign({ map: tex }, extra));
@@ -2125,7 +2750,7 @@ function buildCharacter(def) {
   const parts = {};
 
   if (def.quad) {
-    /* --- rubah: kuadruped --- */
+    /* --- the fox: a quadruped --- */
     const body = new THREE.Group(); body.position.y = 10 * U; root.add(body);
     const torso = box(7, 6, 14, mSkin); body.add(torso);
     const headP = new THREE.Group(); headP.position.set(0, 2 * U, 7 * U); body.add(headP);
@@ -2209,11 +2834,11 @@ function buildCharacter(def) {
     const shoe = box(4.2, 2.4, 5, mShoe); shoe.position.set(0, -11 * U, 0.4 * U); lp.add(shoe);
     parts.legs.push(lp);
   }
-  root.scale.setScalar(0.9);      // 32 px -> 1.8 unit
+  root.scale.setScalar(0.9);      // 32 px -> 1.8 units
   return { root, parts, def };
 }
 
-/** Animasi berjalan / diam. `speed` 0..1, `t` waktu, `yaw/pitch` arah kepala. */
+/** Walk / idle animation. `speed` 0..1, `t` is time, `pitch` aims the head. */
 function animateCharacter(m, t, speed, pitch = 0, walkPhase = 0) {
   const p = m.parts;
   const sw = Math.sin(walkPhase) * clamp(speed, 0, 1);
@@ -2243,8 +2868,8 @@ function animateCharacter(m, t, speed, pitch = 0, walkPhase = 0) {
 
 /* ===== 60-chunks.js ===== */
 'use strict';
-/* Manajer chunk: memuat, menghasilkan mesh, dan membuang chunk dengan anggaran
-   waktu per frame supaya frame rate tidak jatuh saat dunia dibangkitkan. */
+/* Chunk manager: loads, meshes and evicts chunks under a per-frame time budget
+   so generating the world never tanks the frame rate. */
 
 function scanChunkLights(chunk) {
   const out = [];
@@ -2253,7 +2878,7 @@ function scanChunkLights(chunk) {
     for (let i = 0; i < CH2; i++) {
       const id = chunk.blocks[(y << 8) | i];
       if (!id || !LIGHT_EMIT[id]) continue;
-      if (id === 30) {                                  // lava: hanya yang terbuka
+      if (id === 30) {                                  // lava: only where it is exposed
         const above = chunk.blocks[((y + 1) << 8) | i];
         if (above !== 0) continue;
       }
@@ -2320,7 +2945,7 @@ class ChunkManager {
     chunk.tris = r.tris;
     chunk.dirty = false;
   }
-  /** Kerjakan sebanyak mungkin dalam `budget` milidetik. */
+  /** Do as much work as fits in `budget` milliseconds. */
   update(px, pz, budget = 8) {
     const d = this.dist;
     if (this._offDist !== d) this.buildOffsets(d);
@@ -2339,7 +2964,7 @@ class ChunkManager {
       }
       if (c.dirty) {
         if (!this.neighborsReady(cx, cz)) {
-          // pastikan tetangga dibuat lebih dulu agar AO di batas benar
+          // generate the neighbours first so border AO comes out right
           pending++;
           if (performance.now() - t0 < budget) {
             for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
@@ -2354,7 +2979,7 @@ class ChunkManager {
       }
     }
 
-    // buang yang jauh
+    // evict anything far away
     const lim = d + 2;
     for (const [key, c] of this.world.chunks) {
       if (Math.abs(c.cx - ccx) > lim || Math.abs(c.cz - ccz) > lim) {
@@ -2374,7 +2999,7 @@ class ChunkManager {
     this.stats = { chunks: this.world.chunks.size, meshes, tris, pending };
     return pending;
   }
-  /** Kumpulkan sumber cahaya terdekat untuk shader. */
+  /** Collect the nearest light sources for the shader. */
   collectLights(px, py, pz, out, max) {
     const ccx = Math.floor(px / CH), ccz = Math.floor(pz / CH);
     const cand = [];
@@ -2407,10 +3032,10 @@ class ChunkManager {
 
 /* ===== 65-player.js ===== */
 'use strict';
-/* Pemain: tabrakan AABB, gravitasi, renang, terbang, dan raycast voxel DDA. */
+/* The player: AABB collision, gravity, swimming, flight, and a DDA voxel raycast. */
 
-const PW = 0.62;        // lebar (setengahnya dipakai)
-const PH = 1.78;        // tinggi
+const PW = 0.62;        // width (half of it is used as the radius)
+const PH = 1.78;        // height
 const EYE = 1.62;
 const GRAV = 30;
 const JUMP = 8.9;
@@ -2421,16 +3046,16 @@ class Player {
     this.pos = new THREE.Vector3(0, 80, 0);
     this.vel = new THREE.Vector3();
     this.yaw = 0; this.pitch = 0;
-    this.yawT = 0; this.pitchT = 0;      // sasaran arah pandang; yaw/pitch mengejarnya
+    this.yawT = 0; this.pitchT = 0;      // look target; yaw/pitch chase it
     this.onGround = false;
     this.flying = false;
     this.inWater = false;
     this.eyeInWater = false;
     this.sprint = false;
-    this.stepSmooth = 0;      // offset kamera untuk melembutkan naik-tangga
+    this.stepSmooth = 0;      // camera offset that smooths out an auto step-up
     this.walkPhase = 0;
     this.speedNow = 0;
-    this.mode = 0;            // 0 = orang pertama, 1 = orang ketiga, 2 = depan
+    this.mode = 0;            // 0 = first person, 1 = third person, 2 = front
   }
   solidAt(x, y, z) {
     const id = this.w.getBlock(Math.floor(x), Math.floor(y), Math.floor(z));
@@ -2455,7 +3080,7 @@ class Player {
     return id === 29 || id === 30 ? id : 0;
   }
 
-  /** Set arah pandang sekaligus sasarannya (tanpa animasi kejar). */
+  /** Set the look direction and its target at once, with no chase animation. */
   setLook(yaw, pitch) {
     this.yaw = this.yawT = yaw;
     this.pitch = this.pitchT = clamp(pitch, -1.553, 1.553);
@@ -2465,7 +3090,7 @@ class Player {
     const hw = PW / 2, eps = 1e-3;
     const p = this.pos;
 
-    // ---- menoleh: tombol panah + pelembutan ----
+    // ---- looking: arrow keys plus smoothing ----
     const turn = 2.0 * dt;
     if (input.lookL) this.yawT += turn;
     if (input.lookR) this.yawT -= turn;
@@ -2483,7 +3108,7 @@ class Player {
     this.inWater = !!this.liquidAt(p.x, p.y + 0.4, p.z);
     this.eyeInWater = !!this.liquidAt(p.x, p.y + EYE, p.z);
 
-    // ---- arah gerak relatif yaw ----
+    // ---- movement direction, relative to yaw ----
     const cy = Math.cos(this.yaw), sy = Math.sin(this.yaw);
     let mx = 0, mz = 0;
     if (input.f) { mx -= sy; mz -= cy; }
@@ -2500,7 +3125,7 @@ class Player {
     else if (this.inWater) speed = sprinting ? 5.2 : 3.9;
     else speed = sprinting ? 7.4 : 4.5;
 
-    // percepatan halus
+    // smooth acceleration
     const accel = this.onGround || this.flying ? 22 : 8;
     const tx = mx * speed, tz = mz * speed;
     this.vel.x += (tx - this.vel.x) * Math.min(1, accel * dt);
@@ -2515,7 +3140,7 @@ class Player {
       this.vel.y += (-GRAV * 0.22) * dt;
       if (input.up) this.vel.y = Math.min(this.vel.y + 26 * dt, 4.0);
       if (input.down) this.vel.y = Math.max(this.vel.y - 26 * dt, -4.0);
-      this.vel.y *= Math.pow(0.06, dt);           // hambatan air
+      this.vel.y *= Math.pow(0.06, dt);           // water drag
       this.vel.x *= Math.pow(0.30, dt);
       this.vel.z *= Math.pow(0.30, dt);
     } else {
@@ -2524,7 +3149,7 @@ class Player {
       if (input.up && this.onGround) { this.vel.y = JUMP; this.onGround = false; }
     }
 
-    // ---- integrasi dengan sub-langkah ----
+    // ---- integration in sub-steps ----
     let remain = dt;
     while (remain > 0) {
       const step = Math.min(remain, 0.012);
@@ -2578,7 +3203,7 @@ class Player {
     this.walkPhase += hs * dt * 2.2;
   }
 
-  /** Naik satu blok otomatis. Kembalikan y baru atau null. */
+  /** Automatic one-block step up. Returns the new y, or null. */
   canStep(x, y, z) {
     if (!S.autoStep) return null;
     if (!this.onGround && !this.inWater) return null;
@@ -2599,7 +3224,7 @@ class Player {
   }
 }
 
-/* ---------- raycast voxel (Amanatides & Woo) ---------- */
+/* ---------- voxel raycast (Amanatides & Woo, 1987) ---------- */
 const _rc = { x: 0, y: 0, z: 0, nx: 0, ny: 0, nz: 0, id: 0, dist: 0 };
 function raycastVoxel(world, ox, oy, oz, dx, dy, dz, maxD) {
   let x = Math.floor(ox), y = Math.floor(oy), z = Math.floor(oz);
@@ -2623,7 +3248,7 @@ function raycastVoxel(world, ox, oy, oz, dx, dy, dz, maxD) {
   return null;
 }
 
-/** Apakah AABB pemain menabrak sel blok ini? */
+/** Does the player's AABB overlap this block cell? */
 function boxHitsPlayer(px, py, pz, bx, by, bz) {
   const hw = PW / 2;
   return (px + hw > bx && px - hw < bx + 1 &&
@@ -2633,11 +3258,13 @@ function boxHitsPlayer(px, py, pz, bx, by, bz) {
 
 /* ===== 70-ui.js ===== */
 'use strict';
-/* Lapisan antarmuka: pengaturan, hotbar, inventaris, pemilih karakter, toast. */
+/* Interface layer: settings, hotbar, inventory, character picker, toasts.
+   Every visible string goes through t(); nothing is hard-coded here. */
 
 const LS_KEY = 'voxelia.v1';
 
 const DEFAULTS = {
+  lang: 'auto',
   renderDist: 6, resScale: 100, fov: 70, exposure: 105, fogAmt: 100,
   clouds: true, ao: true, wave: true, vignette: true,
   sens: 65, invertY: false, autoStep: true,
@@ -2648,56 +3275,57 @@ const DEFAULTS = {
 };
 let S = Object.assign({}, DEFAULTS);
 
+/* Labels come from `set.<k>`, descriptions from `set.<k>.desc` when present. */
 const SCHEMA = [
   {
-    group: 'Tampilan', items: [
-      { k: 'renderDist', label: 'Jarak pandang', desc: 'Radius chunk yang dimuat di sekitar kamu', type: 'range', min: 3, max: 12, step: 1, fmt: v => v + ' chunk' },
-      { k: 'resScale', label: 'Skala resolusi', desc: 'Turunkan bila frame rate berat', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
-      { k: 'fov', label: 'Bidang pandang', desc: 'Nilai kecil terasa lebih tenang, nilai besar lebih luas', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
-      { k: 'exposure', label: 'Kecerahan', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
-      { k: 'fogAmt', label: 'Kabut jarak', desc: '0% = pandangan bersih sampai batas chunk', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+    group: 'display', items: [
+      { k: 'lang', type: 'select', options: ['auto', 'id', 'en'] },
+      { k: 'renderDist', type: 'range', min: 3, max: 12, step: 1, fmt: v => t('unit.chunk', { n: v }) },
+      { k: 'resScale', type: 'range', min: 50, max: 100, step: 5, fmt: v => v + '%' },
+      { k: 'fov', type: 'range', min: 55, max: 110, step: 1, fmt: v => v + '°' },
+      { k: 'exposure', type: 'range', min: 60, max: 170, step: 5, fmt: v => (v / 100).toFixed(2) + '×' },
+      { k: 'fogAmt', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
     ]
   },
   {
-    group: 'Grafis', items: [
-      { k: 'clouds', label: 'Awan', desc: 'Lapisan awan kotak di ketinggian 112', type: 'toggle' },
-      { k: 'ao', label: 'Ambient occlusion', desc: 'Bayangan lembut di sudut blok', type: 'toggle' }
+    group: 'graphics', items: [
+      { k: 'clouds', type: 'toggle' },
+      { k: 'ao', type: 'toggle' }
     ]
   },
   {
-    group: 'Kontrol', items: [
-      { k: 'lookMode', label: 'Cara menoleh', desc: 'Kalau kursor terasa liar, pilih Seret klik kiri', type: 'select',
-        options: [['auto', 'Otomatis'], ['lock', 'Kunci kursor'], ['drag', 'Seret klik kiri']] },
-      { k: 'sens', label: 'Sensitivitas menoleh', type: 'range', min: 15, max: 250, step: 5, fmt: v => (v / 100).toFixed(2) },
-      { k: 'lookSmooth', label: 'Kehalusan kamera', desc: 'Meredam gerakan mouse yang menyentak', type: 'range', min: 0, max: 100, step: 5, fmt: v => v ? v + '%' : 'mati' },
-      { k: 'invertY', label: 'Balik sumbu Y', type: 'toggle' },
-      { k: 'autoStep', label: 'Naik blok otomatis', desc: 'Melangkahi tepian setinggi satu blok tanpa lompat', type: 'toggle' }
+    group: 'controls', items: [
+      { k: 'lookMode', type: 'select', options: ['auto', 'lock', 'drag'] },
+      { k: 'sens', type: 'range', min: 15, max: 250, step: 5, fmt: v => (v / 100).toFixed(2) },
+      { k: 'lookSmooth', type: 'range', min: 0, max: 100, step: 5, fmt: v => v ? v + '%' : t('common.off') },
+      { k: 'invertY', type: 'toggle' },
+      { k: 'autoStep', type: 'toggle' }
     ]
   },
   {
-    group: 'Kenyamanan', items: [
-      { k: 'bob', label: 'Goyangan langkah', desc: 'Kamera naik-turun saat berjalan. Matikan bila pusing.', type: 'toggle' },
-      { k: 'wave', label: 'Gerakan air & daun', desc: 'Riak air dan tumbuhan yang bergoyang', type: 'toggle' },
-      { k: 'vignette', label: 'Vignette', desc: 'Penggelapan lembut di tepi layar', type: 'toggle' }
+    group: 'comfort', items: [
+      { k: 'bob', type: 'toggle' },
+      { k: 'wave', type: 'toggle' },
+      { k: 'vignette', type: 'toggle' }
     ]
   },
   {
-    group: 'Dunia', items: [
-      { k: 'dayLength', label: 'Panjang hari', type: 'range', min: 2, max: 20, step: 1, fmt: v => v + ' menit' },
-      { k: 'timeFrozen', label: 'Bekukan waktu', desc: 'Matahari berhenti di posisi sekarang', type: 'toggle' },
-      { k: 'timeOfDay', label: 'Waktu', desc: '0.00 tengah malam · 0.50 tengah hari', type: 'range', min: 0, max: 100, step: 1, scale: 100, fmt: v => clockLabel(v / 100) }
+    group: 'world', items: [
+      { k: 'dayLength', type: 'range', min: 2, max: 20, step: 1, fmt: v => t('unit.minutes', { n: v }) },
+      { k: 'timeFrozen', type: 'toggle' },
+      { k: 'timeOfDay', type: 'range', min: 0, max: 100, step: 1, scale: 100, fmt: v => clockLabel(v / 100) }
     ]
   },
   {
-    group: 'Suara', items: [
-      { k: 'sfx', label: 'Efek suara', desc: 'Nada sintetis, tanpa berkas audio', type: 'toggle' },
-      { k: 'volume', label: 'Volume', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
+    group: 'sound', items: [
+      { k: 'sfx', type: 'toggle' },
+      { k: 'volume', type: 'range', min: 0, max: 100, step: 5, fmt: v => v + '%' }
     ]
   }
 ];
 
-function clockLabel(t) {
-  const mins = Math.round(((t % 1) + 1) % 1 * 1440);
+function clockLabel(v) {
+  const mins = Math.round(((v + 0.5) % 1) * 1440);
   const h = Math.floor(mins / 60), m = mins % 60;
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }
@@ -2711,7 +3339,7 @@ function loadSettings() {
       if (!Array.isArray(S.hotbar) || S.hotbar.length !== 9) S.hotbar = DEFAULT_HOTBAR.slice();
       return o || {};
     }
-  } catch (e) { /* penyimpanan diblokir: pakai bawaan */ }
+  } catch (e) { /* storage blocked: fall back to defaults */ }
   return {};
 }
 function persist(extra) {
@@ -2730,21 +3358,33 @@ function buildSettingsUI() {
   for (const g of SCHEMA) {
     const panel = document.createElement('div');
     panel.className = 'panel optgrp';
-    panel.innerHTML = `<div class="panel-hd"><span class="eyebrow">${g.group}</span></div><div class="rows"></div>`;
+    panel.innerHTML = '<div class="panel-hd"><span class="eyebrow"></span></div><div class="rows"></div>';
+    panel.querySelector('.eyebrow').textContent = t('group.' + g.group);
     const rows = panel.querySelector('.rows');
     for (const it of g.items) {
+      const label = t('set.' + it.k);
+      const descKey = 'set.' + it.k + '.desc';
+      const hasDesc = I18N.en[descKey] !== undefined;
       const row = document.createElement('div');
       row.className = 'row';
       const left = document.createElement('div');
-      left.innerHTML = `<div class="lbl">${it.label}</div>` + (it.desc ? `<div class="desc">${it.desc}</div>` : '');
+      const lbl = document.createElement('div');
+      lbl.className = 'lbl'; lbl.textContent = label;
+      left.append(lbl);
+      if (hasDesc) {
+        const d = document.createElement('div');
+        d.className = 'desc'; d.textContent = t(descKey);
+        left.append(d);
+      }
       const ctl = document.createElement('div');
       ctl.className = 'ctl';
       if (it.type === 'select') {
         const sel = document.createElement('select');
-        sel.setAttribute('aria-label', it.label);
-        for (const [val, txt] of it.options) {
+        sel.setAttribute('aria-label', label);
+        for (const val of it.options) {
           const o = document.createElement('option');
-          o.value = val; o.textContent = txt;
+          o.value = val;
+          o.textContent = t('opt.' + it.k + '.' + val);
           if (S[it.k] === val) o.selected = true;
           sel.append(o);
         }
@@ -2754,7 +3394,7 @@ function buildSettingsUI() {
         const inp = document.createElement('input');
         inp.type = 'range'; inp.min = it.min; inp.max = it.max; inp.step = it.step;
         inp.value = it.scale ? Math.round(S[it.k] * it.scale) : S[it.k];
-        inp.setAttribute('aria-label', it.label);
+        inp.setAttribute('aria-label', label);
         const out = document.createElement('span');
         out.className = 'out';
         const sync = () => { out.textContent = it.fmt ? it.fmt(+inp.value) : inp.value; };
@@ -2768,7 +3408,7 @@ function buildSettingsUI() {
         const btn = document.createElement('button');
         btn.className = 'sw-toggle';
         btn.setAttribute('aria-pressed', String(!!S[it.k]));
-        btn.setAttribute('aria-label', it.label);
+        btn.setAttribute('aria-label', label);
         btn.addEventListener('click', () => {
           S[it.k] = !S[it.k];
           btn.setAttribute('aria-pressed', String(!!S[it.k]));
@@ -2784,24 +3424,32 @@ function buildSettingsUI() {
 }
 function refreshSettingsUI() { buildSettingsUI(); }
 
-/* ---------- panduan tombol ---------- */
+/* ---------- controls guide ---------- */
 const KEYMAP = [
-  ['W A S D', 'Berjalan'], ['Panah', 'Menoleh tanpa mouse'],
-  ['Spasi', 'Lompat · naik saat terbang'], ['Shift', 'Berlari'],
-  ['Ctrl', 'Turun saat terbang'], ['Spasi ×2 / F', 'Mode terbang'],
-  ['Klik kiri', 'Gali blok'], ['Klik kanan', 'Taruh blok'], ['Klik tengah', 'Ambil blok yang dilihat'],
-  ['1 – 9', 'Pilih slot hotbar'], ['Roda mouse', 'Geser slot'], ['E', 'Inventaris'],
-  ['L', 'Lampu kepala'], ['F5', 'Sudut pandang'], ['F3', 'Panel diagnostik'],
-  ['F2', 'Simpan dunia'], ['R', 'Kembali ke permukaan'], ['Esc', 'Jeda'],
-  ['Seret kiri', 'Menoleh, bila kursor tak bisa dikunci']
+  ['W A S D', 'key.move'], ['kb.arrows', 'key.look'],
+  ['kb.space', 'key.jump'], ['Shift', 'key.sprint'],
+  ['Ctrl', 'key.descend'], ['kb.space2', 'key.fly'],
+  ['kb.lclick', 'key.dig'], ['kb.rclick', 'key.place'], ['kb.mclick', 'key.pick'],
+  ['1 – 9', 'key.slot'], ['kb.wheel', 'key.wheel'], ['E', 'key.inv'],
+  ['L', 'key.torch'], ['F5', 'key.view'], ['F3', 'key.debug'],
+  ['F2', 'key.save'], ['R', 'key.surface'], ['Esc', 'key.pause']
 ];
 function buildKeyList() {
   const el = $('#keyList');
-  el.innerHTML = KEYMAP.map(([k, v]) =>
-    `<div class="keyrow"><kbd>${k}</kbd><span class="what">${v}</span></div>`).join('');
+  el.innerHTML = '';
+  for (const [kb, desc] of KEYMAP) {
+    const row = document.createElement('div');
+    row.className = 'keyrow';
+    const k = document.createElement('kbd');
+    k.textContent = kb.startsWith('kb.') ? t(kb) : kb;
+    const w = document.createElement('span');
+    w.className = 'what'; w.textContent = t(desc);
+    row.append(k, w);
+    el.append(row);
+  }
 }
 
-/* ---------- hotbar & inventaris ---------- */
+/* ---------- hotbar & inventory ---------- */
 let ICONS = {};
 let hotIndex = 0;
 let onHotbarChange = () => {};
@@ -2813,11 +3461,13 @@ function buildHotbar() {
     const b = document.createElement('button');
     b.className = 'slot';
     b.setAttribute('aria-selected', String(i === hotIndex));
-    b.innerHTML = `<span class="n">${i + 1}</span>`;
+    const n = document.createElement('span');
+    n.className = 'n'; n.textContent = String(i + 1);
+    b.append(n);
     const id = S.hotbar[i];
     if (id && ICONS[id]) {
       const img = document.createElement('img');
-      img.src = ICONS[id]; img.alt = BLOCKS[id].name;
+      img.src = ICONS[id]; img.alt = blockName(id);
       b.append(img);
     }
     b.addEventListener('click', e => { e.preventDefault(); setHot(i); });
@@ -2842,8 +3492,10 @@ function showItemName() {
   const el = $('#itemname');
   const id = currentBlock();
   if (!id || !BLOCKS[id]) { el.classList.remove('show'); return; }
-  const B = BLOCKS[id];
-  el.innerHTML = `<span class="id">#${String(id).padStart(3, '0')}</span>${B.name}`;
+  el.innerHTML = '';
+  const tag = document.createElement('span');
+  tag.className = 'id'; tag.textContent = '#' + String(id).padStart(3, '0');
+  el.append(tag, document.createTextNode(blockName(id)));
   el.classList.add('show');
   clearTimeout(nameTimer);
   nameTimer = setTimeout(() => el.classList.remove('show'), 1600);
@@ -2858,15 +3510,25 @@ function buildInventory() {
     if (!ids.length) continue;
     const sec = document.createElement('section');
     sec.className = 'cat';
-    sec.innerHTML = `<h3>${CAT_LABEL[cat] || cat}</h3><div class="grid"></div>`;
-    const grid = sec.querySelector('.grid');
+    const h = document.createElement('h3');
+    h.textContent = t('cat.' + cat);
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    sec.append(h, grid);
     for (const id of ids) {
       const B = BLOCKS[id];
+      const nm = blockName(id);
       const cell = document.createElement('button');
       cell.className = 'cell';
-      cell.title = `${B.name} · kekerasan ${B.hardness < 0 ? '∞' : B.hardness.toFixed(1)}${B.note ? ' · ' + B.note : ''}`;
+      cell.title = nm + ' · ' + t('block.hardness') + ' ' +
+        (B.hardness < 0 ? '∞' : B.hardness.toFixed(1)) +
+        (B.note ? ' · ' + t('block.' + B.key + '.note') : '');
       cell.setAttribute('aria-selected', String(S.hotbar.includes(id)));
-      cell.innerHTML = `<img src="${ICONS[id] || ''}" alt=""><span class="cn">${B.name}</span>`;
+      const img = document.createElement('img');
+      img.src = ICONS[id] || ''; img.alt = '';
+      const cn = document.createElement('span');
+      cn.className = 'cn'; cn.textContent = nm;
+      cell.append(img, cn);
       cell.addEventListener('click', () => {
         setHotSlot(hotIndex, id);
         $$('#invBody .cell').forEach(c => c.setAttribute('aria-selected', 'false'));
@@ -2879,7 +3541,7 @@ function buildInventory() {
   }
 }
 
-/* ---------- pemilih karakter ---------- */
+/* ---------- character picker ---------- */
 let charIndex = 0;
 let onCharChange = () => {};
 function buildCharList() {
@@ -2889,26 +3551,40 @@ function buildCharList() {
     const b = document.createElement('button');
     b.className = 'charcard';
     b.setAttribute('aria-pressed', String(i === charIndex));
-    b.innerHTML = `<span class="sw" style="background:${c.sw}"></span>
-      <span><span class="nm">${c.name}</span><br><span class="rl">${c.role}</span></span>`;
+    const sw = document.createElement('span');
+    sw.className = 'sw'; sw.style.background = c.sw;
+    const wrap = document.createElement('span');
+    const nm = document.createElement('span');
+    nm.className = 'nm'; nm.textContent = c.name;
+    const rl = document.createElement('span');
+    rl.className = 'rl'; rl.textContent = charRole(c);
+    wrap.append(nm, document.createElement('br'), rl);
+    b.append(sw, wrap);
     b.addEventListener('click', () => selectChar(i));
     el.append(b);
   });
 }
+/** Refresh only the text around the current explorer (used on language change). */
+function paintCharInfo() {
+  const c = CHARS[charIndex];
+  $$('#charList .charcard').forEach((el, k) => el.setAttribute('aria-pressed', String(k === charIndex)));
+  $('#charRole').textContent = charRole(c);
+  $('#charBio').textContent = charBio(c);
+  $('#charIdx').textContent = t('chars.index', {
+    i: String(charIndex + 1).padStart(2, '0'),
+    n: String(CHARS.length).padStart(2, '0')
+  });
+  $('#wChar').textContent = c.name + ' · ' + charRole(c);
+}
 function selectChar(i) {
   charIndex = (i + CHARS.length) % CHARS.length;
-  const c = CHARS[charIndex];
-  S.charKey = c.key;
-  $$('#charList .charcard').forEach((el, k) => el.setAttribute('aria-pressed', String(k === charIndex)));
-  $('#charRole').textContent = c.role;
-  $('#charBio').textContent = c.bio;
-  $('#charIdx').textContent = `PERSONEL ${String(charIndex + 1).padStart(2, '0')} / ${String(CHARS.length).padStart(2, '0')}`;
-  $('#wChar').textContent = `${c.name} · ${c.role}`;
+  S.charKey = CHARS[charIndex].key;
+  paintCharInfo();
   onCharChange(charIndex);
   persist();
 }
 
-/* ---------- toast & bioma ---------- */
+/* ---------- toasts & biome banner ---------- */
 function toast(msg, warn) {
   const box = $('#toast');
   const el = document.createElement('div');
@@ -2922,20 +3598,20 @@ function toast(msg, warn) {
 let biomeTimer = 0;
 function announceBiome(bio) {
   const el = $('#biome');
-  el.querySelector('.t').textContent = bio.id;
-  el.querySelector('.s').textContent = bio.sub;
+  el.querySelector('.t').textContent = biomeName(bio);
+  el.querySelector('.s').textContent = biomeSub(bio);
   el.classList.add('show');
   clearTimeout(biomeTimer);
   biomeTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
-/* ---------- navigasi layar ---------- */
+/* ---------- screen navigation ---------- */
 const SCREENS = ['boot', 'menu', 'chars', 'opts', 'guide', 'inv', 'pause'];
 let screenNow = 'boot';
 let screenBack = 'menu';
 function showScreen(id) {
   SCREENS.forEach(s => $('#' + s).classList.toggle('on', s === id));
-  $('#hud').classList.toggle('on', id === null || id === 'hud');
+  $('#hud').classList.toggle('on', id === 'hud');
   screenNow = id;
 }
 function showHUD() {
@@ -2944,9 +3620,40 @@ function showHUD() {
   screenNow = 'hud';
 }
 
+/* ---------- language ---------- */
+let onLocaleChange = () => {};
+
+function paintLangSwitch() {
+  $$('#langSw button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LOCALE)));
+}
+function initLangSwitch() {
+  $$('#langSw button').forEach(b => {
+    b.addEventListener('click', () => {
+      if (b.dataset.lang === LOCALE && S.lang !== 'auto') return;
+      S.lang = b.dataset.lang;
+      applyLocale();
+      persist();
+    });
+  });
+}
+/** Re-resolve the locale and repaint every string in the interface. */
+function applyLocale() {
+  setLocale(S.lang);
+  applyI18n();
+  paintLangSwitch();
+  buildSettingsUI();
+  buildKeyList();
+  buildHotbar();
+  buildInventory();
+  buildCharList();
+  paintCharInfo();
+  showItemName();
+  onLocaleChange();
+}
+
 /* ===== 80-audio.js ===== */
 'use strict';
-/* Suara sintetis. Tidak ada berkas audio — semua dari osilator & derau. */
+/* Synthesised sound. No audio files: everything is oscillators and noise. */
 
 const Audio3D = {
   ctx: null, master: null, noiseBuf: null, wind: null, windGain: null,
@@ -3032,14 +3739,14 @@ const Audio3D = {
 
 /* ===== 90-main.js ===== */
 'use strict';
-/* Perakitan: renderer, adegan, siklus siang-malam, masukan, dan gelung utama. */
+/* Assembly: renderer, scene, day-night cycle, input, and the main loop. */
 
 let renderer, scene, camera, world, chunks, player;
 let matSolid, matLiquid, matItem, atlas;
 let sky, clouds, selBox, particles, pData;
 let handScene, handCam, handMesh, handArm, handLight;
 let charScene, charCam, charModel, charPivot, charSpin = { x: -0.10, y: 0.52, z: 4.6, drag: false, lx: 0, ly: 0 };
-let worldChar = null;                 // model di dunia (orang ketiga)
+let worldChar = null;                 // the in-world model (third person)
 let saved = {};
 let state = 'boot';
 let timeOfDay = 0.30;
@@ -3053,7 +3760,7 @@ const tmpV = new THREE.Vector3(), tmpV2 = new THREE.Vector3(), tmpQ = new THREE.
 const input = { f: 0, b: 0, l: 0, r: 0, up: 0, down: 0, sprint: 0, torch: 0, lookL: 0, lookR: 0, lookU: 0, lookD: 0 };
 let mouseDown = 0, digTimer = 0, placeTimer = 0;
 let isTouch = false;
-/* Pointer lock bisa diblokir (mis. di dalam iframe). Kalau begitu, pakai mode seret. */
+/* Pointer lock can be blocked (inside an iframe, say). Fall back to drag-look. */
 let lockMode = 'lock';
 let dragOn = false, dragBtn = 0, dragDist = 0, dragX = 0, dragY = 0;
 
@@ -3065,8 +3772,8 @@ function bootLog(txt, ok) {
   el.scrollTop = el.scrollHeight;
 }
 function bootBar(p) { $('#bar i').style.width = (p * 100).toFixed(0) + '%'; }
-/* Menunggu frame berikutnya, tapi tetap jalan bila tab di latar belakang
-   (requestAnimationFrame berhenti di sana dan pemuatan akan menggantung selamanya). */
+/* Wait for the next frame, but keep going in a background tab
+   (requestAnimationFrame stops there and loading would hang forever). */
 const nextFrame = () => new Promise(r => {
   let done = false;
   const fin = () => { if (!done) { done = true; r(); } };
@@ -3076,6 +3783,8 @@ const nextFrame = () => new Promise(r => {
 
 async function boot() {
   saved = loadSettings();
+  setLocale(S.lang);
+  applyI18n();
   isTouch = window.matchMedia('(pointer: coarse)').matches;
 
   const canvas = $('#gl');
@@ -3085,21 +3794,21 @@ async function boot() {
   renderer.setClearColor(0x090c11, 1);
   renderer.autoClear = true;
   renderer.toneMapping = THREE.NoToneMapping;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;   // shader kustom sudah keluar di ruang sRGB
+  renderer.outputColorSpace = THREE.SRGBColorSpace;   // the custom shaders already output sRGB
 
   if (!renderer.capabilities.isWebGL2) {
-    bootLog('WebGL2 tidak tersedia di peramban ini.', 'GAGAL');
-    bootLog('Voxelia butuh WebGL2 untuk tekstur array. Coba Chrome, Edge, Firefox, atau Safari 15+.');
+    bootLog(t('boot.noWebgl'), t('boot.failed'));
+    bootLog(t('boot.noWebgl2'));
     return;
   }
-  bootLog('memeriksa konteks grafis', 'WEBGL2');
+  bootLog(t('boot.gl'), 'WEBGL2');
   bootBar(0.08);
   await nextFrame();
 
   computeTexAverages();
   atlas = buildBlockTextures(renderer);
   U.uAtlas.value = atlas;
-  bootLog(`menggambar ${TEX.length} tekstur prosedural 16×16`, 'OK');
+  bootLog(t('boot.tex', { n: TEX.length }), t('boot.ok'));
   bootBar(0.22);
   await nextFrame();
 
@@ -3108,17 +3817,17 @@ async function boot() {
   matItem = makeItemMaterial();
 
   ICONS = bakeBlockIcons(renderer, matItem, 96);
-  bootLog(`merender ${BLOCK_COUNT} ikon blok 3D`, 'OK');
+  bootLog(t('boot.icons', { n: BLOCK_COUNT }), t('boot.ok'));
   bootBar(0.36);
   await nextFrame();
 
   buildScene();
-  bootLog('menyusun langit, awan, dan partikel', 'OK');
+  bootLog(t('boot.scene'), t('boot.ok'));
   bootBar(0.46);
   await nextFrame();
 
   buildCharScene();
-  bootLog(`membangun ${CHARS.length} model penjelajah`, 'OK');
+  bootLog(t('boot.chars', { n: CHARS.length }), t('boot.ok'));
   bootBar(0.55);
   await nextFrame();
 
@@ -3132,11 +3841,11 @@ async function boot() {
   chunks.setDistance(S.renderDist);
   player = new Player(world);
 
-  bootLog(`menyiapkan dunia "${seedText}" (seed ${world.seed})`, 'OK');
+  bootLog(t('boot.world', { seed: seedText, n: world.seed }), t('boot.ok'));
   bootBar(0.62);
   await nextFrame();
 
-  // dunia awal
+  // the starting world
   const spawn = findSpawn(world);
   player.pos.set(spawn.x + 0.5, spawn.y, spawn.z + 0.5);
   if (savedWorld && savedWorld.pos) {
@@ -3155,7 +3864,7 @@ async function boot() {
     if (!pend) break;
     if (i % 6 === 0) await nextFrame();
   }
-  bootLog(`memuat ${chunks.stats.chunks} chunk di sekitar titik muncul`, 'SIAP');
+  bootLog(t('boot.chunks', { n: chunks.stats.chunks }), t('boot.ready'));
   bootBar(1);
   await nextFrame();
 
@@ -3166,8 +3875,7 @@ async function boot() {
 }
 
 function randomSeedText() {
-  const a = ['batu', 'kabut', 'lumut', 'pasir', 'obor', 'palung', 'akar', 'kerikil', 'senja', 'arus'];
-  const b = ['utara', 'dalam', 'sunyi', 'panjang', 'kering', 'biru', 'tua', 'jauh'];
+  const a = t('seed.a').split(','), b = t('seed.b').split(',');
   return a[(Math.random() * a.length) | 0] + '-' + b[(Math.random() * b.length) | 0] + '-' +
     String((Math.random() * 900 + 100) | 0);
 }
@@ -3184,11 +3892,11 @@ function findSpawn(w) {
   return { x: 0, y: w.heightAt(0, 0) + 1.2, z: 0, h: w.heightAt(0, 0) };
 }
 
-/* ═══════════ adegan ═══════════ */
+/* ═══════════ scene ═══════════ */
 function buildScene() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(S.fov, innerWidth / innerHeight, 0.06, 900);
-  camera.rotation.order = 'YXZ';   // yaw lalu pitch — urutan XYZ bawaan bikin kamera terguling
+  camera.rotation.order = 'YXZ';   // yaw then pitch; the default XYZ order rolls the camera
 
   scene.add(new THREE.AmbientLight(0xffffff, 1.1));
   const dl = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -3196,7 +3904,7 @@ function buildScene() {
   scene.add(dl);
   scene.userData.dl = dl;
 
-  // langit
+  // sky
   const skyGeo = new THREE.SphereGeometry(1, 24, 16);
   sky = new THREE.Mesh(skyGeo, new THREE.ShaderMaterial({
     vertexShader: SKY_VERT, fragmentShader: SKY_FRAG,
@@ -3212,7 +3920,7 @@ function buildScene() {
   sky.frustumCulled = false;
   scene.add(sky);
 
-  // awan
+  // clouds
   const cg = new THREE.PlaneGeometry(2600, 2600, 1, 1);
   cg.rotateX(-Math.PI / 2);
   clouds = new THREE.Mesh(cg, new THREE.ShaderMaterial({
@@ -3229,7 +3937,7 @@ function buildScene() {
   clouds.frustumCulled = false;
   scene.add(clouds);
 
-  // kotak seleksi
+  // selection box
   selBox = new THREE.LineSegments(
     new THREE.EdgesGeometry(new THREE.BoxGeometry(1.004, 1.004, 1.004)),
     new THREE.LineBasicMaterial({ color: 0x0a0c10, transparent: true, opacity: 0.85, depthTest: true })
@@ -3238,7 +3946,7 @@ function buildScene() {
   selBox.renderOrder = 6;
   scene.add(selBox);
 
-  // partikel pecahan blok
+  // block-break particles
   const N = 420;
   const pg = new THREE.BufferGeometry();
   pg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
@@ -3252,7 +3960,7 @@ function buildScene() {
   pData = { n: N, life: new Float32Array(N), vel: new Float32Array(N * 3), head: 0 };
   for (let i = 0; i < N; i++) pg.attributes.position.array[i * 3 + 1] = -9999;
 
-  // benda di tangan
+  // held item
   handScene = new THREE.Scene();
   handCam = new THREE.PerspectiveCamera(52, innerWidth / innerHeight, 0.01, 12);
   handScene.add(new THREE.AmbientLight(0xffffff, 1.4));
@@ -3271,7 +3979,7 @@ function buildCharScene() {
   charPivot = new THREE.Group();
   charScene.add(charPivot);
 
-  // panggung: cakram blok
+  // stage: a disc of blocks
   const stage = new THREE.Group();
   for (let dz = -3; dz <= 3; dz++) for (let dx = -3; dx <= 3; dx++) {
     if (dx * dx + dz * dz > 10) continue;
@@ -3286,7 +3994,7 @@ function buildCharScene() {
   charPivot.add(stage);
 }
 
-/** Lepas geometri & tekstur milik sebuah subtree (model karakter dibuat ulang tiap ganti). */
+/** Dispose the geometry and textures under a subtree (models are rebuilt on every swap). */
 function disposeTree(obj) {
   obj.traverse(o => {
     if (o.geometry) o.geometry.dispose();
@@ -3304,7 +4012,7 @@ function setCharModel(i) {
   charModel = buildCharacter(CHARS[i]);
   charModel.root.position.y = 0;
   charPivot.add(charModel.root);
-  // model dunia (orang ketiga)
+  // the in-world model (third person)
   if (worldChar) { scene.remove(worldChar.root); disposeTree(worldChar.root); }
   worldChar = buildCharacter(CHARS[i]);
   worldChar.root.visible = false;
@@ -3347,7 +4055,7 @@ function setHandItem() {
   if (handArm) handArm.visible = true;
 }
 
-/* ═══════════ siklus siang-malam ═══════════ */
+/* ═══════════ day-night cycle ═══════════ */
 const C_NIGHT = { top: [0x06, 0x09, 0x14], mid: [0x0b, 0x11, 0x22], hor: [0x16, 0x1e, 0x33] };
 const C_DAY = { top: [0x2f, 0x6e, 0xc8], mid: [0x74, 0xae, 0xe8], hor: [0xc2, 0xdb, 0xf0] };
 const C_DUSK = { top: [0x35, 0x36, 0x74], mid: [0x9a, 0x62, 0x8e], hor: [0xef, 0x8f, 0x4a] };
@@ -3379,7 +4087,7 @@ function updateSky(dt) {
   su.uGround.value.setRGB(hor[0] / 255 * 0.86, hor[1] / 255 * 0.88, hor[2] / 255 * 0.92, THREE.LinearSRGBColorSpace);
   su.uNight.value = night;
 
-  // warna matahari: jingga rendah -> putih hangat tinggi
+  // sun colour: orange near the horizon, warm white overhead
   const warm = clamp(1 - h / 0.3, 0, 1);
   const sunI = clamp(h * 2.6 + 0.10, 0, 1.25);
   su.uSunCol.value.setRGB(
@@ -3394,7 +4102,7 @@ function updateSky(dt) {
     (0.90 - 0.62 * warm) * sunI, THREE.LinearSRGBColorSpace);
   if (h < 0) {
     const moon = clamp(-h * 2.0, 0, 1);
-    U.uSunDir.value.multiplyScalar(-1);        // bulan jadi sumber utama
+    U.uSunDir.value.multiplyScalar(-1);        // the moon becomes the key light
     U.uSunCol.value.setRGB(0.13 * moon, 0.16 * moon, 0.26 * moon, THREE.LinearSRGBColorSpace);
   }
 
@@ -3414,7 +4122,7 @@ function updateSky(dt) {
   cu.uShade.value.setRGB(lerp(0.13, 0.72, dayF) + duskF * 0.2, lerp(0.15, 0.77, dayF), lerp(0.24, 0.85, dayF), THREE.LinearSRGBColorSpace);
 }
 
-/* ═══════════ pengaturan ═══════════ */
+/* ═══════════ settings ═══════════ */
 function applyAllSettings() {
   const scale = S.resScale / 100;
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2) * scale);
@@ -3449,14 +4157,15 @@ onSettingChange = (k) => {
   else if (k === 'vignette') $('#vignette').style.display = S.vignette ? '' : 'none';
   else if (k === 'timeOfDay') timeOfDay = S.timeOfDay;
   else if (k === 'volume' || k === 'sfx') Audio3D.setVolume();
+  else if (k === 'lang') applyLocale();
   else if (k === 'lookMode') {
     if (S.lookMode === 'drag') {
       lockMode = 'drag';
       if (document.pointerLockElement) document.exitPointerLock();
-      toast('Menoleh dengan menahan klik kiri');
+      toast(t('msg.dragLook'));
     } else {
       lockMode = 'lock';
-      toast(S.lookMode === 'lock' ? 'Kursor akan dikunci saat bermain' : 'Mode menoleh otomatis');
+      toast(t(S.lookMode === 'lock' ? 'msg.lockLook' : 'msg.autoLook'));
       if (state === 'play') lockPointer();
     }
   }
@@ -3469,16 +4178,17 @@ function buildUI() {
   buildHotbar();
   buildInventory();
   buildCharList();
+  initLangSwitch();
+  paintLangSwitch();
   onCharChange = i => { setCharModel(i); setHandItem(); };
+  onLocaleChange = () => { paintWorldStatus(); updateWorldCard(); lastBiome = null; };
   onHotbarChange = () => setHandItem();
   const ci = Math.max(0, CHARS.findIndex(c => c.key === S.charKey));
   selectChar(ci);
   setHot(0);
 
   $('#seedIn').value = S.seed;
-  $('#wBlocks').textContent = BLOCK_COUNT + ' blok';
-  $('#wStatus').textContent = saved.world ? 'TERSIMPAN' : 'BARU';
-  if (saved.world) $('#bPlay').firstChild.textContent = 'Lanjutkan Dunia ';
+  paintWorldStatus();
   $('#gpuInfo').textContent = gpuName();
   updateWorldCard();
 
@@ -3497,7 +4207,7 @@ function buildUI() {
   $('#bReset').onclick = () => {
     const keep = { charKey: S.charKey, hotbar: S.hotbar, seed: S.seed };
     S = Object.assign({}, DEFAULTS, keep);
-    refreshSettingsUI(); applyAllSettings(); persist(); toast('Pengaturan dikembalikan ke bawaan');
+    refreshSettingsUI(); applyAllSettings(); persist(); toast(t('opts.resetDone'));
   };
   $$('[data-back]').forEach(b => b.onclick = () => {
     Audio3D.ui();
@@ -3509,7 +4219,7 @@ function buildUI() {
     if (v && v !== S.seed) newWorld(v);
   });
 
-  // pemutar model di panggung karakter
+  // model turntable on the character stage
   const stageEl = $('#charStage');
   stageEl.addEventListener('pointerdown', e => {
     charSpin.drag = true; charSpin.lx = e.clientX; charSpin.ly = e.clientY;
@@ -3542,11 +4252,22 @@ function gpuName() {
   } catch (e) { return 'WebGL2'; }
 }
 
+/** Repaint the world-file status chip, the footer counts and the play button. */
+function paintWorldStatus(force) {
+  const st = force || (saved.world ? 'saved' : 'new');
+  $('#wStatus').textContent = t('world.status.' + st);
+  $('#wBlocks').textContent = t('foot.blocksVal', { n: BLOCK_COUNT });
+  $('#wHeight').textContent = t('foot.heightVal');
+  const lbl = $('#bPlayLabel');
+  lbl.dataset.i18n = saved.world ? 'menu.continue' : 'menu.play';
+  lbl.textContent = t(lbl.dataset.i18n);
+}
+
 function updateWorldCard() {
   const sp = findSpawn(world);
   const bio = world.biomeAt(sp.x, sp.z);
   $('#wSpawn').textContent = `X ${sp.x} · Y ${Math.round(sp.y)} · Z ${sp.z}`;
-  $('#wBiome').textContent = `${bio.id} — ${bio.sub}`;
+  $('#wBiome').textContent = biomeName(bio) + ' — ' + biomeSub(bio);
   const st = $('#wStrata');
   st.innerHTML = '';
   const col = [];
@@ -3559,7 +4280,7 @@ function updateWorldCard() {
     const B = BLOCKS[id];
     const c = B ? TEX_AVG[B.side] : [12, 16, 24];
     i.style.background = `rgb(${c[0]},${c[1]},${c[2]})`;
-    i.title = B ? B.name : 'Udara';
+    i.title = blockName(id);
     st.append(i);
   }
 }
@@ -3576,13 +4297,14 @@ function newWorld(seedText) {
   player.vel.set(0, 0, 0);
   for (let i = 0; i < 40; i++) if (!chunks.update(player.pos.x, player.pos.z, 20)) break;
   saved.world = null;
-  $('#wStatus').textContent = 'BARU';
+  saved.world = null;
+  paintWorldStatus();
   updateWorldCard();
   persist({ world: null });
-  toast('Dunia baru dibangkitkan · seed ' + seedText);
+  toast(t('msg.newWorld', { seed: seedText }));
 }
 
-/* ═══════════ status permainan ═══════════ */
+/* ═══════════ game state ═══════════ */
 function enterMenu() {
   state = 'menu';
   showScreen('menu');
@@ -3595,7 +4317,7 @@ function startGame() {
   Audio3D.init(); Audio3D.resume(); Audio3D.startWind();
   setHandItem();
   lockPointer();
-  toast('Selamat menjelajah · Esc untuk jeda');
+  toast(t('msg.welcome'));
 }
 function resume() {
   state = 'play';
@@ -3620,14 +4342,14 @@ function lockPointer() {
 function useDragLook() {
   if (lockMode === 'drag') return;
   lockMode = 'drag';
-  toast('Kursor tidak bisa dikunci di sini — tahan klik kiri untuk melihat sekeliling');
+  toast(t('msg.dragFallback'));
 }
 function pauseGame() {
   if (state !== 'play') return;
   state = 'pause';
   showScreen('pause');
   const n = world.editCount();
-  $('#pauseInfo').textContent = `${n} blok disunting · seed ${S.seed} · ${chunks.stats.chunks} chunk dimuat`;
+  $('#pauseInfo').textContent = t('pause.info', { n, seed: S.seed, c: chunks.stats.chunks });
   document.exitPointerLock && document.exitPointerLock();
 }
 function doSave() {
@@ -3640,11 +4362,11 @@ function doSave() {
     }
   });
   saved.world = ok ? { seed: S.seed } : null;
-  $('#wStatus').textContent = ok ? 'TERSIMPAN' : 'GAGAL';
-  toast(ok ? `Dunia tersimpan · ${edits.length / 4} blok disunting` : 'Penyimpanan peramban ditolak', !ok);
+  paintWorldStatus(ok ? null : 'failed');
+  toast(ok ? t('msg.saved', { n: edits.length / 4 }) : t('msg.saveFail'), !ok);
 }
 
-/* ═══════════ masukan ═══════════ */
+/* ═══════════ input ═══════════ */
 function setupInput() {
   const canvas = $('#gl');
 
@@ -3694,18 +4416,18 @@ function setupInput() {
         break;
       case 'KeyL':
         input.torch = input.torch ? 0 : 1;
-        toast(input.torch ? 'Lampu kepala menyala' : 'Lampu kepala padam');
+        toast(t(input.torch ? 'msg.torchOn' : 'msg.torchOff'));
         break;
       case 'KeyR': {
         const h = world.heightAt(Math.floor(player.pos.x), Math.floor(player.pos.z));
         player.pos.y = h + 1.2; player.vel.set(0, 0, 0);
-        toast('Kembali ke permukaan · Y ' + Math.round(h + 1));
+        toast(t('msg.surface', { n: Math.round(h + 1) }));
         break;
       }
       case 'F2': e.preventDefault(); doSave(); break;
       case 'F3': e.preventDefault(); S.debug = !S.debug; $('#debug').classList.toggle('on', S.debug); persist(); break;
       case 'F5': e.preventDefault(); player.mode = (player.mode + 1) % 3;
-        toast(['Sudut pandang orang pertama', 'Sudut pandang orang ketiga', 'Sudut pandang depan'][player.mode]); break;
+        toast(t('msg.view' + player.mode)); break;
       default:
         if (k.startsWith('Digit')) {
           const n = +k.slice(5);
@@ -3794,7 +4516,7 @@ let lastSpace = 0;
 function toggleFly() {
   player.flying = !player.flying;
   player.vel.y = 0;
-  toast(player.flying ? 'Mode terbang aktif · Ctrl untuk turun' : 'Mode terbang mati');
+  toast(t(player.flying ? 'msg.flyOn' : 'msg.flyOff'));
 }
 
 function setupTouch(canvas) {
@@ -3856,7 +4578,7 @@ function setupTouch(canvas) {
   $('#tFly').addEventListener('touchstart', e => { e.preventDefault(); toggleFly(); }, { passive: false });
 }
 
-/* ═══════════ aksi blok ═══════════ */
+/* ═══════════ block actions ═══════════ */
 function currentHit() {
   player.eyePos(tmpV); player.dirVec(tmpV2);
   return raycastVoxel(world, tmpV.x, tmpV.y, tmpV.z, tmpV2.x, tmpV2.y, tmpV2.z, 6.2);
@@ -3865,7 +4587,7 @@ function digBlock() {
   const h = currentHit();
   if (!h) return;
   const B = BLOCKS[h.id];
-  if (!B || B.hardness < 0) { Audio3D.deny(); toast('Bedrock tidak bisa digali', true); return; }
+  if (!B || B.hardness < 0) { Audio3D.deny(); toast(t('msg.bedrock'), true); return; }
   spawnParticles(h.x + 0.5, h.y + 0.5, h.z + 0.5, B, 14);
   world.setBlock(h.x, h.y, h.z, 0);
   refreshLights(h.x, h.z);
@@ -3882,7 +4604,7 @@ function placeBlock() {
   const cur = world.getBlock(x, y, z);
   if (cur > 0 && IS_OPAQUE[cur]) return;
   if (IS_SOLID[id] && boxHitsPlayer(player.pos.x, player.pos.y, player.pos.z, x, y, z)) {
-    Audio3D.deny(); toast('Tidak ada ruang di situ', true); return;
+    Audio3D.deny(); toast(t('msg.noRoom'), true); return;
   }
   world.setBlock(x, y, z, id);
   refreshLights(x, z);
@@ -3939,7 +4661,7 @@ function updateParticles(dt) {
   if (any) particles.geometry.attributes.position.needsUpdate = true;
 }
 
-/* ═══════════ gelung utama ═══════════ */
+/* ═══════════ main loop ═══════════ */
 let last = performance.now();
 function loop(now) {
   requestAnimationFrame(loop);
@@ -3963,9 +4685,9 @@ function loop(now) {
   }
   updateParticles(dt);
 
-  // kamera
+  // camera
   if (state === 'menu' || state === 'boot') {
-    // ayunan sangat pelan di satu sisi, bukan berputar mengelilingi dunia
+    // a very slow sway on one side, not an orbit around the world
     menuAngle += dt * 0.10;
     const a = 0.95 + Math.sin(menuAngle) * 0.14;
     const cx = player.pos.x, cz = player.pos.z, cy = player.pos.y + 15;
@@ -3987,7 +4709,7 @@ function loop(now) {
 
   chunks.update(player.pos.x, player.pos.z, state === 'play' ? 7 : 5);
 
-  // sorotan blok
+  // block highlight
   if (state === 'play' && player.mode !== 2) {
     const h = currentHit();
     if (h) { selBox.visible = true; selBox.position.set(h.x + 0.5, h.y + 0.5, h.z + 0.5); }
@@ -4026,7 +4748,7 @@ function positionCamera(dt) {
   player.eyePos(tmpV);
   const sp = clamp(player.speedNow / 7, 0, 1);
   bob += dt * player.speedNow * 1.9;
-  // goyangan langkah: mati secara bawaan, dan tidak pernah memiringkan kamera
+  // head bob: off by default, and it never tilts the camera
   const bobA = (S.bob && player.onGround) ? sp * 0.030 : 0;
   const bx = Math.cos(bob) * bobA, by = Math.abs(Math.sin(bob)) * bobA;
 
@@ -4121,19 +4843,19 @@ function updateHUD() {
   const info = renderer.info.render;
   $('#debug').innerHTML =
     `VOXELIA 1.0 · <b>${fps.toFixed(0)} fps</b> <span class="dim">(${(1000 / Math.max(fps, 1)).toFixed(1)} ms)</span><br>` +
-    `XYZ <b>${p.x.toFixed(1)} ${p.y.toFixed(1)} ${p.z.toFixed(1)}</b><br>` +
-    `chunk <b>${bx >> 4}, ${bz >> 4}</b> <span class="dim">lokal ${((bx % 16) + 16) % 16}, ${((bz % 16) + 16) % 16}</span><br>` +
-    `bioma <b>${bio.id}</b><br>` +
-    `pijakan <b>${B ? B.name : 'udara'}</b> <span class="dim">#${String(under).padStart(3, '0')}</span><br>` +
-    `<span class="dim">${chunks.stats.chunks} chunk · ${chunks.stats.meshes} mesh · ${(chunks.stats.tris / 1000).toFixed(0)}k tri · ${info.calls} draw</span><br>` +
-    `<span class="dim">waktu ${clockLabel(timeOfDay)} · matahari ${(Math.asin(clamp(U.uSunDir.value.y, -1, 1)) * 57.3).toFixed(0)}° · cahaya ${U.uLightN.value}</span><br>` +
-    `<span class="dim">${player.flying ? 'terbang' : (player.inWater ? 'berenang' : (player.onGround ? 'di tanah' : 'jatuh'))} · ${player.speedNow.toFixed(1)} blok/d</span>`;
+    `${t('hud.pos')} <b>${p.x.toFixed(1)} ${p.y.toFixed(1)} ${p.z.toFixed(1)}</b><br>` +
+    `${t('hud.chunk')} <b>${bx >> 4}, ${bz >> 4}</b> <span class="dim">${t('hud.local')} ${((bx % 16) + 16) % 16}, ${((bz % 16) + 16) % 16}</span><br>` +
+    `${t('hud.biome')} <b>${biomeName(bio)}</b><br>` +
+    `${t('hud.standing')} <b>${blockName(under)}</b> <span class="dim">#${String(under).padStart(3, '0')}</span><br>` +
+    `<span class="dim">${t('hud.stats', { c: chunks.stats.chunks, m: chunks.stats.meshes, t: (chunks.stats.tris / 1000).toFixed(0), d: info.calls })}</span><br>` +
+    `<span class="dim">${t('hud.time', { clock: clockLabel(timeOfDay), sun: (Math.asin(clamp(U.uSunDir.value.y, -1, 1)) * 57.3).toFixed(0), lights: U.uLightN.value })}</span><br>` +
+    `<span class="dim">${t(player.flying ? 'hud.flying' : (player.inWater ? 'hud.swimming' : (player.onGround ? 'hud.grounded' : 'hud.falling')))} · ${t('hud.speed', { n: player.speedNow.toFixed(1) })}</span>`;
 }
 
-/* mulai */
+/* go */
 boot().catch(e => {
   console.error(e);
-  bootLog('galat saat memuat: ' + (e && e.message ? e.message : e), 'GAGAL');
+  bootLog(t('boot.error', { msg: (e && e.message ? e.message : e) }), t('boot.failed'));
 });
 
 </script>

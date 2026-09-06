@@ -1,12 +1,13 @@
 'use strict';
-/* Mesher: ubah chunk jadi geometri. Face culling + ambient occlusion per-vertex
-   + cahaya langit yang dihitung dari tinggi kolom (fungsi murni -> tanpa jahitan
-   antar chunk). Posisi dikemas Uint16 (skala 1/8), sisanya 4 byte per vertex. */
+/* Mesher: turns a chunk into geometry. Face culling, per-vertex ambient
+   occlusion, and skylight derived from column height (a pure function, so
+   chunks never disagree at their seams). Positions are packed as Uint16 at
+   1/8 scale; everything else fits in 4 more bytes per vertex. */
 
 const P = CH + 2;                              // 18
 const pIdx = (x, y, z) => (y * P + z) * P + x;
 
-/* Enam sisi kubus. Urutan sudut CCW dilihat dari luar. */
+/* The six cube faces. Corners wind counter-clockwise seen from outside. */
 const RAW_FACES = [
   { n: [-1, 0, 0], c: [[0, 1, 0], [0, 0, 0], [0, 0, 1], [0, 1, 1]], uv: [[0, 0], [0, 1], [1, 1], [1, 0]] }, // 0 -X
   { n: [1, 0, 0], c: [[1, 1, 1], [1, 0, 1], [1, 0, 0], [1, 1, 0]], uv: [[0, 0], [0, 1], [1, 1], [1, 0]] }, // 1 +X
@@ -16,7 +17,7 @@ const RAW_FACES = [
   { n: [0, 0, 1], c: [[1, 1, 1], [0, 1, 1], [0, 0, 1], [1, 0, 1]], uv: [[0, 0], [1, 0], [1, 1], [0, 1]] }  // 5 +Z
 ];
 
-/* Pra-hitung offset tetangga untuk AO tiap sudut. */
+/* Pre-compute the neighbour offsets each corner needs for ambient occlusion. */
 const FACES = RAW_FACES.map(f => {
   const n = f.n;
   const axes = [];
@@ -34,7 +35,7 @@ const FACES = RAW_FACES.map(f => {
 
 const AO_LEVEL = [0.54, 0.72, 0.88, 1.0];
 
-/* Buffer sementara dipakai ulang antar chunk. */
+/* Scratch buffers, reused across chunks. */
 const MAXV = 200000;
 const sPos = new Uint16Array(MAXV * 3);
 const sDat = new Uint8Array(MAXV * 4);
@@ -75,7 +76,7 @@ function meshChunk(world, chunk) {
         const B = BLOCKS[id];
         if (!B) continue;
 
-        /* ---- tanaman silang ---- */
+        /* ---- cross-shaped plants ---- */
         if (B.kind === K_CROSS) {
           if (vc + 8 > MAXV) continue;
           const layer = B.side;
@@ -102,7 +103,7 @@ function meshChunk(world, chunk) {
           continue;
         }
 
-        /* ---- cairan ---- */
+        /* ---- fluids ---- */
         if (B.kind === K_LIQUID) {
           const above = padded[pIdx(px, y + 1, pz)];
           const topH = (above === id) ? 8 : 7;      // permukaan sedikit turun
@@ -133,14 +134,14 @@ function meshChunk(world, chunk) {
           continue;
         }
 
-        /* ---- kubus biasa ---- */
+        /* ---- ordinary cubes ---- */
         for (let f = 0; f < 6; f++) {
           const F = FACES[f], n = F.n;
           const nx = px + n[0], ny = y + n[1], nz = pz + n[2];
           let nb;
           if (ny < 0) nb = 3; else if (ny >= WH) nb = 0;
           else nb = padded[pIdx(nx, ny, nz)];
-          if (nb === id) continue;                       // sisi antar-blok sejenis
+          if (nb === id) continue;                       // face between two of the same block
           if (nb !== 0 && IS_OPAQUE[nb]) continue;
           if (vc + 4 > MAXV) continue;
 
@@ -155,7 +156,7 @@ function meshChunk(world, chunk) {
             const ao = (s1 && s2) ? 0 : 3 - (s1 + s2 + sc);
             aoq[k] = ao;
 
-            // cahaya: rata-rata sisi udara di sekitar sudut
+            // light: average the air cells touching this corner
             let sum = skyAt(nx, clamp(ny, 0, WH - 1), nz), cnt = 1;
             const add = (o) => {
               const ax = px + o[0], ay = y + o[1], az = pz + o[2];
@@ -174,7 +175,7 @@ function meshChunk(world, chunk) {
             sDat[vc * 4 + 3] = f | (c.uv[0] << 3) | (c.uv[1] << 4);
             vc++;
           }
-          // balik arah segitiga agar gradasi AO tidak melintir
+          // flip the quad's triangulation so the AO gradient does not twist
           if (aoq[0] + aoq[2] > aoq[1] + aoq[3]) {
             sIdx[ic++] = base; sIdx[ic++] = base + 1; sIdx[ic++] = base + 2;
             sIdx[ic++] = base; sIdx[ic++] = base + 2; sIdx[ic++] = base + 3;
@@ -199,7 +200,7 @@ function packGeom(pos, dat, idx, vc, ic) {
   g.setAttribute('aPos', new THREE.BufferAttribute(pos.slice(0, vc * 3), 3));
   g.setAttribute('aData', new THREE.BufferAttribute(dat.slice(0, vc * 4), 4));
   g.setIndex(new THREE.BufferAttribute(idx.slice(0, ic), 1));
-  // bounding sphere manual: geometri tak punya atribut `position`
+  // bounding sphere set by hand: this geometry has no `position` attribute
   g.boundingSphere = new THREE.Sphere(new THREE.Vector3(CH / 2, WH / 2, CH / 2), Math.sqrt(8 * 8 + 64 * 64 + 8 * 8) + 1);
   return g;
 }
