@@ -60,7 +60,7 @@ neighbour.
 ## Run locally
 
 ```bash
-git clone https://github.com/rochmanramadhani/voxelia.git
+git clone https://github.com/rochmanrmdhnn/voxelia.git
 cd voxelia
 python3 -m http.server 8788
 # open http://localhost:8788
